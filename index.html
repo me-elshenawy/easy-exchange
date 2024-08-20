@@ -6,27 +6,33 @@
         <title>عمليات البنك</title>
         <link rel="stylesheet" href="style.css">
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<body>
-    <div id="welcome-message">
-        <h1>مرحبا بك!</h1>
+<div class="container">
+        <h1>تحويل العملات</h1>
+        <div id="step1">
+            <p>اختر نوع العملية:</p>
+            <button onclick="selectOperation(1)">سحب</button>
+            <button onclick="selectOperation(2)">إيداع</button>
+        </div>
+        <div id="step2" style="display: none;">
+            <p>اختر نوع التحويل:</p>
+            <button onclick="selectTransaction(1)">أريد دفع مبلغ</button>
+            <button onclick="selectTransaction(2)">أريد أن يصلني</button>
+            <br>
+            <button class="back-button" onclick="goBack(1)">الرجوع للخلف</button>
+        </div>
+        <div id="step3" style="display: none;">
+            <p id="inputLabel"></p>
+            <input type="number" id="amountInput" placeholder="أدخل المبلغ" />
+            <button onclick="calculate()">احسب</button>
+            <br>
+            <button class="back-button" onclick="goBack(2)">الرجوع للخلف</button>
+        </div>
+        <div id="result" class="result"></div>
+        <div id="newCalculation" style="display: none;">
+            <button onclick="resetCalculation()">إجراء حساب جديد</button>
+        </div>
     </div>
 
-    <div id="container">
-        <button id="binance-btn">Binance</button>
-        <button id="redotpay-btn">RedotPay</button>
-    </div>
-
-    <div id="action-container" class="hidden">
-        <button id="charge-btn">شحن</button>
-        <button id="withdraw-btn">سحب</button>
-    </div>
-
-    <div id="form-container" class="hidden">
-        <p id="action-message"></p>
-        <p>سعر الصرف: <span id="exchange-rate"></span> جنيه</p>
-        <input type="number" id="amount" placeholder="أدخل المبلغ" />
-        <p>الإجمالي: <span id="total-amount">0</span> جنيه</p>
-    </div>
 
 
 <script src="script.js"></script>   
