@@ -1,55 +1,57 @@
-let operationType;
-    let transactionType;
+document.getElementById('binance-btn').addEventListener('click', function() {
+            document.getElementById('action-container').classList.remove('hidden');
+            document.getElementById('action-container').innerHTML = `
+                <button id="charge-btn">شحن</button>
+                <button id="withdraw-btn">سحب</button>
+            `;
+            document.getElementById('exchange-rate').innerText = '52';
+            setUpActionButtons('binance');
+        });
 
-    function selectOperation(type) {
-        operationType = type;
-        document.getElementById('transactionTypeDiv').style.display = 'block';
-    }
+        document.getElementById('redotpay-btn').addEventListener('click', function() {
+            document.getElementById('action-container').classList.remove('hidden');
+            document.getElementById('action-container').innerHTML = `
+                <button id="charge-btn">شحن</button>
+                <button id="withdraw-btn">سحب رصيد</button>
+            `;
+            document.getElementById('exchange-rate').innerText = '52';
+            setUpActionButtons('redotpay');
+        });
 
-    function selectTransaction(type) {
-        transactionType = type;
-        document.getElementById('amountDiv').style.display = 'block';
-        
-        let promptText = "";
-        if (operationType === 1) { // سحب
-            if (transactionType === 1) { // أريد دفع
-                promptText = "برجاء ذكر المبلغ بالدولار:";
-            } else if (transactionType === 2) { // أريد أن يصلني
-                promptText = "برجاء ذكر المبلغ بالجنيه:";
-            }
-        } else if (operationType === 2) { // إيداع
-            if (transactionType === 1) { // أريد دفع
-                promptText = "برجاء ذكر المبلغ بالجنيه:";
-            } else if (transactionType === 2) { // أريد أن يصلني
-                promptText = "برجاء ذكر المبلغ بالدولار:";
-            }
+        function setUpActionButtons(method) {
+            document.getElementById('charge-btn').addEventListener('click', function() {
+                document.getElementById('form-container').classList.remove('hidden');
+                document.getElementById('action-message').innerText = 'ادخل المبلغ:';
+                document.getElementById('amount').addEventListener('input', function() {
+                    calculateTotal(method, 'charge');
+                });
+            });
+
+            document.getElementById('withdraw-btn').addEventListener('click', function() {
+                document.getElementById('form-container').classList.remove('hidden');
+                document.getElementById('action-message').innerText = 'ادخل المبلغ:';
+                document.getElementById('amount').addEventListener('input', function() {
+                    calculateTotal(method, 'withdraw');
+                });
+            });
         }
 
-        document.getElementById('amountPrompt').innerText = promptText;
-    }
-
-    function calculateTotal() {
-        let amount = parseFloat(document.getElementById('amountInput').value);
-        let total = 0;
-        let resultText = "";
-
-        if (operationType === 1) { // سحب
-            if (transactionType === 1) { // أريد دفع
-                total = amount * 49;
-                resultText = "الإجمالي: " + total + " جنيه";
-            } else if (transactionType === 2) { // أريد أن يصلني
-                total = amount / 49;
-                resultText = "الإجمالي: " + total + " دولار";
+        function calculateTotal(method, action) {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            let exchangeRate = parseFloat(document.getElementById('exchange-rate').innerText);
+            let total;
+            
+            if (method === 'binance') {
+                exchangeRate = action === 'charge' ? 52 : 49;
+            } else if (method === 'redotpay') {
+                exchangeRate = action === 'charge' ? 52 : 49;
             }
-        } else if (operationType === 2) { // إيداع
-            if (transactionType === 1) { // أريد دفع
-                total = amount / 52;
-                resultText = "الإجمالي: " + total + " دولار";
-            } else if (transactionType === 2) { // أريد أن يصلني
-                total = amount * 52;
-                resultText = "الإجمالي: " + total + " جنيه";
+
+            if (action === 'charge') {
+                total = Math.ceil(amount * exchangeRate);
+            } else if (action === 'withdraw') {
+                total = Math.floor(amount * exchangeRate);
             }
+
+            document.getElementById('total-amount').innerText = total;
         }
-
-        document.getElementById('resultDiv').innerText = resultText;
-    }
