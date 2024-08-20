@@ -1,57 +1,79 @@
-document.getElementById('binance-btn').addEventListener('click', function() {
-            document.getElementById('action-container').classList.remove('hidden');
-            document.getElementById('action-container').innerHTML = `
-                <button id="charge-btn">شحن</button>
-                <button id="withdraw-btn">سحب</button>
-            `;
-            document.getElementById('exchange-rate').innerText = '52';
-            setUpActionButtons('binance');
-        });
+let operationType = 0;
+        let transactionType = 0;
 
-        document.getElementById('redotpay-btn').addEventListener('click', function() {
-            document.getElementById('action-container').classList.remove('hidden');
-            document.getElementById('action-container').innerHTML = `
-                <button id="charge-btn">شحن</button>
-                <button id="withdraw-btn">سحب رصيد</button>
-            `;
-            document.getElementById('exchange-rate').innerText = '52';
-            setUpActionButtons('redotpay');
-        });
-
-        function setUpActionButtons(method) {
-            document.getElementById('charge-btn').addEventListener('click', function() {
-                document.getElementById('form-container').classList.remove('hidden');
-                document.getElementById('action-message').innerText = 'ادخل المبلغ:';
-                document.getElementById('amount').addEventListener('input', function() {
-                    calculateTotal(method, 'charge');
-                });
-            });
-
-            document.getElementById('withdraw-btn').addEventListener('click', function() {
-                document.getElementById('form-container').classList.remove('hidden');
-                document.getElementById('action-message').innerText = 'ادخل المبلغ:';
-                document.getElementById('amount').addEventListener('input', function() {
-                    calculateTotal(method, 'withdraw');
-                });
-            });
+        function selectOperation(type) {
+            operationType = type;
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
         }
 
-        function calculateTotal(method, action) {
-            const amount = parseFloat(document.getElementById('amount').value) || 0;
-            let exchangeRate = parseFloat(document.getElementById('exchange-rate').innerText);
-            let total;
-            
-            if (method === 'binance') {
-                exchangeRate = action === 'charge' ? 52 : 49;
-            } else if (method === 'redotpay') {
-                exchangeRate = action === 'charge' ? 52 : 49;
+        function selectTransaction(type) {
+            transactionType = type;
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+
+            let inputLabel = document.getElementById('inputLabel');
+            if (operationType === 1 && transactionType === 1) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+            } else if (operationType === 1 && transactionType === 2) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
+            } else if (operationType === 2 && transactionType === 1) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
+            } else if (operationType === 2 && transactionType === 2) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+            }
+        }
+
+        function calculate() {
+            let amount = parseFloat(document.getElementById('amountInput').value);
+            let result = 0;
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("برجاء إدخال مبلغ صحيح.");
+                return;
             }
 
-            if (action === 'charge') {
-                total = Math.ceil(amount * exchangeRate);
-            } else if (action === 'withdraw') {
-                total = Math.floor(amount * exchangeRate);
+            if (operationType === 1) { // سحب
+                if (transactionType === 1) { // أريد دفع
+                    result = amount * 49;
+                    document.getElementById('result').textContent = `الإجمالي: ${result.toFixed(2)} جنيه`;
+                } else if (transactionType === 2) { // أريد أن يصلني
+                    result = amount / 49;
+                    document.getElementById('result').textContent = `الإجمالي: ${result.toFixed(2)} دولار`;
+                }
+            } else if (operationType === 2) { // إيداع
+                if (transactionType === 1) { // أريد دفع
+                    result = amount / 52;
+                    document.getElementById('result').textContent = `الإجمالي: ${result.toFixed(2)} دولار`;
+                } else if (transactionType === 2) { // أريد أن يصلني
+                    result = amount * 52;
+                    document.getElementById('result').textContent = `الإجمالي: ${result.toFixed(2)} جنيه`;
+                }
             }
 
-            document.getElementById('total-amount').innerText = total;
+            // عرض زر إجراء حساب جديد بعد إتمام العملية
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('newCalculation').style.display = 'block';
+        }
+
+        function goBack(step) {
+            if (step === 1) {
+                document.getElementById('step1').style.display = 'block';
+                document.getElementById('step2').style.display = 'none';
+            } else if (step === 2) {
+                document.getElementById('step2').style.display = 'block';
+                document.getElementById('step3').style.display = 'none';
+            }
+        }
+
+        function resetCalculation() {
+            // إعادة تعيين جميع الخطوات للبدء من جديد
+            operationType = 0;
+            transactionType = 0;
+            document.getElementById('amountInput').value = '';
+            document.getElementById('result').textContent = '';
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('newCalculation').style.display = 'none';
         }
