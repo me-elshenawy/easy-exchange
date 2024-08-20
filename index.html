@@ -1,42 +1,152 @@
 <!DOCTYPE html>
-<html lang="ar">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>عمليات البنك</title>
-        <link rel="stylesheet" href="sstyle.css">
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<div class="container">
-        <h1>تحويل العملات</h1>
-        <div id="step1">
-            <p>اختر نوع العملية:</p>
-            <button onclick="selectOperation(1)">سحب</button>
-            <button onclick="selectOperation(2)">إيداع</button>
-        </div>
-        <div id="step2" style="display: none;">
-            <p>اختر نوع التحويل:</p>
-            <button onclick="selectTransaction(1)">أريد دفع مبلغ</button>
-            <button onclick="selectTransaction(2)">أريد أن يصلني</button>
-            <br>
-            <button class="back-button" onclick="goBack(1)">الرجوع للخلف</button>
-        </div>
-        <div id="step3" style="display: none;">
-            <p id="inputLabel"></p>
-            <input type="number" id="amountInput" placeholder="أدخل المبلغ" />
-            <button onclick="calculate()">احسب</button>
-            <br>
-            <button class="back-button" onclick="goBack(2)">الرجوع للخلف</button>
-        </div>
-        <div id="result" class="result"></div>
-        <div id="newCalculation" style="display: none;">
-            <button onclick="resetCalculation()">إجراء حساب جديد</button>
-        </div>
-    </div>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Currency Converter with Visa Fee</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS CSS (Animate on Scroll) -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .currency-select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
+<body>
 
-<script src="script.js"></script>   
-     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>     
+<div class="container" data-aos="fade-up">
+    <div class="card p-4">
+        <h2 class="text-center mb-4">Currency Converter with Visa Fee</h2>
+        
+        <div class="form-group">
+            <label for="from-currency">Select Payment Currency:</label>
+            <select id="from-currency" class="currency-select"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="to-currency">Select Deduction Currency:</label>
+            <select id="to-currency" class="currency-select"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Enter Payment Amount:</label>
+            <input type="number" id="amount" class="form-control" placeholder="Enter amount">
+        </div>
+
+        <div class="form-group">
+            <label for="fee">Enter Visa Fee Percentage:</label>
+            <input type="number" id="fee" class="form-control" value="2.25">
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="calculate()">Calculate</button>
+
+        <div id="result" class="result mt-4" style="display:none;"></div>
+    </div>
+</div>
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- GSAP for animations -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
+<!-- AOS for scroll animations -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        AOS.init(); // Initialize AOS for animations
+
+        // Fetch available currencies from API
+        fetch('https://api.exchangerate.host/symbols')
+            .then(response => response.json())
+            .then(data => {
+                const currencies = data.symbols;
+                const fromCurrency = document.getElementById('from-currency');
+                const toCurrency = document.getElementById('to-currency');
+                
+                for (let code in currencies) {
+                    const option1 = document.createElement('option');
+                    const option2 = document.createElement('option');
+                    option1.value = code;
+                    option1.textContent = `${code} - ${currencies[code].description}`;
+                    option2.value = code;
+                    option2.textContent = `${code} - ${currencies[code].description}`;
+                    fromCurrency.appendChild(option1);
+                    toCurrency.appendChild(option2);
+                }
+            });
+
+        gsap.from(".container", { duration: 1.5, opacity: 0, y: -50 });
+    });
+
+    async function getExchangeRate(fromCurrency, toCurrency) {
+        const response = await fetch(`https://api.exchangerate.host/convert?from=${fromCurrency}&to=${toCurrency}`);
+        const data = await response.json();
+        return data.result;
+    }
+
+    async function calculate() {
+        const fromCurrency = document.getElementById('from-currency').value;
+        const toCurrency = document.getElementById('to-currency').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const feePercentage = parseFloat(document.getElementById('fee').value);
+
+        if (isNaN(amount) || isNaN(feePercentage)) {
+            alert('Please enter valid numbers.');
+            return;
+        }
+
+        try {
+            const exchangeRate = await getExchangeRate(fromCurrency, toCurrency);
+            const convertedAmount = amount * exchangeRate;
+            const feeAmount = (convertedAmount * feePercentage) / 100;
+            const totalAmount = convertedAmount + feeAmount;
+
+            document.getElementById('result').innerHTML = `
+                <p>Payment Amount: ${amount} ${fromCurrency}</p>
+                <p>Converted Amount: ${convertedAmount.toFixed(2)} ${toCurrency}</p>
+                <p>Visa Fee (${feePercentage}%): ${feeAmount.toFixed(2)} ${toCurrency}</p>
+                <p><strong>Total Deduction: ${totalAmount.toFixed(2)} ${toCurrency}</strong></p>
+            `;
+            document.getElementById('result').style.display = 'block';
+
+            gsap.from("#result", { duration: 1, opacity: 0, y: 50 });
+        } catch (error) {
+            alert('Failed to fetch exchange rate. Please try again.');
+            console.error(error);
+        }
+    }
+</script>
+
 </body>
 </html>
