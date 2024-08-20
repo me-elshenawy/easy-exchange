@@ -6,25 +6,29 @@
         <title>عمليات البنك</title>
         <link rel="stylesheet" href="style.css">
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<div class="container">
-    <h1>اختر نوع العملية</h1>
-    <button onclick="selectOperation(1)">سحب</button>
-    <button onclick="selectOperation(2)">إيداع</button>
-
-    <div id="transactionTypeDiv" style="display:none;">
-        <h1>اختر الخيار</h1>
-        <button onclick="selectTransaction(1)">أريد دفع</button>
-        <button onclick="selectTransaction(2)">أريد أن يصلني</button>
+<body>
+    <div id="welcome-message">
+        <h1>مرحبا بك!</h1>
     </div>
 
-    <div id="amountDiv" style="display:none;">
-        <h1 id="amountPrompt"></h1>
-        <input type="number" id="amountInput" placeholder="أدخل المبلغ">
-        <button onclick="calculateTotal()">احسب الإجمالي</button>
+    <div id="container">
+        <button id="binance-btn">Binance</button>
+        <button id="redotpay-btn">RedotPay</button>
     </div>
 
-    <div id="resultDiv" class="result"></div>
-</div>
+    <div id="action-container" class="hidden">
+        <button id="charge-btn">شحن</button>
+        <button id="withdraw-btn">سحب</button>
+    </div>
+
+    <div id="form-container" class="hidden">
+        <p id="action-message"></p>
+        <p>سعر الصرف: <span id="exchange-rate"></span> جنيه</p>
+        <input type="number" id="amount" placeholder="أدخل المبلغ" />
+        <p>الإجمالي: <span id="total-amount">0</span> جنيه</p>
+    </div>
+
+
 <script src="script.js"></script>   
      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>     
