@@ -1,42 +1,177 @@
 <!DOCTYPE html>
 <html lang="ar">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Easy Exchange</title>
-        <link rel="stylesheet" href="sstyle.css">
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-<div class="container">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحويل العملات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+            text-align: left;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #28a745;
+        }
+
+        .chat-button {
+            display: none;
+            background-color: #28a745;
+        }
+
+        .chat-button:hover {
+            background-color: #218838;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
         <h1>تحويل العملات</h1>
         <div id="step1">
-            <p>اختر نوع العملية:</p>
-            <button onclick="selectOperation(1)">سحب</button>
-            <button onclick="selectOperation(2)">إيداع</button>
-        </div>
-        <div id="step2" style="display: none;">
-            <p>اختر نوع التحويل:</p>
-            <button onclick="selectTransaction(1)">أريد دفع مبلغ</button>
-            <button onclick="selectTransaction(2)">أريد أن يصلني</button>
-            <br>
-            <button class="back-button" onclick="goBack(1)">الرجوع للخلف</button>
-        </div>
-        <div id="step3" style="display: none;">
-            <p id="inputLabel"></p>
+            <label for="operationType">اختر نوع العملية:</label>
+            <select id="operationType">
+                <option value="1">سحب</option>
+                <option value="2">إيداع</option>
+            </select>
+
+            <label for="transactionType">اختر نوع التحويل:</label>
+            <select id="transactionType">
+                <option value="1">أريد دفع مبلغ</option>
+                <option value="2">أريد أن يصلني</option>
+            </select>
+
+            <label id="inputLabel" for="amountInput">برجاء ذكر المبلغ بالدولار:</label>
             <input type="number" id="amountInput" placeholder="أدخل المبلغ" />
+
             <button onclick="calculate()">احسب</button>
-            <br>
-            <button class="back-button" onclick="goBack(2)">الرجوع للخلف</button>
         </div>
+
         <div id="result" class="result"></div>
-        <div id="newCalculation" style="display: none;">
-            <button onclick="resetCalculation()">إجراء حساب جديد</button>
+
+        <div id="chatButtonContainer">
+            <button id="chatButton" class="chat-button">التوجه إلى الدردشة</button>
         </div>
     </div>
 
-</head>
+    <script>
+        let operationType = 0;
+        let transactionType = 0;
 
-<script src="script.js"></script>   
-     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>     
+        function updateLabel() {
+            operationType = parseInt(document.getElementById('operationType').value);
+            transactionType = parseInt(document.getElementById('transactionType').value);
+
+            let inputLabel = document.getElementById('inputLabel');
+            if (operationType === 1 && transactionType === 1) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+            } else if (operationType === 1 && transactionType === 2) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
+            } else if (operationType === 2 && transactionType === 1) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
+            } else if (operationType === 2 && transactionType === 2) {
+                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+            }
+        }
+
+        document.getElementById('operationType').addEventListener('change', updateLabel);
+        document.getElementById('transactionType').addEventListener('change', updateLabel);
+
+        function calculate() {
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            if (isNaN(amount) || amount <= 0) {
+                alert("برجاء إدخال مبلغ صحيح.");
+                return;
+            }
+
+            const exchangeRates = {
+                "USD_EGP": 30.85,
+                "EGP_USD": 0.032,
+            };
+
+            let fromCurrency = (operationType === 1 && transactionType === 1) || (operationType === 2 && transactionType === 2) ? "USD" : "EGP";
+            let toCurrency = fromCurrency === "USD" ? "EGP" : "USD";
+            const exchangeRate = exchangeRates[`${fromCurrency}_${toCurrency}`];
+            const convertedAmount = amount * exchangeRate;
+            const feePercentage = 0; // Fixed 0% fee
+            const feeAmount = (convertedAmount * feePercentage) / 100;
+            const totalAmount = convertedAmount + feeAmount;
+
+            document.getElementById('result').innerHTML = `
+                <p>المبلغ المدخل: ${amount} ${fromCurrency}</p>
+                <p>المبلغ المحول: ${convertedAmount.toFixed(2)} ${toCurrency}</p>
+                <p>رسوم الفيزا (${feePercentage}%): ${feeAmount.toFixed(2)} ${toCurrency}</p>
+                <p><strong>الإجمالي: ${totalAmount.toFixed(2)} ${toCurrency}</strong></p>
+            `;
+            document.getElementById('result').style.display = 'block';
+
+            // إظهار زر الدردشة بعد حساب النتائج
+            document.getElementById('chatButton').style.display = 'block';
+            document.getElementById('chatButton').onclick = function() {
+                sendToMessenger(amount, fromCurrency, toCurrency, operationType, transactionType);
+            };
+        }
+
+        function sendToMessenger(amount, fromCurrency, toCurrency, operationType, transactionType) {
+            const operation = operationType === 1 ? 'سحب' : 'إيداع';
+            const transaction = transactionType === 1 ? 'دفع' : 'استلام';
+            const message = `Amount:${amount}${fromCurrency}-Converted:${toCurrency}-Operation:${operation}-Transaction:${transaction}`;
+            const messengerUrl = `https://m.me/7ossam.tarek?ref=${encodeURIComponent(message)}`;
+            window.location.href = messengerUrl;
+        }
+    </script>
 </body>
 </html>
