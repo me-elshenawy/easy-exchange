@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحويل العملات</title>
+    <title>Easy Exchange</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
             background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
+            direction: rtl; /* لضبط اللغة العربية من اليمين */
         }
 
         .container {
@@ -21,18 +22,19 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-top: 50px;
+            text-align: right; /* لمحاذاة النص العربي لليمين */
         }
 
         h1 {
             color: #333;
             margin-bottom: 20px;
+            text-align: center; /* للحفاظ على العنوان في المنتصف */
         }
 
         label {
             font-size: 16px;
             margin-bottom: 10px;
             display: block;
-            text-align: left;
         }
 
         select, input[type="number"] {
@@ -42,6 +44,8 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+            text-align: right; /* لضبط المحاذاة داخل المدخلات */
+            box-sizing: border-box; /* لضمان أن جميع المدخلات متساوية في الحجم */
         }
 
         button {
@@ -65,6 +69,7 @@
             font-size: 18px;
             margin-top: 20px;
             color: #28a745;
+            text-align: right;
         }
 
         .chat-button {
@@ -80,18 +85,18 @@
 </head>
 <body>
     <div class="container">
-        <h1>تحويل العملات</h1>
+        <h1>Easy Exchange</h1>
         <div id="step1">
             <label for="operationType">اختر نوع العملية:</label>
             <select id="operationType">
                 <option value="1">سحب</option>
-                <option value="2">إيداع</option>
+                <option value="2" selected>إيداع</option> <!-- تعيين الخيار الافتراضي إلى "إيداع" -->
             </select>
 
             <label for="transactionType">اختر نوع التحويل:</label>
             <select id="transactionType">
                 <option value="1">أريد دفع مبلغ</option>
-                <option value="2">أريد أن يصلني</option>
+                <option value="2" selected>أريد أن يصلني</option> <!-- تعيين الخيار الافتراضي إلى "أريد أن يصلني" -->
             </select>
 
             <label id="inputLabel" for="amountInput">برجاء ذكر المبلغ بالدولار:</label>
@@ -108,8 +113,8 @@
     </div>
 
     <script>
-        let operationType = 0;
-        let transactionType = 0;
+        let operationType = 2; // تعيين القيمة الافتراضية إلى "إيداع"
+        let transactionType = 2; // تعيين القيمة الافتراضية إلى "أريد أن يصلني"
 
         function updateLabel() {
             operationType = parseInt(document.getElementById('operationType').value);
@@ -137,31 +142,37 @@
                 return;
             }
 
-            const exchangeRates = {
-                "USD_EGP": 30.85,
-                "EGP_USD": 0.032,
-            };
+            let convertedAmount = 0;
+            if (operationType === 1 && transactionType === 1) {
+                // سحب مع أريد دفع
+                convertedAmount = amount * 49;
+                displayResult(amount, "USD", convertedAmount, "EGP");
+            } else if (operationType === 1 && transactionType === 2) {
+                // سحب مع أريد أن يصلني
+                convertedAmount = amount / 49;
+                displayResult(amount, "EGP", convertedAmount, "USD");
+            } else if (operationType === 2 && transactionType === 1) {
+                // إيداع مع أريد دفع
+                convertedAmount = amount / 52;
+                displayResult(amount, "EGP", convertedAmount, "USD");
+            } else if (operationType === 2 && transactionType === 2) {
+                // إيداع مع أريد أن يصلني
+                convertedAmount = amount * 52;
+                displayResult(amount, "USD", convertedAmount, "EGP");
+            }
+        }
 
-            let fromCurrency = (operationType === 1 && transactionType === 1) || (operationType === 2 && transactionType === 2) ? "USD" : "EGP";
-            let toCurrency = fromCurrency === "USD" ? "EGP" : "USD";
-            const exchangeRate = exchangeRates[`${fromCurrency}_${toCurrency}`];
-            const convertedAmount = amount * exchangeRate;
-            const feePercentage = 0; // Fixed 0% fee
-            const feeAmount = (convertedAmount * feePercentage) / 100;
-            const totalAmount = convertedAmount + feeAmount;
-
+        function displayResult(originalAmount, originalCurrency, convertedAmount, convertedCurrency) {
             document.getElementById('result').innerHTML = `
-                <p>المبلغ المدخل: ${amount} ${fromCurrency}</p>
-                <p>المبلغ المحول: ${convertedAmount.toFixed(2)} ${toCurrency}</p>
-                <p>رسوم الفيزا (${feePercentage}%): ${feeAmount.toFixed(2)} ${toCurrency}</p>
-                <p><strong>الإجمالي: ${totalAmount.toFixed(2)} ${toCurrency}</strong></p>
+                <p>المبلغ المدخل: ${originalAmount} ${originalCurrency}</p>
+                <p><strong>الإجمالي: ${convertedAmount.toFixed(2)} ${convertedCurrency}</strong></p>
             `;
             document.getElementById('result').style.display = 'block';
 
             // إظهار زر الدردشة بعد حساب النتائج
             document.getElementById('chatButton').style.display = 'block';
             document.getElementById('chatButton').onclick = function() {
-                sendToMessenger(amount, fromCurrency, toCurrency, operationType, transactionType);
+                sendToMessenger(originalAmount, originalCurrency, convertedCurrency, operationType, transactionType);
             };
         }
 
