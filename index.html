@@ -11,7 +11,7 @@
             background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
-            direction: rtl; /* لضبط اللغة العربية من اليمين */
+            direction: rtl;
         }
 
         .container {
@@ -22,13 +22,13 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-top: 50px;
-            text-align: right; /* لمحاذاة النص العربي لليمين */
+            text-align: right;
         }
 
         h1 {
             color: #333;
             margin-bottom: 20px;
-            text-align: center; /* للحفاظ على العنوان في المنتصف */
+            text-align: center;
         }
 
         label {
@@ -44,8 +44,8 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
-            text-align: right; /* لضبط المحاذاة داخل المدخلات */
-            box-sizing: border-box; /* لضمان أن جميع المدخلات متساوية في الحجم */
+            text-align: right;
+            box-sizing: border-box;
         }
 
         button {
@@ -90,13 +90,21 @@
             <label for="operationType">اختر نوع العملية:</label>
             <select id="operationType">
                 <option value="1">سحب</option>
-                <option value="2" selected>إيداع</option> <!-- تعيين الخيار الافتراضي إلى "إيداع" -->
+                <option value="2" selected>إيداع</option>
             </select>
 
             <label for="transactionType">اختر نوع التحويل:</label>
             <select id="transactionType">
                 <option value="1">أريد دفع مبلغ</option>
-                <option value="2" selected>أريد أن يصلني</option> <!-- تعيين الخيار الافتراضي إلى "أريد أن يصلني" -->
+                <option value="2" selected>أريد أن يصلني</option>
+            </select>
+
+            <label for="paymentMethod">حدد طريقة التحويل:</label>
+            <select id="paymentMethod">
+                <option value="wallet">المحافظ الإلكترونية</option>
+                <option value="instapay">انستا باي</option>
+                <option value="fawry">كارت فوري</option>
+                <option value="telda">كارت تيلدا</option>
             </select>
 
             <label id="inputLabel" for="amountInput">برجاء ذكر المبلغ بالدولار:</label>
@@ -113,8 +121,8 @@
     </div>
 
     <script>
-        let operationType = 2; // تعيين القيمة الافتراضية إلى "إيداع"
-        let transactionType = 2; // تعيين القيمة الافتراضية إلى "أريد أن يصلني"
+        let operationType = 2;
+        let transactionType = 2;
 
         function updateLabel() {
             operationType = parseInt(document.getElementById('operationType').value);
@@ -137,39 +145,42 @@
 
         function calculate() {
             const amount = parseFloat(document.getElementById('amountInput').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
             if (isNaN(amount) || amount <= 0) {
                 alert("برجاء إدخال مبلغ صحيح.");
                 return;
             }
 
+            let fee = 0;
+            if (paymentMethod === "wallet" && ((amount > 520 && operationType === 1) || (amount > 10 && operationType === 2))) {
+                fee = 0.57 / 100;
+            }
+
             let convertedAmount = 0;
             if (operationType === 1 && transactionType === 1) {
-                // سحب مع أريد دفع
-                convertedAmount = amount * 49;
-                displayResult(amount, "USD", convertedAmount, "EGP");
+                convertedAmount = amount * 49 * (1 - fee);
+                displayResult(amount, "USD", convertedAmount, "EGP", fee);
             } else if (operationType === 1 && transactionType === 2) {
-                // سحب مع أريد أن يصلني
-                convertedAmount = amount / 49;
-                displayResult(amount, "EGP", convertedAmount, "USD");
+                convertedAmount = amount / 49 * (1 - fee);
+                displayResult(amount, "EGP", convertedAmount, "USD", fee);
             } else if (operationType === 2 && transactionType === 1) {
-                // إيداع مع أريد دفع
-                convertedAmount = amount / 52;
-                displayResult(amount, "EGP", convertedAmount, "USD");
+                convertedAmount = amount / 52 * (1 - fee);
+                displayResult(amount, "EGP", convertedAmount, "USD", fee);
             } else if (operationType === 2 && transactionType === 2) {
-                // إيداع مع أريد أن يصلني
-                convertedAmount = amount * 52;
-                displayResult(amount, "USD", convertedAmount, "EGP");
+                convertedAmount = amount * 52 * (1 - fee);
+                displayResult(amount, "USD", convertedAmount, "EGP", fee);
             }
         }
 
-        function displayResult(originalAmount, originalCurrency, convertedAmount, convertedCurrency) {
+        function displayResult(originalAmount, originalCurrency, convertedAmount, convertedCurrency, fee) {
             document.getElementById('result').innerHTML = `
                 <p>المبلغ المدخل: ${originalAmount} ${originalCurrency}</p>
+                <p>الرسوم: ${fee * 100}%</p>
                 <p><strong>الإجمالي: ${convertedAmount.toFixed(2)} ${convertedCurrency}</strong></p>
             `;
             document.getElementById('result').style.display = 'block';
 
-            // إظهار زر الدردشة بعد حساب النتائج
             document.getElementById('chatButton').style.display = 'block';
             document.getElementById('chatButton').onclick = function() {
                 sendToMessenger(originalAmount, originalCurrency, convertedCurrency, operationType, transactionType);
