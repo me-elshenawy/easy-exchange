@@ -178,7 +178,7 @@
             }
 
             let adjustedAmount = amount * (1 - fee);
-            let roundedAmount = Math.floor(adjustedAmount);
+            let roundedAmount = isDollarCase ? adjustedAmount : Math.floor(adjustedAmount);
 
             let convertedAmount = 0;
             if (operationType === 1 && transactionType === 1) {
