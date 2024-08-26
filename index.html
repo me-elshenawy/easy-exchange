@@ -108,7 +108,7 @@
             </select>
 
             <label id="inputLabel" for="amountInput">برجاء ذكر المبلغ بالدولار:</label>
-            <input type="number" id="amountInput" placeholder="أدخل المبلغ" />
+            <input type="number" id="amountInput" placeholder="أدخل المبلغ" step="0.01" />
 
             <button onclick="calculate()">احسب</button>
         </div>
@@ -143,36 +143,42 @@
         document.getElementById('operationType').addEventListener('change', updateLabel);
         document.getElementById('transactionType').addEventListener('change', updateLabel);
 
+        function checkDecimals(value) {
+            return value % 1 !== 0;
+        }
+
         function calculate() {
             const amount = parseFloat(document.getElementById('amountInput').value);
             const paymentMethod = document.getElementById('paymentMethod').value;
+            const isDollarCase = operationType === 1 && transactionType === 1 || operationType === 2 && transactionType === 2;
 
             if (isNaN(amount) || amount <= 0) {
                 alert("برجاء إدخال مبلغ صحيح.");
                 return;
             }
 
+            if (!isDollarCase && checkDecimals(amount)) {
+                alert("برجاء إدخال مبلغ صحيح بدون كسور.");
+                return;
+            }
+
             let fee = 0;
             if (paymentMethod === "instapay" || paymentMethod === "fawry" || paymentMethod === "telda") {
-                // عند اختيار انستا باي، كارت تيلدا، أو كارت فوري، تكون الرسوم 0%
                 fee = 0;
             } else if (operationType === 1) {
-                // عند اختيار السحب تكون الرسوم ثابتة 0%
                 fee = 0;
             } else if (operationType === 2 && transactionType === 2 && paymentMethod === "wallet") {
-                // عند اختيار إيداع مع أريد أن يصلني مع المحافظ الإلكترونية
                 const amountInEGP = amount * 52;
                 fee = 0.57 / 100;
                 const totalAmount = amountInEGP * (1 + fee);
                 displayResult(amount, "USD", totalAmount, "EGP", fee);
                 return;
             } else if (operationType === 2 && transactionType === 1) {
-                // عند اختيار إيداع مع أريد دفع مبلغ
                 fee = 0.57 / 100;
             }
 
-            let adjustedAmount = amount * (1 - fee); // طرح الرسوم
-            let roundedAmount = Math.floor(adjustedAmount); // تقريب المبلغ لأقرب عدد صحيح أصغر
+            let adjustedAmount = amount * (1 - fee);
+            let roundedAmount = Math.floor(adjustedAmount);
 
             let convertedAmount = 0;
             if (operationType === 1 && transactionType === 1) {
