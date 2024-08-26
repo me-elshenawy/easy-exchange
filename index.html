@@ -153,22 +153,39 @@
             }
 
             let fee = 0;
-            if (paymentMethod === "wallet" && ((amount > 520 && operationType === 1) || (amount > 10 && operationType === 2))) {
+            if (paymentMethod === "instapay" || paymentMethod === "fawry" || paymentMethod === "telda") {
+                // عند اختيار انستا باي، كارت تيلدا، أو كارت فوري، تكون الرسوم 0%
+                fee = 0;
+            } else if (operationType === 1) {
+                // عند اختيار السحب تكون الرسوم ثابتة 0%
+                fee = 0;
+            } else if (operationType === 2 && transactionType === 2 && paymentMethod === "wallet") {
+                // عند اختيار إيداع مع أريد أن يصلني مع المحافظ الإلكترونية
+                const amountInEGP = amount * 52;
+                fee = 0.57 / 100;
+                const totalAmount = amountInEGP * (1 + fee);
+                displayResult(amount, "USD", totalAmount, "EGP", fee);
+                return;
+            } else if (operationType === 2 && transactionType === 1) {
+                // عند اختيار إيداع مع أريد دفع مبلغ
                 fee = 0.57 / 100;
             }
 
+            let adjustedAmount = amount * (1 - fee); // طرح الرسوم
+            let roundedAmount = Math.floor(adjustedAmount); // تقريب المبلغ لأقرب عدد صحيح أصغر
+
             let convertedAmount = 0;
             if (operationType === 1 && transactionType === 1) {
-                convertedAmount = amount * 49 * (1 - fee);
+                convertedAmount = roundedAmount * 49;
                 displayResult(amount, "USD", convertedAmount, "EGP", fee);
             } else if (operationType === 1 && transactionType === 2) {
-                convertedAmount = amount / 49 * (1 - fee);
+                convertedAmount = roundedAmount / 49;
                 displayResult(amount, "EGP", convertedAmount, "USD", fee);
             } else if (operationType === 2 && transactionType === 1) {
-                convertedAmount = amount / 52 * (1 - fee);
+                convertedAmount = roundedAmount / 52;
                 displayResult(amount, "EGP", convertedAmount, "USD", fee);
             } else if (operationType === 2 && transactionType === 2) {
-                convertedAmount = amount * 52 * (1 - fee);
+                convertedAmount = roundedAmount * 52;
                 displayResult(amount, "USD", convertedAmount, "EGP", fee);
             }
         }
@@ -177,7 +194,7 @@
             document.getElementById('result').innerHTML = `
                 <p>المبلغ المدخل: ${originalAmount} ${originalCurrency}</p>
                 <p>الرسوم: ${fee * 100}%</p>
-                <p><strong>الإجمالي: ${convertedAmount.toFixed(2)} ${convertedCurrency}</strong></p>
+                <p><strong>الإجمالي: ${Math.floor(convertedAmount * 100) / 100} ${convertedCurrency}</strong></p>
             `;
             document.getElementById('result').style.display = 'block';
 
