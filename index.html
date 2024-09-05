@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Exchange</title>
+    <link rel="shortcut icon" href="./R.png">
+    <title>Easy Exchange | Home</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -104,8 +105,8 @@
 
             <label for="transactionType">اختر نوع التحويل:</label>
             <select id="transactionType">
-                <option value="1">أريد دفع مبلغ</option>
-                <option value="2" selected>أريد أن يصلني</option>
+                <option value="1">أريد دفع مبلغ بالمصري</option>
+                <option value="2" selected>أريد أن يصلني مبلغ بالدولار</option>
             </select>
 
             <label for="paymentMethod">حدد طريقة التحويل:</label>
@@ -139,14 +140,28 @@
             transactionType = parseInt(document.getElementById('transactionType').value);
 
             let inputLabel = document.getElementById('inputLabel');
-            if (operationType === 1 && transactionType === 1) {
-                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
-            } else if (operationType === 1 && transactionType === 2) {
-                inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
-            } else if (operationType === 2 && transactionType === 1) {
-                inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
-            } else if (operationType === 2 && transactionType === 2) {
-                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+            if (operationType === 1) {  // حالة السحب
+                if (transactionType === 1) {
+                    inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+                } else {
+                    inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
+                }
+            } else if (operationType === 2) {  // حالة الإيداع
+                if (transactionType === 1) {
+                    inputLabel.textContent = "برجاء ذكر المبلغ بالجنيه:";
+                } else {
+                    inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
+                }
+            }
+
+            // تعديل النصوص بناءً على نوع العملية والتحويل
+            const transactionTypeElement = document.getElementById('transactionType');
+            if (operationType === 1) {  // حالة السحب
+                transactionTypeElement.options[0].text = "أريد دفع مبلغ بالدولار";
+                transactionTypeElement.options[1].text = "أريد أن يصلني مبلغ بالجنيه";
+            } else if (operationType === 2) {  // حالة الإيداع
+                transactionTypeElement.options[0].text = "أريد دفع مبلغ بالمصري";
+                transactionTypeElement.options[1].text = "أريد أن يصلني مبلغ بالدولار";
             }
         }
 
