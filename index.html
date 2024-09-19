@@ -212,23 +212,23 @@
             if (transactionType === 'network' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'trc20':
-                        fee = 2 * 51;
+                        fee = 2 ;
                         total = (amount + fee) * 51;
                         break;
                     case 'bep20':
                     case 'toncoin':
-                        fee = 1 * 51;
+                        fee = 1 ;
                         total = (amount + fee) * 51;
                         break;
                     case 'erc20':
-                        fee = 4 * 51;
+                        fee = 4 ;
                         total = (amount + fee) * 51;
                         break;
                 }
             } else if (transactionType === 'redotpay' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        fee = (amount * 0.0057 * 51);
+                        fee = (amount * 0.0057);
                         total = (amount + fee) * 51;
                         break;
                     case 'telda':
@@ -242,7 +242,7 @@
             } else if (transactionType === 'binance' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        fee = (amount * 0.0057 * 51);
+                        fee = (amount * 0.0057 );
                         total = (amount + fee) * 51;
                         break;
                     case 'telda':
@@ -256,7 +256,7 @@
             } else if (transactionType === 'musewallet' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        fee = (amount * 0.0057 * 51);
+                        fee = (amount * 0.0057 );
                         total = (amount + fee) * 51;
                         break;
                     case 'telda':
