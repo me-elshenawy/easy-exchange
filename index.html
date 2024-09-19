@@ -281,8 +281,8 @@
             const totalRounded = Math.ceil(total); // تقريب الإجمالي إلى الرقم الصحيح الأكبر
 
             document.getElementById('result').innerHTML = `
-            <p>سوف يصلك: ${amount} USDT</p>
-            <p>${isNetwork ? 'رسوم الشبكة' : 'الرسوم'}: ${fee} USDT</p>
+            <p>مبلغ التحويل: ${amount} USDT</p>
+            <p>${isNetwork ? 'رسوم الشبكة' : 'الرسوم الاضافيه'}: ${fee} USDT</p>
             <p><strong>الإجمالي: ${totalRounded} EGP</strong></p>
             `;
             document.getElementById('chatButton').style.display = 'block';
