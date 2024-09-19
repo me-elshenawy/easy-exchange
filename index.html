@@ -212,59 +212,59 @@
             if (transactionType === 'network' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'trc20':
-                        fee = 2 ;
-                        total = (amount + fee) * 51;
+                        fee = 2 * 51 ;
+                        total = (amount * 51 ) + fee;
                         break;
                     case 'bep20':
                     case 'toncoin':
-                        fee = 1 ;
-                        total = (amount + fee) * 51;
+                        fee = 1 * 51 ;
+                        total = (amount * 51 ) + fee;
                         break;
                     case 'erc20':
-                        fee = 4 ;
-                        total = (amount + fee) * 51;
+                        fee = 4 * 51 ;
+                        total = (amount * 51 ) + fee;
                         break;
                 }
             } else if (transactionType === 'redotpay' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        fee = (amount * 0.0057);
-                        total = (amount + fee) * 51;
+                        fee = (amount * 0.0057 * 51);
+                        total = (amount * 51 ) + fee;
                         break;
                     case 'telda':
                     case 'instapay':
                     case 'fawry':
                     case 'nexta':
                         fee = 0;
-                        total = (amount + fee) * 51;
+                        total = (amount * 51 ) + fee;
                         break;
                 }
             } else if (transactionType === 'binance' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        fee = (amount * 0.0057 );
-                        total = (amount + fee) * 51;
+                        fee = (amount * 0.0057 * 51 );
+                        total = (amount * 51 ) + fee;
                         break;
                     case 'telda':
                     case 'instapay':
                     case 'fawry':
                     case 'nexta':
                         fee = 0;
-                        total = (amount + fee) * 51;
+                        total = (amount * 51 ) + fee;
                         break;
                 }
             } else if (transactionType === 'musewallet' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        fee = (amount * 0.0057 );
-                        total = (amount + fee) * 51;
+                        fee = (amount * 0.0057 * 51 );
+                        total = (amount * 51 ) + fee;
                         break;
                     case 'telda':
                     case 'instapay':
                     case 'fawry':
                     case 'nexta':
                         fee = 0;
-                        total = (amount + fee) * 51;
+                        total = (amount * 51 ) + fee;
                         break;
                 }
             }  else if (operationType === 'withdraw') {
@@ -282,7 +282,7 @@
 
             document.getElementById('result').innerHTML = `
             <p>مبلغ التحويل: ${amount} USDT</p>
-            <p>${isNetwork ? 'رسوم الشبكة' : 'الرسوم'}: ${fee} USDT</p>
+            <p>${isNetwork ? 'رسوم الشبكة' : 'الرسوم'}: ${fee} EGP</p>
             <p><strong>الإجمالي: ${totalRounded} EGP</strong></p>
             `;
             document.getElementById('chatButton').style.display = 'block';
