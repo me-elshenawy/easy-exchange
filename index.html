@@ -352,14 +352,17 @@
         function displayResult(amount, fee, total, isNetwork) {
             const totalRounded = Math.ceil(total); // تقريب الإجمالي إلى الرقم الصحيح الأكبر
 
+            const feeRounded0 = parseFloat(fee); 
+            const feeRounded = Math.floor(feeRounded0 * 100) / 100; //تضرب الرقم في 100 لقص الرقم إلى خانتين عشريتين
+
             document.getElementById('result').innerHTML = `
             <p>مبلغ التحويل: ${amount} USDT</p>
-            <p>${isNetwork ? 'رسوم الشبكة' : 'الرسوم'}: ${fee} EGP</p>
+            <p>${isNetwork ? 'رسوم الشبكة' : 'الرسوم'}: ${feeRounded} EGP</p>
             <p><strong>الإجمالي: ${totalRounded} EGP</strong></p>
             `;
             document.getElementById('chatButton').style.display = 'block';
             document.getElementById('chatButton').onclick = function() {
-                proceedToExchange(amount, fee, totalRounded); // استخدام الإجمالي المقرب عند المتابعة
+                proceedToExchange(amount, feeRounded, totalRounded); // استخدام الإجمالي المقرب عند المتابعة
             };
         }
 
