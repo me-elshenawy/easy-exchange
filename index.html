@@ -239,6 +239,12 @@
             }
         }
 
+        function updateInputLabel() {
+            const operationType = document.getElementById('operationType').value;
+            const transactionType = document.getElementById('transactionType').value;
+            const inputLabel = document.getElementById('inputLabel');
+        }
+
         function calculate() {
             const amount = parseFloat(document.getElementById('amountInput').value);
             const operationType = document.getElementById('operationType').value;
