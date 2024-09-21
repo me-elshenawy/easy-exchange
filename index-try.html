@@ -103,6 +103,7 @@
             color: #0056b3;
         }
 
+        /* شريط الأخبار */
         .marquee {
             width: 100%;
             background-color: #e0f7fa;
@@ -113,6 +114,10 @@
             border-bottom: 2px solid #007bff;
             padding: 10px 0;
             margin-bottom: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000; /* ضمان ظهور الشريط فوق جميع المحتويات الأخرى */
         }
 
         .marquee span {
