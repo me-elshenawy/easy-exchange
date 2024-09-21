@@ -90,6 +90,21 @@
         .chat-button:hover {
             background-color: #218838;
         }
+
+        /* تنسيق الرابط */
+        .currency-switch {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+
+        .currency-switch:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
         /* شريط الأخبار */
         .marquee {
             width: 100%;
@@ -163,7 +178,10 @@
                 <option value="nexta">فيزا نكستا</option>
             </select>
 
-            <label id="inputLabel" for="amountInput">برجاء ذكر المبلغ بالدولار:</label>
+            <label id="inputLabel" for="amountInput">
+                برجاء ذكر المبلغ بالدولار:
+                <a href="index-try.html" class="currency-switch">التبديل إلى الجنيه</a>
+            </label>
             <input type="number" id="amountInput" placeholder="أدخل المبلغ" step="0.01" />
 
             <button onclick="calculate()">احسب</button>
