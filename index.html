@@ -245,10 +245,9 @@
             const inputLabel = document.getElementById('inputLabel');
 
             if (transactionType === 'network') {
-                inputLabel.innerHTML = "برجاء ذكر المبلغ بالدولار: <a href='index-try.html' class='currency-switch'>التبديل إلى الجنيه</a>";
+                inputLabel.textContent = "برجاء ذكر المبلغ بالدولار:";
             } else {
-                inputLabel.innerHTML = (operationType === 'withdraw' ? "برجاء ذكر المبلغ بالدولار:" : "برجاء ذكر المبلغ بالجنيه:") + 
-                " <a href='index-try.html' class='currency-switch'>التبديل إلى الجنيه</a>";
+                inputLabel.textContent = operationType === 'withdraw' ? "برجاء ذكر المبلغ بالدولار:" : "برجاء ذكر المبلغ بالجنيه:";
             }
         }
 
