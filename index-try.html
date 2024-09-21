@@ -193,6 +193,22 @@
     </div>
 
     <script>
+        document.getElementById('transactionType').addEventListener('change', function() {
+            updatePaymentOptions();
+            hideResult(); // إخفاء النتائج عند تغيير الخيار
+        });
+        document.getElementById('operationType').addEventListener('change', function() {
+            updateInputLabel();
+            hideResult(); // إخفاء النتائج عند تغيير الخيار
+        });
+        document.getElementById('paymentMethod').addEventListener('change', hideResult); // إخفاء النتائج عند تغيير طريقة الدفع
+        document.getElementById('amountInput').addEventListener('input', hideResult); // إخفاء النتائج عند تغيير المبلغ
+        
+        function hideResult() {
+            document.getElementById('result').innerHTML = ''; // إفراغ محتوى النتائج
+            document.getElementById('chatButton').style.display = 'none'; // إخفاء زر المتابعة
+        }
+
         document.getElementById('transactionType').addEventListener('change', updatePaymentOptions);
         document.getElementById('operationType').addEventListener('change', updateInputLabel);
 
