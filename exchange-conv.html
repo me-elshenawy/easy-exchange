@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="./R.png">
+    <title>Easy Exchange | تفاصيل العملية</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4ff;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 100px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 350px;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .details {
+            font-size: 20px;
+            color: #333;
+            text-align: right;
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            line-height: 1.8;
+        }
+
+        .details p {
+            margin: 10px 0;
+        }
+
+        .account-info {
+            font-size: 18px;
+            color: #d9534f;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .copyable {
+            font-size: 18px;
+            color: #007bff;
+            font-weight: bold;
+            background-color: #f0f8ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .note {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #218838;
+        }
+
+        .container {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* شريط الأخبار */
+        .marquee {
+            width: 100%;
+            background-color: #e0f7fa;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            display: flex;
+            border-bottom: 2px solid #007bff;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .marquee span {
+            display: inline-block;
+            padding-right: 100%;
+            animation: marquee 40s linear infinite;
+            color: #007bff;
+            font-size: 16px;
+        }
+
+        .marquee span:nth-child(2) {
+            animation-delay: 10s;
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(-5%);
+            }
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- شريط الأخبار -->
+    <div class="marquee">
+        <span>جميع خدماتنا متاحة من الواحدة ظهراً وحتى الرابعة فجراً وتتم في خلال دقائق ⏳  تم تخفيض سعر شحن بطاقة RedotPay وبطاقة MuseWallet وإيداع Binance لـ 51 جنيه فقط بدلاً من 52 جنيه 🔥🔥 هذا الموقع هو الطريقة الرسمية الوحيدة لتعاملاتنا، والهدف هو الحد من الاحتيال والإعلانات غير الموثوقة.</span>
+        <span>جميع خدماتنا متاحة من الواحدة ظهراً وحتى الرابعة فجراً وتتم في خلال دقائق ⏳  تم تخفيض سعر شحن بطاقة RedotPay وبطاقة MuseWallet وإيداع Binance لـ 51 جنيه فقط بدلاً من 52 جنيه 🔥🔥 هذا الموقع هو الطريقة الرسمية الوحيدة لتعاملاتنا، والهدف هو الحد من الاحتيال والإعلانات غير الموثوقة.</span>
+    </div>
+    
+    <div class="container">
+        <h1>تفاصيل العملية</h1>
+        <div id="details" class="details"></div>
+        <div id="note" class="note"></div>
+        <div id="accountInfo" class="account-info"></div>
+        <button id="chatButton" class="button">التوجه إلى الدردشة</button>
+    </div>
+
+    <script>
+        // Function to get URL parameters
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                operationType: params.get('operationType'),
+                transactionType: params.get('transactionType'),
+                paymentMethod: params.get('paymentMethod'),
+                amount: params.get('amount') ? parseFloat(params.get('amount')) : null,
+                total: params.get('total') ? parseFloat(params.get('total')) : null,
+                fee: params.get('fee') ? parseFloat(params.get('fee')) : null  // Add fee
+            };
+        }
+
+        // Display details based on URL parameters
+        function displayDetails() {
+            const params = getQueryParams();
+
+            if (params.total) {
+                document.getElementById('details').innerHTML = `
+                    <p>نوع العملية: ${params.operationType === 'withdraw' ? 'سحب' : (params.operationType === 'deposit' ? 'إيداع' : 'استبدال')}</p>
+                    <p>طريقه الاستلام: ${params.transactionType === 'network' ? 'تحويل شبكة' : params.transactionType}</p>
+                    <p>طريقة الدفع: ${getPaymentMethodName(params.paymentMethod)}</p>
+                    <p><b>المبلغ: ${params.amount.toFixed(2)} USDT</b></p>
+                    ${params.total ? `<p><strong>الإجمالي: ${params.total.toFixed(2)} USDT</strong></p>` : ''}
+                `;
+
+                if (params.operationType === 'withdraw') {
+                    displayWithdrawalID(params.paymentMethod);
+                    document.getElementById('note').innerHTML = `
+                        لا تنسى الاحتفاظ بإيصال العملية، وإرساله مع الـID الخاص بك في الدردشة.
+                    `;
+                } else {
+                    displayAccountInfo(params.paymentMethod, params.operationType);
+                    document.getElementById('note').textContent = "لا تنسي الاحتفاظ بإيصال المعاملة, وارساله مع الـID الخاص بك في الدردشة.";
+                }
+            } else {
+                document.getElementById('details').innerHTML = `
+                    <p>لم يتم العثور على تفاصيل العملية.</p>
+                `;
+                document.getElementById('note').style.display = 'none';
+            }
+        }
+
+        // Function to display account information based on payment method
+        function displayAccountInfo(paymentMethod, operationType) {
+            let accountInfo = '';
+
+            if (operationType === 'exchange') {
+                switch (paymentMethod) {
+                    case 'binance':
+                        accountInfo = '761510526';
+                        break;
+                    case 'musewallet':
+                        accountInfo = '60030767';
+                        break;
+                    case 'redotpay':
+                        accountInfo = '1461251961';
+                        break;
+                    default:
+                        accountInfo = 'غير معروف';
+                        break;
+                }
+            } else {
+                switch (paymentMethod) {
+                    case 'wallet':
+                        accountInfo = '01014520726';
+                        break;
+                    case 'instapay':
+                        accountInfo = '01014520726';
+                        break;
+                    case 'fawry':
+                        accountInfo = '01014520726';
+                        break;
+                    case 'telda':
+                        accountInfo = '01014520726';
+                        break;
+                    case 'nexta':
+                        accountInfo = '01014520726';
+                        break;
+                    default:
+                        accountInfo = 'غير معروف';
+                        break;
+                }
+            }
+
+            document.getElementById('accountInfo').innerHTML = `
+                <p>برجاء التحويل علي الـID:</p>
+                <span class="copyable" onclick="copyToClipboard('${accountInfo}')">${accountInfo}</span>
+            `;
+        }
+
+        // Get human-readable payment method name
+        function getPaymentMethodName(paymentMethod) {
+            switch (paymentMethod) {
+                case 'wallet':
+                    return 'المحافظ الإلكترونية';
+                case 'instapay':
+                    return 'انستا باي';
+                case 'fawry':
+                    return 'كارت فوري';
+                case 'telda':
+                    return 'كارت تيلدا';
+                case 'nexta':
+                    return 'كارت نكستا';
+                default:
+                    return paymentMethod;
+            }
+        }
+
+        // Function to copy text to clipboard
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert("تم نسخ " + text + " إلى الحافظة.");
+        }
+
+        // Set up chat button action
+        document.getElementById('chatButton').onclick = function() {
+    const params = getQueryParams();
+    const message = 
+        `تفاصيل العملية:\n` +
+        `- نوع العملية: ${params.operationType}\n` +
+        `- طريقة الاستلام: ${params.transactionType}\n` +
+        `- طريقة الدفع: ${params.paymentMethod}\n` +
+        `- المبلغ: ${params.amount ? params.amount.toFixed(2) : 'N/A'} USDT\n` +
+        `- الإجمالي: ${params.total ? params.total.toFixed(2) : 'N/A'} USDT\n` +
+        `\nيرجى التأكد من صحة التفاصيل.`;
+    
+    // Redirect to WhatsApp chat or any other chat platform
+    window.open(`https://wa.me/201206085267?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
+
+        // Call display details on page load
+        window.onload = displayDetails;
+    </script>
+</body>
+</html>
