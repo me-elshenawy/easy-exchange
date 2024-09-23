@@ -103,51 +103,11 @@
             color: #0056b3;
         }
 
-        /* شريط الأخبار */
-        .marquee {
-            width: 100%;
-            background-color: #e0f7fa;
-            overflow: hidden;
-            white-space: nowrap;
-            box-sizing: border-box;
-            display: flex;
-            border-bottom: 2px solid #007bff;
-            padding: 10px 0;
-            margin-bottom: 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000; /* ضمان ظهور الشريط فوق جميع المحتويات الأخرى */
-        }
-
-        .marquee span {
-            display: inline-block;
-            padding-right: 100%;
-            animation: marquee 40s linear infinite;
-            color: #007bff;
-            font-size: 16px;
-        }
-
-        .marquee span:nth-child(2) {
-            animation-delay: 10s;
-        }
-
-        @keyframes marquee {
-            from {
-                transform: translateX(-5%);
-            }
-            to {
-                transform: translateX(100%);
-            }
-        }
-
     </style>
 </head>
 <body>
-    <div class="marquee">
-        <span>جميع خدماتنا متاحة من الواحدة ظهراً وحتى الرابعة فجراً وتتم في خلال دقائق ⏳ تم تخفيض سعر شحن بطاقة RedotPay وبطاقة MuseWallet وإيداع Binance لـ 51 جنيه فقط بدلاً من 52 جنيه 🔥🔥 هذا الموقع هو الطريقة الرسمية الوحيدة لتعاملاتنا، والهدف هو الحد من الاحتيال والإعلانات غير الموثوقة.</span>
-        <span>جميع خدماتنا متاحة من الواحدة ظهراً وحتى الرابعة فجراً وتتم في خلال دقائق ⏳ تم تخفيض سعر شحن بطاقة RedotPay وبطاقة MuseWallet وإيداع Binance لـ 51 جنيه فقط بدلاً من 52 جنيه 🔥🔥 هذا الموقع هو الطريقة الرسمية الوحيدة لتعاملاتنا، والهدف هو الحد من الاحتيال والإعلانات غير الموثوقة.</span>
-    </div>
+    <!-- شريط الأخبار -->
+    <div id="notificationBar"></div>
 
     <div class="container">
         <h1>Easy Exchange</h1>
@@ -380,6 +340,13 @@
             window.location.href = url;
         }
 
+        // تحميل شريط الأخبار باستخدام fetch
+        fetch('notification.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('notificationBar').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching notification:', error));
 
     </script>
 </body>
