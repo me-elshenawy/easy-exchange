@@ -321,9 +321,16 @@
                         break;
                 }
             } else if (operationType === 'withdraw') {
-                fee = 0;
-                total = (amount / 48.75);
-            } else {
+
+                if (transactionType === 'redotpay' || transactionType === 'musewallet'){
+                    fee = 0;
+                    total = (amount / 48.5);
+                }else {
+                    fee = 0;
+                    total = (amount / 48.75);
+                }
+                
+            }else {
                 total = operationType === 'withdraw' ? amount * 49 : amount * 51;
             }
 
