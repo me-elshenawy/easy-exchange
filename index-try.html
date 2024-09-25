@@ -123,7 +123,7 @@
                 <option value="binance">Binance ID</option>
                 <option value="redotpay">Redotpay ID</option>
                 <option value="musewallet">MuseWallet UID</option>
-                <option value="network">Network Transfer</option>
+               <!-- <option value="network">Network Transfer</option> -->
             </select>
 
             <label id="paymentMethodLabel" for="paymentMethod">اختر طريقة الدفع:</label>
@@ -238,6 +238,23 @@
                 }
                 if (amount < minAmount) {
                     alert(`المبلغ المدخل أقل من الحد الأدنى المسموح به لهذه الشبكة. الحد الأدنى هو ${minAmount.toFixed(2)} USDT.`);
+                    return;
+                }
+            }
+
+            if (transactionType !== 'network' && operationType === 'deposit') {
+                let minAmountTry = 0;
+                switch (paymentMethod) {
+                    case 'wallet':
+                    case 'telda':
+                    case 'instapay':
+                    case 'fawry':
+                    case 'nexta':
+                      minAmountTry = 26.00;
+                        break;
+                }
+                if (amount < minAmountTry) {
+                    alert(`المبلغ المدخل أقل من الحد الأدنى المسموح به. الحد الأدنى هو ${minAmountTry.toFixed(2)} EGP.`);
                     return;
                 }
             }
