@@ -266,7 +266,7 @@
 
                 let minAmountOf = 0.5;
                 if (amount <= minAmountOf) {
-                        alert(`0.5USDT الحد الأدنى هو`);
+                        alert(` المبلغ المدخل أقل من الحد الأدنى المسموح به. الحد الأدنى هو 0.50 USDT.`);
                         return;
                     }
 
@@ -293,6 +293,23 @@
                         return;
                     }
                 }
+
+                if (transactionType !== 'network' && operationType === 'deposit') {
+                let minAmountTry = 0;
+                switch (paymentMethod) {
+                    case 'wallet':
+                    case 'telda':
+                    case 'instapay':
+                    case 'fawry':
+                    case 'nexta':
+                      minAmountTry = 0.50;
+                        break;
+                }
+                if (amount < minAmountTry) {
+                    alert(`المبلغ المدخل أقل من الحد الأدنى المسموح به. الحد الأدنى هو ${minAmountTry.toFixed(2)} USDT.`);
+                    return;
+                }
+            }
 
                 if (transactionType === 'network' && operationType === 'deposit') {
                     switch (paymentMethod) {
