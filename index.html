@@ -124,11 +124,20 @@
                 <option value="binance">Binance ID</option>
                 <option value="redotpay">Redotpay ID</option>
                 <option value="musewallet">MuseWallet UID</option>
-                <option value="network">Network Transfer</option>
+                <option value="network">Network Transfer For USDT</option>
             </select>
 
             <label id="paymentMethodLabel" for="paymentMethod">اختر طريقة الدفع:</label>
             <select id="paymentMethod"></select>
+
+            <label id="networkPaymentMethodLabel" for="networkPaymentMethod" style="display:none;">اختر طريقة الدفع:</label>
+            <select id="networkPaymentMethod" style="display:none;">
+                <option value="wallet">المحافظ الإلكترونية " تحويل كاش "</option>
+                <option value="instapay">انستا باي</option>
+                <option value="fawry">كارت فوري الاصفر</option>
+                <option value="telda">فيزا تيلدا</option>
+                <option value="nexta">فيزا نكستا</option>
+            </select>
 
             <label id="inputLabel" for="amountInput" style="display: flex; align-items: center;">
                 برجاء ذكر المبلغ بالدولار: 
@@ -166,7 +175,6 @@
 
         document.getElementById('amountInput').addEventListener('input', hideResult);
 
-        // إضافة هذا الجزء
         document.getElementById('paymentMethod').addEventListener('change', function() {
             hideResult(); // إخفاء تفاصيل العملية عند تغيير طريقة الدفع
         });
@@ -180,28 +188,13 @@
             const transactionType = document.getElementById('transactionType').value;
             const operationType = document.getElementById('operationType').value;
             const paymentMethod = document.getElementById('paymentMethod');
+            const networkPaymentMethodLabel = document.getElementById('networkPaymentMethodLabel');
+            const networkPaymentMethod = document.getElementById('networkPaymentMethod');
+
             paymentMethod.innerHTML = '';
-
-            let excludedMethod = '';
-            if (operationType === "exchange") {
-                excludedMethod = transactionType; // وسيلة الدفع المختارة سيتم استبعادها
-            }
-
-            if (operationType === "exchange") {
-                const options = [
-                    { value: 'binance', text: 'Binance ID' },
-                    { value: 'redotpay', text: 'RedotPay ID' },
-                    { value: 'musewallet', text: 'MuseWallet UID' }
-                ];
-                options.forEach(option => {
-                    if (option.value !== excludedMethod) { // استبعاد الوسيلة المختارة
-                        const opt = document.createElement('option');
-                        opt.value = option.value;
-                        opt.textContent = option.text;
-                        paymentMethod.appendChild(opt);
-                    }
-                });
-            } else if (transactionType === 'network') {
+            
+            // عرض طرق الدفع للشبكة إذا كانت العملية إيداع ونوع التحويل Network Transfer
+            if ((operationType === "deposit" || operationType === "withdraw" ) && transactionType === "network") {
                 const networks = [
                     { value: 'trc20', text: 'Tron (TRC20)' },
                     { value: 'bep20', text: 'BNB Smart Chain (BEP20)' },
@@ -213,6 +206,24 @@
                     opt.value = network.value;
                     opt.textContent = network.text;
                     paymentMethod.appendChild(opt);
+                });
+                paymentMethodLabel.textContent = "اختر نوع الشبكه:";
+                networkPaymentMethodLabel.style.display = 'block';
+                networkPaymentMethod.style.display = 'block';
+                paymentMethod.style.display = 'block';  
+            } else if (operationType === "exchange") {
+                const options = [
+                    { value: 'binance', text: 'Binance ID' },
+                    { value: 'redotpay', text: 'RedotPay ID' },
+                    { value: 'musewallet', text: 'MuseWallet UID' }
+                ];
+                options.forEach(option => {
+                    if (option.value !== transactionType) { // استبعاد الوسيلة المختارة
+                        const opt = document.createElement('option');
+                        opt.value = option.value;
+                        opt.textContent = option.text;
+                        paymentMethod.appendChild(opt);
+                    }
                 });
             } else {
                 const methods = [
@@ -228,6 +239,10 @@
                     opt.textContent = method.text;
                     paymentMethod.appendChild(opt);
                 });
+                
+                networkPaymentMethodLabel.style.display = 'none'; // إخفاء طرق الدفع الأخرى للشبكة
+                networkPaymentMethod.style.display = 'none'; // إخفاء طرق الدفع الأخرى للشبكة
+                paymentMethod.style.display = 'block';
             }
         }
 
@@ -251,6 +266,7 @@
             const operationType = document.getElementById('operationType').value;
             const transactionType = document.getElementById('transactionType').value;
             const paymentMethod = document.getElementById('paymentMethod').value;
+            const networkPaymentMethod = document.getElementById('networkPaymentMethod').value;
 
             if (isNaN(amount) || amount <= 0) {
                 alert("برجاء إدخال مبلغ صحيح.");
@@ -311,7 +327,7 @@
                 }
             }
 
-                if (transactionType === 'network' && operationType === 'deposit') {
+                if (transactionType === 'network' && operationType === 'deposit' && networkPaymentMethod !== 'wallet') {
                     switch (paymentMethod) {
                         case 'trc20':
                             fee = 2 * 51;
@@ -324,6 +340,22 @@
                             break;
                         case 'erc20':
                             fee = 4 * 51;
+                            total = (amount * 51) + fee;
+                            break;
+                    }
+                } else if (transactionType === 'network' && operationType === 'deposit' && networkPaymentMethod === 'wallet') {
+                    switch (paymentMethod) {
+                        case 'trc20':
+                            fee = 2 * 51.5;
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'bep20':
+                        case 'toncoin':
+                            fee = 1 * 51.5;
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'erc20':
+                            fee = 4 * 51.5;
                             total = (amount * 51) + fee;
                             break;
                     }
@@ -444,14 +476,20 @@
             const operationType = document.getElementById('operationType').value;
             const transactionType = document.getElementById('transactionType').value;
             const paymentMethod = document.getElementById('paymentMethod').value;
+            const networkPaymentMethod = document.getElementById('networkPaymentMethod').value;
 
             if (operationType === "exchange") {
             const url = `exchange-conv.html?operationType=${encodeURIComponent(operationType)}&transactionType=${encodeURIComponent(transactionType)}&paymentMethod=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(amount)}&fee=${encodeURIComponent(fee)}&total=${encodeURIComponent(total)}`;
             window.location.href = url;
             }else{
+                if (transactionType === "network") {
+                const url = `exchange-net.html?operationType=${encodeURIComponent(operationType)}&transactionType=${encodeURIComponent(transactionType)}&paymentMethod=${encodeURIComponent(paymentMethod)}&networkPaymentMethod=${encodeURIComponent(networkPaymentMethod)}&amount=${encodeURIComponent(amount)}&fee=${encodeURIComponent(fee)}&total=${encodeURIComponent(total)}`;
+                window.location.href = url;
+                }else{
                 const url = `exchange.html?operationType=${encodeURIComponent(operationType)}&transactionType=${encodeURIComponent(transactionType)}&paymentMethod=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(amount)}&fee=${encodeURIComponent(fee)}&total=${encodeURIComponent(total)}`;
             window.location.href = url;
-            }
+                 }
+                }
         }
 
         // تحميل شريط الأخبار باستخدام fetch
