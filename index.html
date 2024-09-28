@@ -214,6 +214,20 @@
             } else if (operationType === "exchange") {
                 window.location.href = "index-conv.html";  // التوجيه إلى صفحة h.html
                 return;  // إنهاء الوظيفة بعد التوجيه
+
+                const options = [
+                    { value: 'binance', text: 'Binance ID' },
+                    { value: 'redotpay', text: 'RedotPay ID' },
+                    { value: 'musewallet', text: 'MuseWallet UID' }
+                ];
+                options.forEach(option => {
+                    if (option.value !== transactionType) { // استبعاد الوسيلة المختارة
+                        const opt = document.createElement('option');
+                        opt.value = option.value;
+                        opt.textContent = option.text;
+                        paymentMethod.appendChild(opt);
+                    }
+                });
                 } else {
                 const methods = [
                     { value: 'instapay', text: 'انستا باي' },
