@@ -212,20 +212,9 @@
                 networkPaymentMethod.style.display = 'block';
                 paymentMethod.style.display = 'block';  
             } else if (operationType === "exchange") {
-                const options = [
-                    { value: 'binance', text: 'Binance ID' },
-                    { value: 'redotpay', text: 'RedotPay ID' },
-                    { value: 'musewallet', text: 'MuseWallet UID' }
-                ];
-                options.forEach(option => {
-                    if (option.value !== transactionType) { // استبعاد الوسيلة المختارة
-                        const opt = document.createElement('option');
-                        opt.value = option.value;
-                        opt.textContent = option.text;
-                        paymentMethod.appendChild(opt);
-                    }
-                });
-            } else {
+                window.location.href = "index-conv.html";  // التوجيه إلى صفحة h.html
+                return;  // إنهاء الوظيفة بعد التوجيه
+                } else {
                 const methods = [
                     { value: 'instapay', text: 'انستا باي' },
                     { value: 'wallet', text: 'المحافظ الإلكترونية " تحويل كاش " ' },
