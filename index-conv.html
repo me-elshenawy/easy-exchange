@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="./R.png">
+    <title>Easy Exchange | Home</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #f0f4ff, #e0f7fa);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: right;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+
+        button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #28a745;
+            text-align: right;
+        }
+
+        .chat-button {
+            display: none;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .chat-button:hover {
+            background-color: #218838;
+        }
+
+        .currency-switch {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .currency-switch:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- شريط الأخبار -->
+    <div id="notificationBar"></div>
+    
+    <div class="container">
+        <h1>Easy Exchange</h1>
+        <div id="step1">
+            <label for="operationType">اختر نوع العملية:</label>
+            <select id="operationType">
+                <option value="deposit" >إيداع</option>
+                <option value="withdraw">سحب</option>
+                <option value="exchange" selected>استبدال</option>
+            </select>
+
+            <label id="transactionTypeLabel" for="transactionType">اختر نوع التحويل:</label>
+            <select id="transactionType">
+                <option value="binance">Binance ID</option>
+                <option value="redotpay">Redotpay ID</option>
+                <option value="musewallet">MuseWallet UID</option>
+                <option value="network">Network Transfer For USDT</option>
+            </select>
+
+            <label id="paymentMethodLabel" for="paymentMethod">اختر طريقة الدفع:</label>
+            <select id="paymentMethod"></select>
+
+            <label id="networkPaymentMethodLabel" for="networkPaymentMethod" style="display:none;">اختر طريقة الدفع:</label>
+            <select id="networkPaymentMethod" style="display:none;">
+                <option value="wallet">المحافظ الإلكترونية " تحويل كاش "</option>
+                <option value="instapay">انستا باي</option>
+                <option value="fawry">كارت فوري الاصفر</option>
+                <option value="telda">فيزا تيلدا</option>
+                <option value="nexta">فيزا نكستا</option>
+            </select>
+
+            <label id="inputLabel" for="amountInput" style="display: flex; align-items: center;">
+                برجاء ذكر المبلغ بالدولار: 
+                <span id="switchCurrency" style="margin-left: 10px;">
+                    <a href="index-try.html" class="currency-switch">  التبديل للجنيه </a>
+                </span>
+            </label>
+            <input type="number" id="amountInput" placeholder="أدخل المبلغ" step="0.01" />
+
+            <button onclick="calculate()">احسب</button>
+        </div>
+
+        <div id="result" class="result"></div>
+
+        <div id="chatButtonContainer">
+            <button id="chatButton" class="chat-button">المتابعة لإتمام العملية</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePaymentOptions(); // تحديث خيارات الدفع عند تحميل الصفحة
+        });
+
+        document.getElementById('transactionType').addEventListener('change', function() {
+            hideResult();
+            updatePaymentOptions();
+        });
+        
+        document.getElementById('operationType').addEventListener('change', function() {
+            hideResult();
+            updateInputLabel();
+            updatePaymentOptions();
+        });
+
+        document.getElementById('amountInput').addEventListener('input', hideResult);
+
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            hideResult(); // إخفاء تفاصيل العملية عند تغيير طريقة الدفع
+        });
+
+        function hideResult() {
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('chatButton').style.display = 'none';
+        }
+
+        function updatePaymentOptions() {
+            const transactionType = document.getElementById('transactionType').value;
+            const operationType = document.getElementById('operationType').value;
+            const paymentMethod = document.getElementById('paymentMethod');
+            const networkPaymentMethodLabel = document.getElementById('networkPaymentMethodLabel');
+            const networkPaymentMethod = document.getElementById('networkPaymentMethod');
+
+            paymentMethod.innerHTML = '';
+            
+            // عرض طرق الدفع للشبكة إذا كانت العملية إيداع ونوع التحويل Network Transfer
+            if ((operationType === "deposit" || operationType === "withdraw" ) && transactionType === "network") {
+                const networks = [
+                    { value: 'trc20', text: 'Tron (TRC20)' },
+                    { value: 'bep20', text: 'BNB Smart Chain (BEP20)' },
+                    { value: 'erc20', text: 'Ethereum (ERC20)' },
+                    { value: 'toncoin', text: 'Ton (Toncoin)' }
+                ];
+                networks.forEach(network => {
+                    const opt = document.createElement('option');
+                    opt.value = network.value;
+                    opt.textContent = network.text;
+                    paymentMethod.appendChild(opt);
+                });
+                paymentMethodLabel.textContent = "اختر نوع الشبكه:";
+                networkPaymentMethodLabel.style.display = 'block';
+                networkPaymentMethod.style.display = 'block';
+                paymentMethod.style.display = 'block';  
+            } else if (operationType === "exchange") {
+                const options = [
+                    { value: 'binance', text: 'Binance ID' },
+                    { value: 'redotpay', text: 'RedotPay ID' },
+                    { value: 'musewallet', text: 'MuseWallet UID' }
+                ];
+                options.forEach(option => {
+                    if (option.value !== transactionType) { // استبعاد الوسيلة المختارة
+                        const opt = document.createElement('option');
+                        opt.value = option.value;
+                        opt.textContent = option.text;
+                        paymentMethod.appendChild(opt);
+                    }
+                });
+            } else {
+                const methods = [
+                    { value: 'instapay', text: 'انستا باي' },
+                    { value: 'wallet', text: 'المحافظ الإلكترونية " تحويل كاش " ' },
+                    { value: 'fawry', text: 'كارت فوري الاصفر' },
+                    { value: 'telda', text: 'فيزا تيلدا' },
+                    { value: 'nexta', text: 'فيزا نكستا' }
+                ];
+                methods.forEach(method => {
+                    const opt = document.createElement('option');
+                    opt.value = method.value;
+                    opt.textContent = method.text;
+                    paymentMethod.appendChild(opt);
+                });
+                
+                networkPaymentMethodLabel.style.display = 'none'; // إخفاء طرق الدفع الأخرى للشبكة
+                networkPaymentMethod.style.display = 'none'; // إخفاء طرق الدفع الأخرى للشبكة
+                paymentMethod.style.display = 'block';
+            }
+        }
+
+        function updateInputLabel() {
+            const transactionTypeLabel = document.getElementById('transactionTypeLabel');
+            const operationType = document.getElementById('operationType').value;
+            const switchCurrency = document.getElementById('switchCurrency');
+
+            if (operationType === "exchange") {
+                switchCurrency.style.display = 'none'; // إخفاء الرابط عند اختيار استبدال
+                transactionTypeLabel.textContent = "اختر طريقة الاستلام:";
+                updatePaymentOptions(); // تحديث خيارات الدفع هنا
+            } else {
+                transactionTypeLabel.textContent = "اختر نوع التحويل:";
+                switchCurrency.style.display = 'inline'; // عرض الرابط في الحالات الأخرى
+            }
+        }
+
+        function calculate() {
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const operationType = document.getElementById('operationType').value;
+            const transactionType = document.getElementById('transactionType').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const networkPaymentMethod = document.getElementById('networkPaymentMethod').value;
+
+            if (isNaN(amount) || amount <= 0) {
+                alert("برجاء إدخال مبلغ صحيح.");
+                return;
+            }
+
+            let fee = 0;
+            let total = 0;
+
+            if (operationType === 'exchange') {
+                fee = Math.max(amount * 0.01, 0.5); // 1% أو 0.5 دولار، أيهما أعلى
+                total = amount - fee; // المبلغ + الرسوم
+
+                let minAmountOf = 0.5;
+                if (amount <= minAmountOf) {
+                        alert(` المبلغ المدخل أقل من الحد الأدنى المسموح به. الحد الأدنى هو 0.50 USDT.`);
+                        return;
+                    }
+
+            } else {
+                // باقي الشروط للإيداع والسحب كما هي
+                if (transactionType === 'network' && operationType === 'deposit') {
+                    let minAmount = 0;
+                    switch (paymentMethod) {
+                        case 'trc20':
+                            minAmount = 10.00;
+                            break;
+                        case 'bep20':
+                            minAmount = 10.00;
+                            break;
+                        case 'erc20':
+                            minAmount = 16.00;
+                            break;
+                        case 'toncoin':
+                            minAmount = 1.00;
+                            break;
+                    }
+                    if (amount < minAmount) {
+                        alert(`المبلغ المدخل أقل من الحد الأدنى المسموح به لهذه الشبكة. الحد الأدنى هو ${minAmount.toFixed(2)} USDT.`);
+                        return;
+                    }
+                }
+
+                if (transactionType !== 'network' && operationType === 'deposit') {
+                let minAmountTry = 0;
+                switch (paymentMethod) {
+                    case 'wallet':
+                    case 'telda':
+                    case 'instapay':
+                    case 'fawry':
+                    case 'nexta':
+                      minAmountTry = 0.50;
+                        break;
+                }
+                if (amount < minAmountTry) {
+                    alert(`المبلغ المدخل أقل من الحد الأدنى المسموح به. الحد الأدنى هو ${minAmountTry.toFixed(2)} USDT.`);
+                    return;
+                }
+            }
+
+                if (transactionType === 'network' && operationType === 'deposit' && networkPaymentMethod !== 'wallet') {
+                    switch (paymentMethod) {
+                        case 'trc20':
+                            fee = 2 * 51;
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'bep20':
+                        case 'toncoin':
+                            fee = 1 * 51;
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'erc20':
+                            fee = 4 * 51;
+                            total = (amount * 51) + fee;
+                            break;
+                    }
+                } else if (transactionType === 'network' && operationType === 'deposit' && networkPaymentMethod === 'wallet') {
+                    switch (paymentMethod) {
+                        case 'trc20':
+                            fee = 2 * 51.5;
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'bep20':
+                        case 'toncoin':
+                            fee = 1 * 51.5;
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'erc20':
+                            fee = 4 * 51.5;
+                            total = (amount * 51) + fee;
+                            break;
+                    }
+                } else if (transactionType === 'redotpay' && operationType === 'deposit') {
+                    switch (paymentMethod) {
+                        case 'wallet':
+                            fee = (amount * 0.0057 * 51);
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'telda':
+                        case 'instapay':
+                        case 'fawry':
+                        case 'nexta':
+                            fee = 0;
+                            total = (amount * 51) + fee;
+                            break;
+                    }
+                } else if (transactionType === 'binance' && operationType === 'deposit') {
+                    switch (paymentMethod) {
+                        case 'wallet':
+                            fee = (amount * 0.0057 * 51);
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'telda':
+                        case 'instapay':
+                        case 'fawry':
+                        case 'nexta':
+                            fee = 0;
+                            total = (amount * 51) + fee;
+                            break;
+                    }
+                } else if (transactionType === 'musewallet' && operationType === 'deposit') {
+                    switch (paymentMethod) {
+                        case 'wallet':
+                            fee = (amount * 0.0057 * 51);
+                            total = (amount * 51) + fee;
+                            break;
+                        case 'telda':
+                        case 'instapay':
+                        case 'fawry':
+                        case 'nexta':
+                            fee = 0;
+                            total = (amount * 51) + fee;
+                            break;
+                    }
+                } else if (operationType === 'withdraw') {
+
+                    if (transactionType === 'redotpay' || transactionType === 'musewallet'){
+                        fee = 0;
+                        total = ((amount + 0) * 48.5) - 1;
+                    }else {
+                        fee = 0;
+                        total = ((amount + 0) * 48.5) - 1;
+                    }
+                    
+                } else {
+                    total = operationType === 'withdraw' ? amount * 48.75 : amount * 51;
+                }
+            }
+
+            displayResult(amount, fee, total, operationType === 'withdraw');
+        }
+
+        function displayResult(amount, fee, total, isNetwork) {
+            const transactionType = document.getElementById('transactionType').value;
+            const operationType = document.getElementById('operationType').value;
+            const totalRounded = Math.ceil(total); // تقريب الإجمالي إلى الرقم الصحيح الأكبر
+
+            const feeRounded0 = parseFloat(fee); 
+            const feeRounded = Math.floor(feeRounded0 * 100) / 100; //تضرب الرقم في 100 لقص الرقم إلى خانتين عشريتين
+
+            const totalRounded0 = parseFloat(total); 
+            const totalRoundedOf = Math.floor(totalRounded0 * 100) / 100; //تضرب الرقم في 100 لقص الرقم إلى خانتين عشريتين
+
+
+            if (operationType === "exchange") {
+                
+                document.getElementById('result').innerHTML = `
+                <p>مبلغ التحويل: ${amount} USDT</p>
+                <p>الرسوم: ${feeRounded} USDT</p>
+                <p><strong>الإجمالي: ${totalRoundedOf} USDT</strong></p>
+                `;
+
+                document.getElementById('chatButton').style.display = 'block';
+            document.getElementById('chatButton').onclick = function() {
+                proceedToExchange(amount, feeRounded, total); // استخدام الإجمالي المقرب عند المتابعة
+            };
+            } else {
+
+                if (transactionType === 'network'){
+                document.getElementById('result').innerHTML = `
+                <p>مبلغ التحويل: ${amount} USDT</p>
+                <p>رسوم الشبكه:  ${feeRounded} EGP</p>
+                <p><strong>الإجمالي: ${totalRounded} EGP</strong></p>
+                `;
+
+                document.getElementById('chatButton').style.display = 'block';
+            document.getElementById('chatButton').onclick = function() {
+                proceedToExchange(amount, feeRounded, totalRounded); // استخدام الإجمالي المقرب عند المتابعة
+            };
+            }else {
+                document.getElementById('result').innerHTML = `
+                <p>مبلغ التحويل: ${amount} USDT</p>
+                <p>الرسوم: ${feeRounded} EGP</p>
+                <p><strong>الإجمالي: ${totalRounded} EGP</strong></p>
+                `;
+
+                document.getElementById('chatButton').style.display = 'block';
+            document.getElementById('chatButton').onclick = function() {
+                proceedToExchange(amount, feeRounded, totalRounded); // استخدام الإجمالي المقرب عند المتابعة
+            };
+            }
+        }
+           
+        }
+
+        function proceedToExchange(amount, fee, total) {
+            const operationType = document.getElementById('operationType').value;
+            const transactionType = document.getElementById('transactionType').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const networkPaymentMethod = document.getElementById('networkPaymentMethod').value;
+
+            if (operationType === "exchange") {
+            const url = `exchange-conv.html?operationType=${encodeURIComponent(operationType)}&transactionType=${encodeURIComponent(transactionType)}&paymentMethod=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(amount)}&fee=${encodeURIComponent(fee)}&total=${encodeURIComponent(total)}`;
+            window.location.href = url;
+            }else{
+                if (transactionType === "network") {
+                const url = `exchange-net.html?operationType=${encodeURIComponent(operationType)}&transactionType=${encodeURIComponent(transactionType)}&paymentMethod=${encodeURIComponent(paymentMethod)}&networkPaymentMethod=${encodeURIComponent(networkPaymentMethod)}&amount=${encodeURIComponent(amount)}&fee=${encodeURIComponent(fee)}&total=${encodeURIComponent(total)}`;
+                window.location.href = url;
+                }else{
+                const url = `exchange.html?operationType=${encodeURIComponent(operationType)}&transactionType=${encodeURIComponent(transactionType)}&paymentMethod=${encodeURIComponent(paymentMethod)}&amount=${encodeURIComponent(amount)}&fee=${encodeURIComponent(fee)}&total=${encodeURIComponent(total)}`;
+            window.location.href = url;
+                 }
+                }
+        }
+
+        // تحميل شريط الأخبار باستخدام fetch
+        fetch('notification.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('notificationBar').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching notification:', error));
+
+        // استدعاء الدالة لتحديث النص عند تحميل الصفحة
+        updateInputLabel();
+    </script>
+</body>
+</html>
