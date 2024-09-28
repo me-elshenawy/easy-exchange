@@ -373,10 +373,10 @@
 
                     if (transactionType === 'redotpay' || transactionType === 'musewallet'){
                         fee = 0;
-                        total = (amount + 0) * 48.5;
+                        total = ((amount + 0) * 48.5) - 1;
                     }else {
                         fee = 0;
-                        total = (amount + 0) * 48.75;
+                        total = ((amount + 0) * 48.5) - 1;
                     }
                     
                 } else {
