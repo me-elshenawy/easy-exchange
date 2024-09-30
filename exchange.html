@@ -87,6 +87,13 @@
             transition: background-color 0.3s;
         }
 
+        .button box-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
         .button:hover {
             background-color: #218838;
         }
@@ -98,6 +105,7 @@
         }
 
     </style>
+    <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
 </head>
 <body>
     <!-- شريط الأخبار -->
@@ -108,7 +116,10 @@
         <div id="details" class="details"></div>
         <div id="note" class="note"></div>
         <div id="accountInfo" class="account-info"></div>
-        <button id="chatButton" class="button">التوجه إلى الدردشة</button>
+        <button id="chatButton" class="button">
+            التوجه إلى الدردشة
+            <box-icon name='whatsapp' type='logo' animation='tada' color='#ffffff'></box-icon>
+        </button>
     </div>
 
     <script>
