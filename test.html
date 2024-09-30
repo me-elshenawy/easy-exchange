@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Redirect</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+</head>
+<body>
+    <script>
+        // Redirect user based on value of x
+        const x = false;  // Change this value to true or false to test redirection
+        
+        // Redirect based on the Boolean value of x
+        const redirectPage = x ? 'home.html' : 'update.html';
+        window.location.href = redirectPage;
+    </script>
+</body>
+</html>
