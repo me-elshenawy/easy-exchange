@@ -65,6 +65,13 @@
             transition: background-color 0.3s;
         }
 
+        .button box-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
         button:hover {
             background-color: #0056b3;
         }
@@ -104,6 +111,7 @@
         }
 
     </style>
+        <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
 </head>
 <body>
     <!-- شريط الأخبار -->
@@ -142,7 +150,11 @@
 
             <input type="number" id="amountInput" placeholder="أدخل المبلغ" step="1" />
 
-            <button onclick="calculate()">احسب</button>
+            <button onclick="calculate()" style="display: flex; align-items: center; justify-content: center;">
+            احسب
+            <box-icon name='rotate-right' animation='spin' color='#ffffff' style="margin-right: 10px;"></box-icon>
+</button>
+
         </div>
 
         <div id="result" class="result"></div>
