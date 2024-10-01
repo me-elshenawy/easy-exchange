@@ -268,6 +268,7 @@
             `;
         }
 
+        let showAlert = true; // متغير للتحكم في عرض الـ alert
         // Function to copy text to clipboard
         function copyToClipboard(text) {
             const textarea = document.createElement('textarea');
@@ -276,24 +277,32 @@
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            alert("تم نسخ " + text + " إلى الحافظة.");
+            if (showAlert) {
+                alert("تم نسخ " + text + " إلى الحافظة.");
+            }
         }
 
         // Set up chat button action
         document.getElementById('chatButton').onclick = function() {
-    const params = getQueryParams();
-    const message = 
-        `تفاصيل العملية:\n` +
-        `- نوع العملية: ${params.operationType}\n` +
-        `- نوع التحويل: ${params.transactionType}\n` +
-        `- طريقة الدفع: ${params.paymentMethod}\n` +
-        `- المبلغ: ${params.amount ? params.amount.toFixed(2) : 'N/A'} EGP\n` +
-        `- الإجمالي: ${params.total ? params.total.toFixed(2) : 'N/A'} USDT\n` +
-        `\nيرجى التأكد من صحة التفاصيل.`;
-    
-    // Redirect to WhatsApp chat or any other chat platform
-    window.open(`https://wa.me/201206085267?text=${encodeURIComponent(message)}`, '_blank');
-    };
+        const params = getQueryParams();
+        const message = 
+            `تفاصيل العملية:\n` +
+            `- نوع العملية: ${params.operationType}\n` +
+            `- نوع التحويل: ${params.transactionType}\n` +
+            `- طريقة الدفع: ${params.paymentMethod}\n` +
+            `- المبلغ: ${params.amount ? params.amount.toFixed(2) : 'N/A'} EGP\n` +
+            `- الإجمالي: ${params.total ? params.total.toFixed(2) : 'N/A'} USDT\n` +
+            `\nيرجى التأكد من صحة التفاصيل.`;
+
+            // Copy the account info to clipboard without showing alert
+            const accountInfo = document.querySelector('.copyable').textContent;
+            showAlert = false; // تعطيل عرض الـ alert
+            copyToClipboard(accountInfo);
+            showAlert = true;  // إعادة تمكين عرض الـ alert للعمليات الأخرى
+        
+        // Redirect to WhatsApp chat or any other chat platform
+        window.open(`https://wa.me/201206085267?text=${encodeURIComponent(message)}`, '_blank');
+        };
 
 
         // Call display details on page load
