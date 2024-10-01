@@ -149,9 +149,11 @@
             </label>
             <input type="number" id="amountInput" placeholder="أدخل المبلغ" step="0.01" />
 
-            <button onclick="calculate()">احسب
-            <box-icon name='rotate-right' animation='spin' color='#ffffff' ></box-icon>
+            <button onclick="calculate()" style="display: flex; align-items: center; justify-content: center;">
+                احسب
+                <box-icon name='rotate-right' animation='spin' color='#ffffff' style="margin-right: 10px;"></box-icon>
             </button>
+
         </div>
 
         <div id="result" class="result"></div>
