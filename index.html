@@ -20,10 +20,12 @@
         .container {
             max-width: 500px;
             margin: auto;
-            background-color: rgba(255, 255, 255, 0.8);
+
+            /* background-color: rgba(255, 255, 255, 0.8);
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); */
+
             margin-top: 150px;
             text-align: center;
         }
@@ -34,9 +36,25 @@
             font-size: 24px;
         }
 
-        .clock {
-            font-size: 80px; /* حجم الرمز */
+        .image {
+            width: 100px;
+            height: 100px;
             margin-bottom: 20px;
+            /* تطبيق الأنيميشن على الصورة */
+            animation: fadeEffect 2s infinite;
+        }
+
+        /* تعريف الـ keyframes لتأثير الظهور والاختفاء */
+        @keyframes fadeEffect {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
         }
 
         .message {
@@ -48,9 +66,10 @@
 </head>
 <body>
     <div class="container">
-        <!-- <h1>أوقات التحديثات</h1> -->
-        <div class="clock">🕓</div>
-        <div class="message">يوجد تحديثات حالياً في المنصة، دقائق وسنعود.</div>
+        <img src="./R.png" alt="R" class="image">
+
+        <!-- <img src="./time-left.png" alt="R" class="image">
+        <div class="message">يوجد تحديثات حالياً في المنصة، دقائق وسنعود.</div> -->
     </div>
     
     <script>
