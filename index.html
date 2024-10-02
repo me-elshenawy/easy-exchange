@@ -24,7 +24,7 @@
             /* background-color: rgba(255, 255, 255, 0.8);
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);  */
 
             margin-top: 150px;
             text-align: center;
@@ -40,21 +40,6 @@
             width: 100px;
             height: 100px;
             margin-bottom: 20px;
-            /* تطبيق الأنيميشن على الصورة */
-            animation: fadeEffect 2s infinite;
-        }
-
-        /* تعريف الـ keyframes لتأثير الظهور والاختفاء */
-        @keyframes fadeEffect {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
         }
 
         .message {
@@ -62,24 +47,41 @@
             margin-bottom: 20px;
             font-size: 24px;
         }
+
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="./R.png" alt="R" class="image">
-
-        <!-- <img src="./time-left.png" alt="R" class="image">
-        <div class="message">يوجد تحديثات حالياً في المنصة، دقائق وسنعود.</div> -->
+        <!-- الصورة الأولى -->
+        <img src="./R.png" alt="R" class="image" id="image1">
+        
+        <!-- الصورة الثانية -->
+        <img src="./time-left.png" alt="time-left" class="image hidden" id="image2">
+        
+        <!-- الرسالة -->
+        <div class="message hidden" id="message">يوجد تحديثات حالياً في المنصة، دقائق وسنعود.</div> 
     </div>
-    
+
     <script>
-        // Redirect user based on value of x
-        const x = true;  // Change this value to true or false to test redirection
+       // Redirect user based on value of x
+       const x = true;  // Change this value to true or false to test redirection
         
         // Redirect based on the Boolean value of x
         if (x) {
-            // إذا كانت القيمة true، قم بالتوجيه إلى home.html
-            window.location.href = 'home.html';
+            document.getElementById("image1").classList.remove("hidden");
+            document.getElementById("image2").classList.add("hidden");
+            document.getElementById("message").classList.add("hidden");
+
+             // إذا كانت القيمة true، قم بالتوجيه إلى home.html
+             window.location.href = 'home.html';
+        } else {
+            document.getElementById("image1").classList.add("hidden");
+            document.getElementById("image2").classList.remove("hidden");
+            document.getElementById("message").classList.remove("hidden");
         }
     </script>
 </body>
