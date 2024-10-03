@@ -105,6 +105,21 @@
             transform: translateY(-50%);
         }
 
+        .report-problem {
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        .report-problem a {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .report-problem a:hover {
+            text-decoration: underline;
+        }
+
     </style>
     <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
 </head>
@@ -117,6 +132,12 @@
         <div id="details" class="details"></div>
         <div id="note" class="note"></div>
         <div id="accountInfo" class="account-info"></div>
+
+        <!-- إضافة رابط "الإبلاغ عن مشكلة" -->
+        <div class="report-problem">
+            <a id="reportLink">الإبلاغ عن مشكلة بطريقه الدفع؟</a>
+        </div>
+        
         <button id="chatButton" class="button">
             التوجه إلى الدردشة
             <box-icon name='whatsapp' type='logo' animation='tada' color='#ffffff'></box-icon>
@@ -282,6 +303,25 @@
                 alert("تم نسخ " + text + " إلى الحافظة.");
             }
         }
+
+        // Set up reportLink action
+        document.getElementById('reportLink').onclick = function() {
+        const params = getQueryParams();
+        let message = '';
+
+        if (params.operationType === 'withdraw'){
+            message = 
+            `يوجد مشكله في الـID\n` +
+            `\nيرجى توضيح تفاصيل أكثر.`;
+        } else {
+            message = 
+            `يوجد مشكله في ${getPaymentDetail(params.paymentMethod)}\n` +
+            `\nيرجى توضيح تفاصيل أكثر.`;
+        }
+
+        // Redirect to WhatsApp chat or any other chat platform
+        window.open(`https://wa.me/201206085267?text=${encodeURIComponent(message)}`, '_blank');
+        };
 
         // Set up chat button action
         document.getElementById('chatButton').onclick = function() {
