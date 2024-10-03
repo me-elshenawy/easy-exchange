@@ -272,6 +272,7 @@
 
             let fee = 0;
             let total = 0;
+            let rate = 0; // تأكد من تعيين قيمة افتراضية للـ rate
 
             if (operationType === 'exchange') {
                 fee = Math.max(amount * 0.01, 0.5); // 1% أو 0.5 دولار، أيهما أعلى
@@ -327,15 +328,18 @@
                 if (transactionType === 'network' && operationType === 'deposit') {
                     switch (paymentMethod) {
                         case 'trc20':
+                            rate = 51;
                             fee = 2 * 51;
                             total = (amount * 51) + fee;
                             break;
                         case 'bep20':
                         case 'toncoin':
+                            rate = 51;
                             fee = 1 * 51;
                             total = (amount * 51) + fee;
                             break;
                         case 'erc20':
+                            rate = 51;
                             fee = 4 * 51;
                             total = (amount * 51) + fee;
                             break;
@@ -343,6 +347,7 @@
                 } else if (transactionType === 'redotpay' && operationType === 'deposit') {
                     switch (paymentMethod) {
                         case 'wallet':
+                            rate = 51;
                             fee = (amount * 0.0057 * 51);
                             total = (amount * 51) + fee;
                             break;
@@ -350,6 +355,7 @@
                         case 'instapay':
                         case 'fawry':
                         case 'nexta':
+                            rate = 51;
                             fee = 0;
                             total = (amount * 51) + fee;
                             break;
@@ -357,6 +363,7 @@
                 } else if (transactionType === 'binance' && operationType === 'deposit') {
                     switch (paymentMethod) {
                         case 'wallet':
+                            rate = 51;
                             fee = (amount * 0.0057 * 51);
                             total = (amount * 51) + fee;
                             break;
@@ -364,6 +371,7 @@
                         case 'instapay':
                         case 'fawry':
                         case 'nexta':
+                            rate = 51;
                             fee = 0;
                             total = (amount * 51) + fee;
                             break;
@@ -371,6 +379,7 @@
                 } else if (transactionType === 'musewallet' && operationType === 'deposit') {
                     switch (paymentMethod) {
                         case 'wallet':
+                            rate = 51;
                             fee = (amount * 0.0057 * 51);
                             total = (amount * 51) + fee;
                             break;
@@ -378,6 +387,7 @@
                         case 'instapay':
                         case 'fawry':
                         case 'nexta':
+                            rate = 51;
                             fee = 0;
                             total = (amount * 51) + fee;
                             break;
@@ -385,9 +395,11 @@
                 } else if (operationType === 'withdraw') {
 
                     if (transactionType === 'redotpay' || transactionType === 'musewallet'){
+                        rate = 48.5;
                         fee = 0;
                         total = ((amount + 0) * 48.5) - 1;
                     }else {
+                        rate = 48.5;
                         fee = 0;
                         total = ((amount + 0) * 48.5) - 1;
                     }
@@ -397,10 +409,10 @@
                 }
             }
 
-            displayResult(amount, fee, total, operationType === 'withdraw');
+            displayResult(amount, fee, rate, total, operationType === 'withdraw');
         }
 
-        function displayResult(amount, fee, total, isNetwork) {
+        function displayResult(amount, fee, rate, total, isNetwork) {
             const transactionType = document.getElementById('transactionType').value;
             const operationType = document.getElementById('operationType').value;
             const totalRounded = Math.ceil(total); // تقريب الإجمالي إلى الرقم الصحيح الأكبر
@@ -412,11 +424,11 @@
             const totalRoundedOf = Math.floor(totalRounded0 * 100) / 100; //تضرب الرقم في 100 لقص الرقم إلى خانتين عشريتين
 
 
-            if (operationType === "exchange") {
+           if (operationType === "exchange") {
                 
                 document.getElementById('result').innerHTML = `
                 <p>مبلغ التحويل: ${amount} USDT</p>
-                <p>الرسوم: ${feeRounded} USDT</p>
+                <p>الرسوم: ${feeRounded} USDT (%1 بحد أدني 0.5$)</p>
                 <p><strong>الإجمالي: ${totalRoundedOf} USDT</strong></p>
                 `;
 
@@ -439,6 +451,7 @@
             };
             }else {
                 document.getElementById('result').innerHTML = `
+                <p>سعر الصرف: ${rate} USDT /ُ EGP</p>
                 <p>مبلغ التحويل: ${amount} USDT</p>
                 <p>الرسوم: ${feeRounded} EGP</p>
                 <p><strong>الإجمالي: ${totalRounded} EGP</strong></p>
