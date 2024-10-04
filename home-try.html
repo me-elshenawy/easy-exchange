@@ -278,68 +278,68 @@
             if (transactionType === 'network' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'trc20':
-                        rate = 51;
-                        fee = 2 * 51;
-                        total = (amount - fee) / 51;
+                        rate = 50.5;
+                        fee = 2 * 50.5;
+                        total = (amount - fee) / 50.5;
                         break;
                     case 'bep20':
                     case 'toncoin':
-                        rate = 51;
-                        fee = 1 * 51;
-                        total = (amount - fee) / 51;
+                        rate = 50.5;
+                        fee = 1 * 50.5;
+                        total = (amount - fee) / 50.5;
                         break;
                     case 'erc20':
-                        rate = 51;
-                        fee = 4 * 51;
-                        total = (amount - fee) / 51;
+                        rate = 50.5;
+                        fee = 4 * 50.5;
+                        total = (amount - fee) / 50.5;
                         break;
                 }
             } else if (transactionType === 'redotpay' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        rate = 51;
+                        rate = 50.5;
                         fee = (amount * 0.0057);
-                        total = (amount - fee) / 51;
+                        total = (amount - fee) / 50.5;
                         break;
                     case 'telda':
                     case 'instapay':
                     case 'fawry':
                     case 'nexta':
-                        rate = 51;
+                        rate = 50.5;
                         fee = 0;
-                        total = (amount - fee) / 51;
+                        total = (amount - fee) / 50.5;
                         break;
                 }
             } else if (transactionType === 'binance' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        rate = 51;
+                        rate = 50.5;
                         fee = (amount * 0.0057);
-                        total = (amount - fee) / 51;
+                        total = (amount - fee) / 50.5;
                         break;
                     case 'telda':
                     case 'instapay':
                     case 'fawry':
                     case 'nexta':
-                        rate = 51;
+                        rate = 50.5;
                         fee = 0;
-                        total = (amount - fee) / 51;
+                        total = (amount - fee) / 50.5;
                         break;
                 }
             } else if (transactionType === 'musewallet' && operationType === 'deposit') {
                 switch (paymentMethod) {
                     case 'wallet':
-                        rate = 51;
+                        rate = 50.5;
                         fee = (amount * 0.0057);
-                        total = (amount - fee) / 51;
+                        total = (amount - fee) / 50.5;
                         break;
                     case 'telda':
                     case 'instapay':
                     case 'fawry':
                     case 'nexta':
-                        rate = 51;
+                        rate = 50.5;
                         fee = 0;
-                        total = (amount - fee) / 51;
+                        total = (amount - fee) / 50.5;
                         break;
                 }
             } else if (operationType === 'withdraw') {
@@ -355,7 +355,7 @@
                 }
                 
             }else {
-                total = operationType === 'withdraw' ? amount * 49 : amount * 51;
+                total = operationType === 'withdraw' ? amount * 48.5 : amount * 50.5;
             }
 
             displayResult(amount, fee, rate, total, operationType === 'network');
