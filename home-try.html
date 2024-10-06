@@ -344,14 +344,26 @@
                 }
             } else if (operationType === 'withdraw') {
 
-                if (transactionType === 'redotpay' || transactionType === 'musewallet'){
-                    rate = 48.5;
-                    fee = 0;
-                    total = ((amount+1) / 48.5);
-                }else {
-                    rate = 48.5;
-                    fee = 0;
-                    total = ((amount+1) / 48.5);
+                switch (paymentMethod) {
+                    case 'wallet':
+                        rate = 48.5;
+                        fee = 1;
+                        total = ((amount+1) / 48.5);
+                    break;
+
+                    case 'telda':
+                    case 'fawry':
+                    case 'nexta':
+                        rate = 48.2;
+                        fee = 0;
+                        total = ((amount+0) / 48.2);
+                    break;
+
+                    case 'instapay':
+                        rate = 48;
+                        fee = 0;
+                        total = ((amount+0) / 48);
+                    break;
                 }
                 
             }else {
