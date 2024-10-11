@@ -86,7 +86,7 @@
         <div class="message hidden" id="message">يوجد تحديثات حالياً في المنصة، دقائق وسنعود.</div> 
         
         <!-- زر ابقَ على تواصل -->
-        <a href="https://whatsapp.com/channel/0029VarOLaVGU3BFkRuTMY24" class="contact-btn hidden" id="contactBtn">ابقَ على تواصل
+        <a href="https://whatsapp.com/channel/0029VarOLaVGU3BFkRuTMY24" class="contact-btn hidden" id="contactBtn" style="display : none;">ابقَ على تواصل
         <box-icon name='bell' type='solid' animation='tada' color='#ffffff' ></box-icon> 
         </a>
 
@@ -101,7 +101,6 @@
             document.getElementById("image1").classList.remove("hidden");
             document.getElementById("image2").classList.add("hidden");
             document.getElementById("message").classList.add("hidden");
-            document.getElementById("contactBtn").style.display = 'none';
 
              // إذا كانت القيمة true، قم بالتوجيه إلى home.html
              window.location.href = 'home.html';
@@ -109,7 +108,7 @@
             document.getElementById("image1").classList.add("hidden");
             document.getElementById("image2").classList.remove("hidden");
             document.getElementById("message").classList.remove("hidden");
-            document.getElementById("contactBtn").classList.remove("hidden");
+            document.getElementById("contactBtn").style.display = 'inline';
 
             // تخصيص مظهر الـ container
             const container = document.querySelector(".container");
