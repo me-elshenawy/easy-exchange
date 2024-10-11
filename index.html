@@ -47,7 +47,32 @@
             display: none;
         }
 
+        .contact-btn {
+            display: inline-block;
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background-color: #007bff;
+        }
+
+        .contact-btn box-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
     </style>
+        <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
 </head>
 <body>
     <div class="container">
@@ -59,6 +84,12 @@
         
         <!-- الرسالة -->
         <div class="message hidden" id="message">يوجد تحديثات حالياً في المنصة، دقائق وسنعود.</div> 
+        
+        <!-- زر ابقَ على تواصل -->
+        <a href="https://whatsapp.com/channel/0029VarOLaVGU3BFkRuTMY24" class="contact-btn hidden" id="contactBtn">ابقَ على تواصل
+        <box-icon name='bell' type='solid' animation='tada' color='#ffffff' ></box-icon> 
+        </a>
+
     </div>
 
     <script>
@@ -70,6 +101,7 @@
             document.getElementById("image1").classList.remove("hidden");
             document.getElementById("image2").classList.add("hidden");
             document.getElementById("message").classList.add("hidden");
+            document.getElementById("contactBtn").style.display = 'none';
 
              // إذا كانت القيمة true، قم بالتوجيه إلى home.html
              window.location.href = 'home.html';
@@ -77,9 +109,10 @@
             document.getElementById("image1").classList.add("hidden");
             document.getElementById("image2").classList.remove("hidden");
             document.getElementById("message").classList.remove("hidden");
+            document.getElementById("contactBtn").classList.remove("hidden");
 
-            // تطبيق الخصائص CSS على الـ container عندما يكون x = false
-            const container = document.querySelector(".container"); // التغيير هنا
+            // تخصيص مظهر الـ container
+            const container = document.querySelector(".container");
             container.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
             container.style.padding = "40px";
             container.style.borderRadius = "10px";
