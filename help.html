@@ -21,10 +21,39 @@
             text-align: right;
         }
 
+        /* تصميم الشريط العلوي */
+        .navbar {
+            background-color: #0056b3; /* لون الخلفية */
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000; /* لتكون فوق العناصر الأخرى */
+        }
+
+        .navbar img {
+            height: 40px; /* ارتفاع الشعار */
+            margin-right: 10px; /* مسافة من اليمين */
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px; /* حجم الخط */
+            display: flex;
+            align-items: center; /* محاذاة العناصر عموديًا */
+        }
+
         .container {
             width: 80%;
             margin: auto;
             overflow: hidden;
+            margin-top: 60px; /* مسافة لتفادي الشريط العلوي الثابت */
         }
 
         h1, h2 {
@@ -92,7 +121,7 @@
             align-items: center;
             gap: 10px; /* مسافة بين الجرس والنص */
             text-decoration: none;
-            background-color: #2980b9;
+            background-color: #0056b3;
             color: #fff;
             padding: 15px 30px;
             border: none;
@@ -117,8 +146,18 @@
         <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
 </head>
 <body>
+    <!-- شريط التنقل العلوي -->
+    <div class="navbar">
+        
+        <a href="#faq">الأسئلة الشائعة</a>
+        <a href="index.html">
+            <span>Easy Exchange</span>
+            <img src="./Easy-Exchange.png" alt="Easy Exchange Logo">
+        </a>
+    </div>
+
+    
     <div class="container">
-        <h1>الأسئلة الشائعة</h1>
 
         <!-- السؤال الأول -->
         <div class="faq">
