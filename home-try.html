@@ -98,16 +98,25 @@
             background-color: #218838;
         }
 
-        .currency-switch {
+        .currency-switch, .help {
             color: #007bff;
             cursor: pointer;
             text-decoration: none;
             transition: color 0.3s, text-decoration 0.3s;
         }
 
-        .currency-switch:hover {
+        .currency-switch:hover, .help:hover {
             text-decoration: underline;
             color: #0056b3;
+        }
+
+        .help-section {
+            position: relative;
+            margin-top: 0px;
+            padding: 0px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
         }
 
     </style>
@@ -153,7 +162,7 @@
             <button onclick="calculate()" style="display: flex; align-items: center; justify-content: center;">
             احسب
             <box-icon name='rotate-right' animation='spin' color='#ffffff' style="margin-right: 10px;"></box-icon>
-</button>
+            </button>
 
         </div>
 
@@ -162,27 +171,62 @@
         <div id="chatButtonContainer">
             <button id="chatButton" class="chat-button">المتابعة لإتمام العملية</button>
         </div>
+        
+        <!-- العبارة داخل المستطيل -->
+        <div class="help-section" id="helpSection">
+            <a href="help.html" class="help">بحاجة إلى المساعدة؟</a>
+        </div>
+
     </div>
 
     <script>
+        // تحديث الخيارات وإخفاء النتيجة والعبارة عند تغيير نوع التحويل
         document.getElementById('transactionType').addEventListener('change', function() {
             updatePaymentOptions();
-            hideResult(); // إخفاء النتائج عند تغيير الخيار
+            hideResult(); // إخفاء النتائج
+            showHelpSection(); // عرض العبارة "بحاجة إلى المساعدة؟"
         });
+    
+        // تحديث التسمية وإخفاء النتيجة والعبارة عند تغيير نوع العملية
         document.getElementById('operationType').addEventListener('change', function() {
             updateInputLabel();
-            hideResult(); // إخفاء النتائج عند تغيير الخيار
+            hideResult(); // إخفاء النتائج
+            showHelpSection(); // عرض العبارة "بحاجة إلى المساعدة؟"
         });
-        document.getElementById('paymentMethod').addEventListener('change', hideResult); // إخفاء النتائج عند تغيير طريقة الدفع
-        document.getElementById('amountInput').addEventListener('input', hideResult); // إخفاء النتائج عند تغيير المبلغ
-        
+    
+        // إخفاء النتيجة والعبارة عند تغيير طريقة الدفع
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            hideResult(); // إخفاء النتائج
+            showHelpSection(); // عرض العبارة "بحاجة إلى المساعدة؟"
+        });
+    
+        // إخفاء النتيجة والعبارة عند تغيير المبلغ
+        document.getElementById('amountInput').addEventListener('input', function() {
+            hideResult(); // إخفاء النتائج
+            showHelpSection(); // عرض العبارة "بحاجة إلى المساعدة؟"
+        });
+    
+        // دالة لإخفاء النتيجة وزر المتابعة
         function hideResult() {
             document.getElementById('result').innerHTML = ''; // إفراغ محتوى النتائج
             document.getElementById('chatButton').style.display = 'none'; // إخفاء زر المتابعة
+            hideHelpSection(); // إخفاء العبارة "بحاجة إلى المساعدة؟"
         }
-
+    
+        // دالة لإخفاء العبارة "بحاجة إلى المساعدة؟"
+        function hideHelpSection() {
+            document.querySelector('.help-section').style.display = 'none'; // إخفاء العبارة
+        }
+    
+        // دالة لعرض العبارة "بحاجة إلى المساعدة؟"
+        function showHelpSection() {
+            document.querySelector('.help-section').style.display = 'block'; // عرض العبارة
+        }
+    
+        // تأكد من أن هذه الدوال يتم استدعاؤها بالشكل الصحيح كما هو موجود:
         document.getElementById('transactionType').addEventListener('change', updatePaymentOptions);
         document.getElementById('operationType').addEventListener('change', updateInputLabel);
+    
 
         function updatePaymentOptions() {
             const transactionType = document.getElementById('transactionType').value;
@@ -220,6 +264,7 @@
             const operationType = document.getElementById('operationType').value;
             const transactionType = document.getElementById('transactionType').value;
             const paymentMethod = document.getElementById('paymentMethod').value;
+            hideHelpSection();
 
             if (isNaN(amount) || amount <= 0) {
                 alert("برجاء إدخال مبلغ صحيح.");
