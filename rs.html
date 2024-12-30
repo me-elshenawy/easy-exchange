@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التاريخ الهجري والميلادي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hijri-date/lib/hijri-date.js"></script>
+</head>
+<body>
+    <h1>التاريخ الهجري والميلادي</h1>
+    <p id="current-date"></p>
+    <table>
+        <thead>
+            <tr>
+                <th>اليوم</th>
+                <th>التاريخ الميلادي</th>
+                <th>التاريخ الهجري</th>
+            </tr>
+        </thead>
+        <tbody id="date-table">
+            <!-- Rows will be added dynamically -->
+        </tbody>
+    </table>
+    <script>
+        function toHijri(gregDate) {
+            const hijriDate = new HijriDate(gregDate);
+            return `${hijriDate.getDate()} ${hijriDate.getMonthName()} ${hijriDate.getFullYear()} هـ`;
+        }
+
+        function populateTable() {
+            const today = new Date();
+            const daysOfWeek = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+            const tbody = document.getElementById("date-table");
+            tbody.innerHTML = "";
+
+            for (let i = 0; i < 7; i++) {
+                const currentDate = new Date();
+                currentDate.setDate(today.getDate() + i);
+
+                const dayName = daysOfWeek[currentDate.getDay()];
+                const gregorianDate = currentDate.toLocaleDateString("ar-EG");
+                const hijriDate = toHijri(currentDate);
+
+                const row = `
+                    <tr>
+                        <td>${dayName}</td>
+                        <td>${gregorianDate}</td>
+                        <td>${hijriDate}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            }
+        }
+
+        function displayCurrentDate() {
+            const today = new Date();
+            const gregorianDate = today.toLocaleDateString("ar-EG");
+            const hijriDate = toHijri(today);
+
+            document.getElementById("current-date").textContent = 
+                `اليوم: ${gregorianDate} | هجري: ${hijriDate}`;
+        }
+
+        populateTable();
+        displayCurrentDate();
+    </script>
+</body>
+  </html>
