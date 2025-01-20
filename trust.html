@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Input</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #00e676;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 16px;
+    }
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #f4f4f4;
+      color: #000;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #00e676;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    button:hover {
+      background-color: #00c853;
+    }
+    .message {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: #00e676;
+    }
+    .forgot-container {
+      display: none;
+      background-color: #003;
+      padding: 20px;
+      border-radius: 10px;
+      color: #fff;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 400px;
+      z-index: 1000;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    .forgot-link {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: #00e676;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .forgot-link:hover {
+      color: #00c853;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Your Account</h1>
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Enter a unique username" required>
+    
+    <label for="name">Name</label>
+    <input type="text" id="name" placeholder="Enter your name" required>
+    
+    <label for="birthDate">Birth Date</label>
+    <input type="date" id="birthDate" required>
+    
+    <label for="phone">Phone Number</label>
+    <input type="text" id="phone" placeholder="Enter your phone number" required>
+    
+    <button onclick="generateCode()">Generate Code</button>
+    <p id="message" class="message"></p>
+    <!-- تحويل الزر إلى رابط هنا -->
+    <a href="#" class="forgot-link" onclick="showForgotCode()">▶ Forgot your code?</a>
+  </div>
+
+  <!-- Forgot Code Modal -->
+  <div class="overlay" id="overlay"></div>
+  <div class="forgot-container" id="forgotContainer">
+    <h2>Retrieve Your Code</h2>
+    <label for="forgotUsername">Username</label>
+    <input type="text" id="forgotUsername" placeholder="Enter your username">
+    
+    <label for="forgotBirthDate">Birth Date</label>
+    <input type="date" id="forgotBirthDate">
+    
+    <label for="forgotPhone">Phone Number</label>
+    <input type="text" id="forgotPhone" placeholder="Enter your phone number">
+    
+    <button onclick="retrieveCode()">Retrieve Code</button>
+    <button onclick="closeForgotCode()">Close</button>
+    <p id="forgotMessage" class="message"></p>
+  </div>
+
+  <script>
+    function normalizePhone(phone) {
+      if (phone.startsWith('+20')) phone = phone.replace('+20', '0');
+      return phone.replace(/\s+/g, '');
+    }
+
+    function validatePhone(phone) {
+      const normalizedPhone = normalizePhone(phone);
+      const egyptPhoneRegex = /^01[0-2|5][0-9]{8}$/;
+      return egyptPhoneRegex.test(normalizedPhone);
+    }
+
+    function generateCode() {
+      const username = document.getElementById('username').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const birthDate = document.getElementById('birthDate').value.trim();
+      let phone = document.getElementById('phone').value.trim();
+      const message = document.getElementById('message');
+
+      if (!username || !name || !birthDate || !phone) {
+        message.textContent = 'Please fill in all the fields.';
+        message.className = 'message error';
+        return;
+      }
+
+      phone = normalizePhone(phone);
+      if (!validatePhone(phone)) {
+        message.textContent = 'Invalid phone number.';
+        message.className = 'message error';
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      if (users.some(user => user.username === username)) {
+        message.textContent = 'Username is already taken.';
+        message.className = 'message error';
+        return;
+      }
+      if (users.some(user => user.phone === phone)) {
+        message.textContent = 'Phone number is already used.';
+        message.className = 'message error';
+        return;
+      }
+
+      let code;
+      do {
+        code = `${String.fromCharCode(65 + Math.random() * 26)}${Math.random().toString().slice(2, 8)}`;
+      } while (users.some(user => user.code === code));
+
+      users.push({ username, name, birthDate, phone, code });
+      localStorage.setItem('users', JSON.stringify(users));
+
+      message.textContent = `Your unique code is: ${code}`;
+      message.className = 'message success';
+    }
+
+    function showForgotCode() {
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('forgotContainer').style.display = 'block';
+    }
+
+    function closeForgotCode() {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('forgotContainer').style.display = 'none';
+    }
+
+    function retrieveCode() {
+      const username = document.getElementById('forgotUsername').value.trim();
+      const birthDate = document.getElementById('forgotBirthDate').value.trim();
+      const phone = normalizePhone(document.getElementById('forgotPhone').value.trim());
+      const message = document.getElementById('forgotMessage');
+
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(u => u.username === username && u.birthDate === birthDate && u.phone === phone);
+
+      if (user) {
+        message.textContent = `Your code is: ${user.code}`;
+        message.className = 'message success';
+      } else {
+        message.textContent = 'No matching user found.';
+        message.className = 'message error';
+      }
+    }
+  </script>
+</body>
+</html>

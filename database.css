@@ -1,0 +1,172 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(45deg, #1e3c72, #2a5298);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: auto;
+}
+
+/* Login Container */
+.login-container {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 400px;
+}
+
+.login-container h2 {
+  margin-bottom: 20px;
+  color: #00e676;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 5px 0;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+button {
+  background-color: #00e676;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #00c853;
+}
+
+/* Database Container */
+.database-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px auto;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/.database-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.search-input, .search-select {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.search-select {
+  max-width: 150px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #00e676;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #00c853;
+}
+
+.btn-reset {
+  background-color: #ff5252;
+}
+
+.btn-reset:hover {
+  background-color: #e53935;
+}
+
+/* Table Styles */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+}
+
+.data-table th, .data-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  word-wrap: break-word;
+}
+
+.data-table th {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.data-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.data-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .data-table th, .data-table td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .search-input, .search-select {
+    flex: 100%;
+  }
+
+  .btn {
+    flex: 100%;
+    margin-top: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .login-container, .database-container {
+    width: 95%;
+    padding: 10px;
+  }
+
+  button {
+    width: 100%;
+  }
+}

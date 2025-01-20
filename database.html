@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database</title>
+  <link rel="stylesheet" href="database.css">
+</head>
+<body>
+<div class="login-container" id="login">
+  <h2>Login</h2>
+  <div class="form-group">
+    <input type="text" id="user" placeholder="Username" required>
+  </div>
+  <div class="form-group">
+    <input type="password" id="password" placeholder="Password" required>
+  </div>
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="database-container" id="database" style="display: none;">
+  <h1>Database</h1>
+
+  <!-- Search Section -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search..." class="search-input">
+    <select id="searchType" class="search-select">
+      <option value="username">Username</option>
+      <option value="name">Name</option>
+      <option value="code">Code</option>
+    </select>
+    <button onclick="search()" class="btn">Search</button>
+    <button onclick="resetSearch()" class="btn btn-reset">Reset</button>
+  </div>
+
+  <!-- Data Table -->
+  <table id="dataTable" class="data-table">
+    <thead>
+      <tr id="tableHeaders"></tr>
+    </thead>
+    <tbody id="dataRows"></tbody>
+  </table>
+</div>
+
+<script src="database.js"></script>
+</body>
+</html>
