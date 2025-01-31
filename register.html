@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل جديد</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <form id="registerForm">
+            <h2>تسجيل حساب جديد</h2>
+            <div class="form-group">
+                <input type="text" id="fullName" placeholder="الاسم الكامل" required>
+            </div>
+            <div class="form-group">
+                <input type="date" id="birthDate" required>
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="كلمة المرور" required>
+                <div class="password-requirements">
+                    <ul id="passwordRules">
+                        <li data-rule="length">8 أحرف على الأقل</li>
+                        <li data-rule="uppercase">حرف كبير واحد على الأقل (A-Z)</li>
+                        <li data-rule="lowercase">حرف صغير واحد على الأقل (a-z)</li>
+                        <li data-rule="number">رقم واحد على الأقل (0-9)</li>
+                        <li data-rule="special">رمز خاص واحد على الأقل (@, #, %, !)</li>
+                    </ul>
+                    <div class="strength-meter">
+                        <div class="strength-bar"></div>
+                        <span class="strength-text">قوة كلمة المرور: ضعيفة</span>
+                    </div>
+                </div>
+            </div>
+            <button type="submit">تسجيل</button>
+            <p>لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
+        </form>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>

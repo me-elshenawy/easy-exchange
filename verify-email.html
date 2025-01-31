@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تفعيل البريد</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="verification-message">
+            <h2>يرجى تفعيل بريدك الإلكتروني</h2>
+            <p>تم إرسال رابط التفعيل إلى بريدك الإلكتروني.</p>
+            <button onclick="resendVerification()">إعادة إرسال رابط التفعيل</button>
+            <p><a href="login.html">العودة لتسجيل الدخول</a></p>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        function resendVerification() {
+            const user = auth.currentUser;
+            if (user) {
+                user.sendEmailVerification()
+                    .then(() => alert('تم إعادة إرسال رابط التفعيل!'))
+                    .catch(error => alert('خطأ: ' + error.message));
+            }
+        }
+    </script>
+</body>
+</html>
