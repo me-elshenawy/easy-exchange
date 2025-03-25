@@ -1,342 +1,352 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="og:image" content="https://mmg.whatsapp.net/m1/v/t24/An_anlO5wKAKanT2NlN7i49sUA4HnbgoyO8gjpdG6Zy3GZOjRImrZXD2byTDR3rABR6uqdDGIK2wy_nuo_RUzRmslTcVMXewsP1LQ9C-ANWST3ATEnOqbTx9futO1TWButCbmzRpjKMH7b7Xbsve?ccb=10-5&amp;oh=01_Q5AaIE1Qkg6_eU7OGVrz3ifqJeDSVhNOlp8qjn1gxYfo3nhD&amp;oe=672FD985&amp;_nc_sid=471a72" />
-  <meta itemprop="description" content="Easy Exchange: where transactions move faster than time itself. Exchange seamlessly and effortlessly"/> 
-  <link rel="shortcut icon" href="./Easy-Exchange.png">
-  <title>مساعدة | Easy Exchange</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  
-  <!-- تحميل مكتبة Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1083005893380316"
-      crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://mmg.whatsapp.net/m1/v/t24/An_anlO5wKAKanT2NlN7i49sUA4HnbgoyO8gjpdG6Zy3GZOjRImrZXD2byTDR3rABR6uqdDGIK2wy_nuo_RUzRmslTcVMXewsP1LQ9C-ANWST3ATEnOqbTx9futO1TWButCbmzRpjKMH7b7Xbsve?ccb=10-5&amp;oh=01_Q5AaIE1Qkg6_eU7OGVrz3ifqJeDSVhNOlp8qjn1gxYfo3nhD&amp;oe=672FD985&amp;_nc_sid=471a72" />
+    <meta itemprop="description" content="Easy Exchange: where transactions move faster than time itself. Exchange seamlessly and effortlessly"/> 
+    <link rel="shortcut icon" href="./Easy-Exchange.png">
+    <title>مساعدة | Easy Exchange</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            direction: rtl; /* لجعل النص العربي يبدأ من اليمين */
+            text-align: right;
+        }
 
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-      direction: rtl;
-      text-align: right;
-    }
+        /* تصميم الشريط العلوي */
+        .navbar {
+            background-color: #0056b3; /* لون الخلفية */
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000; /* لتكون فوق العناصر الأخرى */
+        }
 
-    .navbar {
-      background-color: #0056b3;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-    }
+        .navbar img {
+            height: 40px; /* ارتفاع الشعار */
+            margin-right: 10px; /* مسافة من اليمين */
+        }
 
-    .navbar img {
-      height: 40px;
-      margin-right: 10px;
-    }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px; /* حجم الخط */
+            display: flex;
+            align-items: center; /* محاذاة العناصر عموديًا */
+        }
 
-    .navbar a {
-      color: white;
-      text-decoration: none;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-    }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            margin-top: 60px; /* مسافة لتفادي الشريط العلوي الثابت */
+        }
 
-    .container {
-      width: 80%;
-      margin: auto;
-      overflow: hidden;
-      margin-top: 60px;
-    }
+        h1, h2 {
+            color: #2c3e50;
+        }
 
-    h1, h2 {
-      color: #2c3e50;
-    }
+        h1 {
+            text-align: center;
+            padding: 20px 0;
+        }
 
-    h1 {
-      text-align: center;
-      padding: 20px 0;
-    }
+        h2 {
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 10px;
+        }
 
-    h2 {
-      border-bottom: 2px solid #2c3e50;
-      padding-bottom: 10px;
-    }
+        .faq {
+            margin-bottom: 40px;
+        }
 
-    .faq {
-      margin-bottom: 40px;
-    }
+        .faq-item {
+            background: #fff;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .faq-item {
-      background: #fff;
-      padding: 20px;
-      margin: 10px 0;
-      border-radius: 10px;
-      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    }
+        .faq-item:hover {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+        }
 
-    .faq-item:hover {
-      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
-    }
+        .faq-question {
+            font-weight: bold;
+            color: #2980b9;
+            cursor: pointer;
+            font-size: 14px; /* زيادة حجم الخط لجعل السؤال أوضح */
+            transition: color 0.3s ease;
+            padding: 10px 0; /* إضافة مسافة لتوضيح السؤال */
+        }
 
-    .faq-question {
-      font-weight: bold;
-      color: #2980b9;
-      cursor: pointer;
-      font-size: 14px;
-      transition: color 0.3s ease;
-      padding: 10px 0;
-    }
+        .faq-question:hover {
+            color: #3498db;
+        }
 
-    .faq-question:hover {
-      color: #3498db;
-    }
+        .faq-answer {
+            display: none;
+            margin-top: 10px;
+            font-size: 14px;
+            direction: rtl;
+            text-align: right;
+        }
 
-    .faq-answer {
-      display: none;
-      margin-top: 10px;
-      font-size: 14px;
-      direction: rtl;
-      text-align: right;
-    }
+        .faq-answer.visible {
+            display: block;
+        }
 
-    .faq-answer.visible {
-      display: block;
-    }
+        .cta {
+            text-align: center;
+            margin: 30px 0;
+        }
 
-    .cta {
-      text-align: center;
-      margin: 30px 0;
-    }
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px; /* مسافة بين الجرس والنص */
+            text-decoration: none;
+            background-color: #0056b3;
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    .cta-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      background-color: #0056b3;
-      color: #fff;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
+        .cta-button box-icon {
+            margin-left: 5px; /* مسافة صغيرة على يسار الجرس */
+        }
 
-    .cta-button box-icon {
-      margin-left: 5px;
-    }
+        .cta-button:hover {
+            background-color: #3498db;
+        }
 
-    .cta-button:hover {
-      background-color: #3498db;
-    }
-
-    .faq-answer ol, .faq-answer ul, .faq-answer p {
-      direction: rtl;
-      text-align: right;
-    }
-
-    /* تنسيق وحدة الإعلان لتكون متناسقة مع تصميم الصفحة */
-    .ads-container {
-      margin: 20px auto;
-      text-align: center;
-      max-width: 600px;
-    }
-  </style>
-  <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
+        .faq-answer ol, .faq-answer ul, .faq-answer p {
+            direction: rtl;
+            text-align: right;
+        }
+    </style>
+        <script src="https://unpkg.com/boxicons@2.1.1/dist/boxicons.js"></script>
 </head>
 <body>
-  <!-- شريط التنقل العلوي -->
-  <div class="navbar">
-    <a href="#faq">الأسئلة الشائعة</a>
-    <a href="index.html">
-      <span>Easy Exchange</span>
-      <img src="./Easy-Exchange.png" alt="Easy Exchange Logo">
-    </a>
-  </div>
-
-  <div class="container">
-    <!-- عنوان الصفحة -->
-    <h1>قسم المساعدة والأسئلة الشائعة</h1>
-
-    <!-- وحدة الإعلان داخل الصفحة -->
-    <div class="ads-container">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-1083005693380316"
-           data-ad-slot="رقم_الإعلان"  <!-- استبدل "رقم_الإعلان" بمعرف وحدة الإعلان الخاصة بك -->
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+    <!-- شريط التنقل العلوي -->
+    <div class="navbar">
+        
+        <a href="#faq">الأسئلة الشائعة</a>
+        <a href="index.html">
+            <span>Easy Exchange</span>
+            <img src="./Easy-Exchange.png" alt="Easy Exchange Logo">
+        </a>
     </div>
 
-    <!-- قائمة الأسئلة الشائعة -->
-    <div class="faq">
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أشحن MuseWallet؟</div>
-        <div class="faq-answer">
-          <p>لشحن حساب MuseWallet الخاص بك، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
-            <li>انتقل إلى قسم "الإيداع" واختر نوع التحويل MuseWallet.</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+    
+    <div class="container">
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أشحن Redotpay؟</div>
-        <div class="faq-answer">
-          <p>لشحن حساب Redotpay الخاص بك، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
-            <li>انتقل إلى قسم "الإيداع" واختر نوع التحويل Redotpay.</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+        <!-- السؤال الأول -->
+        <div class="faq">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleAnswer(this)">ازاي أشحن MuseWallet؟</div>
+                <div class="faq-answer">
+                    <p>لشحن حساب MuseWallet الخاص بك، اتبع الخطوات التالية:</p>
+                    <ol>
+                        <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
+                        <li>انتقل إلى قسم "الإيداع" واختر نوع التحويل MuseWallet.</li>
+                        <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                        <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                    </ol>
+                </div>
+            </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أشحن Binance؟</div>
-        <div class="faq-answer">
-          <p>لشحن حساب Binance الخاص بك، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
-            <li>انتقل إلى قسم "الإيداع" واختر نوع التحويل Binance.</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+            <!-- السؤال الثاني -->
+            <div class="faq">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleAnswer(this)">ازاي أشحن Redotpay؟</div>
+                    <div class="faq-answer">
+                        <p>لشحن حساب Redotpay الخاص بك، اتبع الخطوات التالية:</p>
+                        <ol>
+                            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
+                            <li>انتقل إلى قسم "الإيداع" واختر نوع التحويل Redotpay.</li>
+                            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                        </ol>
+                    </div>
+                </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أسحب رصيد MuseWallet؟</div>
-        <div class="faq-answer">
-          <p>لسحب رصيد MuseWallet الخاص بك، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
-            <li>انتقل إلى قسم "السحب" واختر نوع التحويل MuseWallet.</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+                <!-- السؤال الثالث -->
+                <div class="faq">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أشحن Binance؟</div>
+                        <div class="faq-answer">
+                            <p>لشحن حساب Binance الخاص بك، اتبع الخطوات التالية:</p>
+                            <ol>
+                                <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
+                                <li>انتقل إلى قسم "الإيداع" واختر نوع التحويل Binance.</li>
+                                <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                                <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                            </ol>
+                        </div>
+                    </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أسحب رصيد Redotpay؟</div>
-        <div class="faq-answer">
-          <p>لسحب رصيد Redotpay الخاص بك، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
-            <li>انتقل إلى قسم "السحب" واختر نوع التحويل Redotpay.</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+                    <!-- السؤال الرابع -->
+                    <div class="faq">
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleAnswer(this)">ازاي أسحب رصيد MuseWallet؟</div>
+                            <div class="faq-answer">
+                                <p>لسحب رصيد MuseWallet الخاص بك، اتبع الخطوات التالية:</p>
+                                <ol>
+                                    <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
+                                    <li>انتقل إلى قسم "السحب" واختر نوع التحويل MuseWallet.</li>
+                                    <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                                    <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                                </ol>
+                            </div>
+                        </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أسحب رصيد Binance؟</div>
-        <div class="faq-answer">
-          <p>لسحب رصيد Binance الخاص بك، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
-            <li>انتقل إلى قسم "السحب" واختر نوع التحويل Binance.</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+                        <!-- السؤال الخامس -->
+                        <div class="faq">
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleAnswer(this)">ازاي أسحب رصيد Redotpay؟</div>
+                                <div class="faq-answer">
+                                    <p>لسحب رصيد Redotpay الخاص بك، اتبع الخطوات التالية:</p>
+                                    <ol>
+                                        <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
+                                        <li>انتقل إلى قسم "السحب" واختر نوع التحويل Redotpay.</li>
+                                        <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                                        <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        
+                        <!-- السؤال السادس -->
+                        <div class="faq">
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleAnswer(this)">ازاي أسحب رصيد Binance؟</div>
+                                <div class="faq-answer">
+                                    <p>لسحب رصيد Binance الخاص بك، اتبع الخطوات التالية:</p>
+                                    <ol>
+                                        <li>سجل الدخول إلى حسابك على Easy Exchange.</li>
+                                        <li>انتقل إلى قسم "السحب" واختر نوع التحويل Binance.</li>
+                                        <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                                        <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                                    </ol>
+                                </div>
+                            </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ما هي طرق الدفع المتاحة؟</div>
-        <div class="faq-answer">
-          <p>نوفر مجموعة متنوعة من طرق الدفع تشمل:</p>
-          <ul>
-            <li>انستا باي</li>
-            <li>المحافظ الإلكترونية</li>
-            <li>كارت فوري الاصفر</li>
-            <li>فيزا نكستا</li>
-            <li>فيزا تيلدا</li>
-          </ul>
-        </div>
-      </div>
+                            <!-- السؤال السابع -->
+                            <div class="faq-item">
+                                <div class="faq-question" onclick="toggleAnswer(this)">ما هي طرق الدفع المتاحة؟</div>
+                                <div class="faq-answer">
+                                    <p>نوفر مجموعة متنوعة من طرق الدفع تشمل:</p>
+                                    <ul>
+                                        <li>انستا باي</li>
+                                        <li>المحافظ الإلكترونية</li>
+                                        <li>كارت فوري الاصفر</li>
+                                        <li>فيزا نكستا</li>
+                                        <li>فيزا تيلدا</li>
+                                    </ul>
+                                </div>
+                            </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ازاي أقوم بعملية استبدال؟</div>
-        <div class="faq-answer">
-          <p>لإجراء عملية استبدال، اتبع الخطوات التالية:</p>
-          <ol>
-            <li>سجل الدخول إلى حسابك على Easy Exchange واختر "استبدال".</li>
-            <li>اختر طريقة الاستلام المفضلة لديك (مثل Binance، Musewallet، Redotpay).</li>
-            <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
-            <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
-          </ol>
-        </div>
-      </div>
+                        <!-- السؤال الثامن -->
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleAnswer(this)">ازاي أقوم بعملية استبدال؟</div>
+                            <div class="faq-answer">
+                                <p>لإجراء عملية استبدال، اتبع الخطوات التالية:</p>
+                                <ol>
+                                    <li>سجل الدخول إلى حسابك على Easy Exchange واختر "استبدال".</li>
+                                    <li>اختر طريقة الاستلام المفضلة لديك (مثل Binance، Musewallet، Redotpay).</li>
+                                    <li>اختر طريقة الدفع المناسبه لك وأدخل المبلغ المطلوب.</li>
+                                    <li>اضغط على زر "احسب" واتبع التعليمات التي تظهر لإكمال العملية.</li>
+                                </ol>
+                            </div>
+                        </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ما هي طرق الدفع المتاحة للاستبدال؟</div>
-        <div class="faq-answer">
-          <p>نوفر مجموعة متنوعة من طرق الاستبدال تشمل:</p>
-          <ul>
-            <li>MuseWallet</li>
-            <li>Redotpay</li>
-            <li>Binance</li>
-          </ul>
-        </div>
-      </div>
+                        <!-- السؤال التاسع -->
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleAnswer(this)">ما هي طرق الدفع المتاحة للاستبدال؟</div>
+                            <div class="faq-answer">
+                                <p>نوفر مجموعة متنوعة من طرق الاستبدال تشمل:</p>
+                                <ul>
+                                    <li>MuseWallet</li>
+                                    <li>Redotpay</li>
+                                    <li>Binance</li>
+                                </ul>
+                            </div>
+                        </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">ما هي الرسوم المطبقة على عمليات الاستبدال؟</div>
-        <div class="faq-answer">
-          <p> لإجراء عملية استبدال الأموال يتم تطبيق رسوم وهي:</p>
-          <ul>
-            <li>%1 من اجمالي المبلغ المطلوب استبداله, بحد ادني 0.5 دولار للعمليه.</li>
-          </ul>
-        </div>
-      </div>
+                        <!-- السؤال العاشر -->
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleAnswer(this)">ما هي الرسوم المطبقة على عمليات الاستبدال؟</div>
+                            <div class="faq-answer">
+                                <p> لإجراء عملية استبدال الأموال يتم تطبيق رسوم وهي:</p>
+                                <ul>
+                                    <li> %1 من اجمالي المبلغ المطلوب استبداله, بحد ادني 0.5 دولار للعمليه.</li>
+                                </ul>
+                            </div>
+                        </div>
 
-      <div class="faq-item">
-        <div class="faq-question" onclick="toggleAnswer(this)">كيف أتعامل مع مشكلة فنية؟</div>
-        <div class="faq-answer">
-          <p>إذا واجهتك أي مشكلة فنية:</p>
-          <ul>
-            <li>حاول إعادة تحميل الصفحة أو إعادة تشغيل التطبيق.</li>
-            <li>تأكد من اتصالك بالإنترنت.</li>
-            <li>إذا استمرت المشكلة، اتصل بالدعم الفني على <a href="https://wa.me/201153180614">WhatsApp</a>.</li>
-          </ul>
+                        <!-- السؤال الحادي عشر -->
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleAnswer(this)">كيف أتعامل مع مشكلة فنية؟</div>
+                            <div class="faq-answer">
+                                <p>إذا واجهتك أي مشكلة فنية:</p>
+                                <ul>
+                                    <li>حاول إعادة تحميل الصفحة أو إعادة تشغيل التطبيق.</li>
+                                    <li>تأكد من اتصالك بالإنترنت.</li>
+                                    <li>إذا استمرت المشكلة، اتصل بالدعم الفني على <a href="https://wa.me/201153180614">WhatsApp</a>.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- المزيد من الأسئلة -->
+                        <!-- <div class="faq-item">
+                            <div class="faq-question" onclick="toggleAnswer(this)">كيف يمكنني إنشاء حساب؟</div>
+                            <div class="faq-answer">
+                                <p>لإنشاء حساب جديد، اتبع الخطوات التالية:</p>
+                                <ol>
+                                    <li>اضغط على زر "إنشاء حساب" في الصفحة الرئيسية.</li>
+                                    <li>املأ المعلومات المطلوبة مثل البريد الإلكتروني وكلمة المرور.</li>
+                                    <li>تأكيد الحساب عبر البريد الإلكتروني المرسل إليك.</li>
+                                </ol>
+                            </div>
+                        </div> -->
+
+            <!-- إضافة المزيد من الأسئلة حسب الحاجة -->
+
         </div>
-      </div>
+
+        <div class="cta">
+            <a class="cta-button" href="https://whatsapp.com/channel/0029VarOLaVGU3BFkRuTMY24" target="_blank">
+                <span>ابقَ على تواصل</span>
+                <box-icon name='bell' type='solid' animation='tada' color='#ffffff'></box-icon>
+            </a>
+        </div>
+        
+        
     </div>
 
-    <div class="cta">
-      <a class="cta-button" href="https://whatsapp.com/channel/0029VarOLaVGU3BFkRuTMY24" target="_blank">
-        <span>ابقَ على تواصل</span>
-        <box-icon name='bell' type='solid' animation='tada' color='#ffffff'></box-icon>
-      </a>
-    </div>
-  </div>
-
-  <script>
-    function toggleAnswer(element) {
-      const answer = element.nextElementSibling;
-      answer.classList.toggle('visible');
-    }
-  </script>
+    <script>
+        function toggleAnswer(element) {
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('visible');
+        }
+    </script>
 </body>
-            </html>
+  </html>
