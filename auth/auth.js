@@ -206,44 +206,57 @@ export const getCurrentUser = () => {
     });
 };
 
+/**
+ * --- START: NEW AND IMPROVED PAGE PROTECTION ---
+ * This function handles all authentication-based page access logic.
+ * It's based on a strict state machine:
+ * 1. LOGGED OUT: Can only access public pages.
+ * 2. LOGGED IN & VERIFIED: Can access protected pages, is redirected from public pages.
+ * 3. LOGGED IN & UNVERIFIED: Is forced to the 'verify-email' page from anywhere else.
+ */
 export const protectPage = async (requiresVerification = true) => {
     const user = await getCurrentUser();
     const currentPathname = window.location.pathname;
     const onAuthDir = currentPathname.includes('/auth/');
+    
     const publicAuthPages = ['/auth/login.html', '/auth/register.html', '/auth/forgot-password.html'];
+    const isPublicAuthPage = publicAuthPages.includes(currentPathname);
+    const isVerifyPage = currentPathname.endsWith('verify-email.html');
 
     if (!user) {
-        // إذا لم يكن المستخدم مسجلاً دخوله ويحاول الوصول إلى صفحة محمية، أعد توجيهه إلى صفحة تسجيل الدخول.
-        if (!publicAuthPages.includes(currentPathname) && !currentPathname.endsWith('verify-email.html')) {
+        // STATE: LOGGED OUT
+        // If trying to access a page that requires a user (e.g., dashboard, history),
+        // redirect them to the login page. The `requiresVerification` parameter serves as a
+        // flag for these protected pages.
+        if (requiresVerification) {
             window.location.href = onAuthDir ? 'login.html' : 'auth/login.html';
         }
-        return null; // اسمح بالوصول إلى الصفحات العامة.
+        // Otherwise, they are on a public page, so allow access.
+        return null;
     }
-    
-    // إذا كان المستخدم مسجلاً ومُتحققًا منه
+
     if (user.emailVerified) {
-        // إذا حاول الوصول إلى صفحات المصادقة العامة، أعد توجيهه إلى لوحة التحكم.
-        if (publicAuthPages.includes(currentPathname) || currentPathname.endsWith('verify-email.html')) {
+        // STATE: LOGGED IN AND VERIFIED
+        // If a verified user somehow lands on a public auth page or the verify page,
+        // redirect them away to their dashboard or intended destination.
+        if (isPublicAuthPage || isVerifyPage) {
             handleSuccessfulAuth(user);
         }
+        // Otherwise, they are on a valid protected page (like dashboard), so allow access.
         return user;
-    } 
-    // إذا كان المستخدم مسجلاً ولكن غير مُتحقق منه
-    else {
-        // إذا كان المستخدم غير المُتحقق منه يحاول الوصول إلى صفحات المصادقة العامة (لأنه عالق ويريد البدء من جديد)،
-        // فقم بتسجيل خروجه تلقائيًا لمسح الجلسة السيئة.
-        if (publicAuthPages.includes(currentPathname)) {
-            await signOut(auth);
-            return null; // تعامل معه كمستخدم غير مسجل للسماح بتحميل الصفحة.
-        }
-
-        // إذا كانت الصفحة تتطلب التحقق، أعد توجيهه إلى صفحة التحقق.
-        if (requiresVerification && !currentPathname.endsWith('verify-email.html')) {
+    } else {
+        // STATE: LOGGED IN, BUT NOT VERIFIED
+        // This is a strict rule: An unverified user's session is only valid on the
+        // 'verify-email.html' page. This prevents all redirect loops and edge cases.
+        if (!isVerifyPage) {
+            // If they are on ANY other page, force them to the verification page.
             window.location.href = onAuthDir ? 'verify-email.html' : 'auth/verify-email.html';
         }
-        return user; // اسمح للمستخدم غير المُتحقق منه بالبقاء في صفحة التحقق.
+        // If they are already on the verification page, let them stay.
+        return user;
     }
 };
+// --- END: NEW AND IMPROVED PAGE PROTECTION ---
 
 export const getUserProfile = async (uid) => {
     if (!uid) return null;
