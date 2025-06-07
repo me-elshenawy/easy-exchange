@@ -212,7 +212,103 @@ document.addEventListener('DOMContentLoaded', async () => {
         function updateCurrencyLabelsAndClearAmounts(clearTarget = 'receive') { const sendKey = sendCurrencySelect.value; const receiveKey = receiveCurrencySelect.value; sendCurrencyLabel.textContent = (sendKey && allPaymentMethods[sendKey]) ? allPaymentMethods[sendKey].type : ""; receiveCurrencyLabel.textContent = (receiveKey && allPaymentMethods[receiveKey]) ? allPaymentMethods[receiveKey].type : ""; if (clearTarget === 'receive') receiveAmountInput.value = ""; else if (clearTarget === 'send') sendAmountInput.value = ""; else if (clearTarget === 'both') { sendAmountInput.value = ""; receiveAmountInput.value = ""; } if (sendKey && receiveKey) { if (sendAmountInput.value && (clearTarget !== 'send' && clearTarget !== 'both')) handleAmountChange_local('send'); else if (receiveAmountInput.value && (clearTarget !== 'receive' && clearTarget !== 'both')) handleAmountChange_local('receive'); } }
         function calculateExchange(sendMethodKey, receiveMethodKey, amount, calculationSource) { if (!exchangeRatesAndFees || !allPaymentMethods[sendMethodKey] || !allPaymentMethods[receiveMethodKey] || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) return "0.00"; const sendMethod = allPaymentMethods[sendMethodKey], receiveMethod = allPaymentMethods[receiveMethodKey], rates = exchangeRatesAndFees; let result = 0; if (calculationSource === 'send') { let amountToConvert = parseFloat(amount); if (sendMethod.fees && sendMethod.fees.sending && sendMethod.fees.sending.type !== 'none') { const feeConfig = sendMethod.fees.sending; let calculatedFee = 0; if (feeConfig.type === 'fixed') calculatedFee = feeConfig.value || 0; else if (feeConfig.type === 'percentage') { calculatedFee = amountToConvert * (feeConfig.value || 0); if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; } amountToConvert -= calculatedFee; } if (amountToConvert <= 0) return "0.00"; let receivedAmountBeforeFees = 0; if (sendMethod.type === "USDT" && receiveMethod.type === "EGP") receivedAmountBeforeFees = amountToConvert * (rates.usdtToEgpBuyRate || 0); else if (sendMethod.type === "EGP" && receiveMethod.type === "USDT") receivedAmountBeforeFees = amountToConvert / (rates.usdtToEgpSellRate || 1); else if (sendMethod.type === "USDT" && receiveMethod.type === "USDT") { receivedAmountBeforeFees = amountToConvert; if (sendMethod.key !== receiveMethod.key && rates.usdtToUsdtServiceFeeType && rates.usdtToUsdtServiceFeeType !== 'none') { let serviceFee = 0; if (rates.usdtToUsdtServiceFeeType === 'fixed') serviceFee = rates.usdtToUsdtServiceFeeValue || 0; else if (rates.usdtToUsdtServiceFeeType === 'percentage') { serviceFee = amountToConvert * (rates.usdtToUsdtServiceFeeValue || 0); if (rates.usdtToUsdtServiceFeeMinCap != null && serviceFee < rates.usdtToUsdtServiceFeeMinCap) serviceFee = rates.usdtToUsdtServiceFeeMinCap; if (rates.usdtToUsdtServiceFeeMaxCap != null && serviceFee > rates.usdtToUsdtServiceFeeMaxCap) serviceFee = rates.usdtToUsdtServiceFeeMaxCap; } receivedAmountBeforeFees -= serviceFee; } } else if (sendMethod.type === "EGP" && receiveMethod.type === "EGP") receivedAmountBeforeFees = amountToConvert; else return "0.00"; if (receivedAmountBeforeFees <= 0) return "0.00"; let finalAmount = receivedAmountBeforeFees; if (receiveMethod.fees && receiveMethod.fees.receiving && receiveMethod.fees.receiving.type !== 'none') { const feeConfig = receiveMethod.fees.receiving; let calculatedFee = 0; if (feeConfig.type === 'fixed') calculatedFee = feeConfig.value || 0; else if (feeConfig.type === 'percentage') { calculatedFee = receivedAmountBeforeFees * (feeConfig.value || 0); if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; } finalAmount -= calculatedFee; } result = finalAmount; } else if (calculationSource === 'receive') { let amountToCalculateFrom = parseFloat(amount); let amountBeforeReceivingFee = amountToCalculateFrom; if (receiveMethod.fees && receiveMethod.fees.receiving && receiveMethod.fees.receiving.type !== 'none') { const feeConfig = receiveMethod.fees.receiving; if (feeConfig.type === 'fixed') { amountBeforeReceivingFee += feeConfig.value || 0; } else if (feeConfig.type === 'percentage') { const percentage = feeConfig.value || 0; if (percentage < 1) { let initialGuess = amountToCalculateFrom / (1 - percentage); let calculatedFee = initialGuess * percentage; if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; amountBeforeReceivingFee = amountToCalculateFrom + calculatedFee; } } } if (amountBeforeReceivingFee <= 0) return "0.00"; let amountAfterSendingFee = 0; if (sendMethod.type === "USDT" && receiveMethod.type === "EGP") { amountAfterSendingFee = amountBeforeReceivingFee / (rates.usdtToEgpBuyRate || 1); } else if (sendMethod.type === "EGP" && receiveMethod.type === "USDT") { amountAfterSendingFee = amountBeforeReceivingFee * (rates.usdtToEgpSellRate || 0); } else if (sendMethod.type === "USDT" && receiveMethod.type === "USDT") { if (sendMethod.key === receiveMethod.key) { amountAfterSendingFee = amountBeforeReceivingFee; } else { const feeConfig = { type: rates.usdtToUsdtServiceFeeType, value: rates.usdtToUsdtServiceFeeValue, minCap: rates.usdtToUsdtServiceFeeMinCap, maxCap: rates.usdtToUsdtServiceFeeMaxCap }; if (feeConfig.type === 'none' || !feeConfig.type) { amountAfterSendingFee = amountBeforeReceivingFee; } else if (feeConfig.type === 'fixed') { amountAfterSendingFee = amountBeforeReceivingFee + (feeConfig.value || 0); } else if (feeConfig.type === 'percentage') { const p = feeConfig.value || 0; if (p < 1) { let potentialSend_A = amountBeforeReceivingFee / (1 - p); let calculatedFee_A = potentialSend_A * p; if ((feeConfig.minCap == null || calculatedFee_A >= feeConfig.minCap) && (feeConfig.maxCap == null || calculatedFee_A <= feeConfig.maxCap)) { amountAfterSendingFee = potentialSend_A; } else if (feeConfig.minCap != null && calculatedFee_A < feeConfig.minCap) { amountAfterSendingFee = amountBeforeReceivingFee + feeConfig.minCap; } else if (feeConfig.maxCap != null && calculatedFee_A > feeConfig.maxCap) { amountAfterSendingFee = amountBeforeReceivingFee + feeConfig.maxCap; } else { amountAfterSendingFee = potentialSend_A; } } } else { amountAfterSendingFee = amountBeforeReceivingFee; } } } else if (sendMethod.type === "EGP" && receiveMethod.type === "EGP") { amountAfterSendingFee = amountBeforeReceivingFee; } else { return "0.00"; } if (amountAfterSendingFee <= 0) return "0.00"; let initialSendAmount = amountAfterSendingFee; if (sendMethod.fees && sendMethod.fees.sending && sendMethod.fees.sending.type !== 'none') { const feeConfig = sendMethod.fees.sending; if (feeConfig.type === 'fixed') { initialSendAmount += feeConfig.value || 0; } else if (feeConfig.type === 'percentage') { const percentage = feeConfig.value || 0; if (percentage < 1) { let initialGuess = amountAfterSendingFee / (1 - percentage); let calculatedFee = initialGuess * percentage; if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; initialSendAmount = amountAfterSendingFee + calculatedFee; } } } result = initialSendAmount; } if (result <= 0 || isNaN(result)) return "0.00"; let finalValue; if (calculationSource === 'send') { finalValue = Math.floor(result * 100) / 100; } else { finalValue = Math.ceil(result * 100) / 100; } return finalValue.toFixed(2); }
         function handleAmountChange_local(source) { if (isCalculating) return; const sendKey = sendCurrencySelect.value, receiveKey = receiveCurrencySelect.value; if (!sendKey || !receiveKey || !exchangeRatesAndFees) { if (source === 'send') receiveAmountInput.value = ""; else sendAmountInput.value = ""; return; } isCalculating = true; try { if (source === 'send') { const amountToConvert = parseFloat(sendAmountInput.value); if (isNaN(amountToConvert) || amountToConvert <= 0) { receiveAmountInput.value = ""; } else { receiveAmountInput.value = calculateExchange(sendKey, receiveKey, amountToConvert, 'send'); } } else if (source === 'receive') { const amountToConvert = parseFloat(receiveAmountInput.value); if (isNaN(amountToConvert) || amountToConvert <= 0) { sendAmountInput.value = ""; } else { sendAmountInput.value = calculateExchange(sendKey, receiveKey, amountToConvert, 'receive'); } } } catch (e) { console.error("Calculation error:", e); sendAmountInput.value = ""; receiveAmountInput.value = ""; } finally { isCalculating = false; } }
-        async function validateAndProceed() { window.showPageSpinner(); const sendMethodKey = sendCurrencySelect.value, receiveMethodKey = receiveCurrencySelect.value, sendAmountVal = sendAmountInput.value, receiveAmountVal = receiveAmountInput.value, sendAmountNum = parseFloat(sendAmountVal), receiveAmountNum = parseFloat(receiveAmountVal); if (!allPaymentMethods || Object.keys(allPaymentMethods).length === 0 || !exchangeRatesAndFees) { showToast("خطأ في تحميل إعدادات الموقع. يرجى تحديث الصفحة.", 'error'); window.hidePageSpinner(); return; } if (!sendMethodKey || !receiveMethodKey) { showToast("الرجاء اختيار عملتي الإرسال والاستلام.", 'error'); window.hidePageSpinner(); return; } if (isNaN(sendAmountNum) || sendAmountNum <= 0 || isNaN(receiveAmountNum) || receiveAmountNum <= 0) { showToast("الرجاء إدخال مبالغ صحيحة.", 'error'); window.hidePageSpinner(); return; } const sendMethodDetails = allPaymentMethods[sendMethodKey]; if (!sendMethodDetails) { showToast("وسيلة الإرسال المختارة غير صالحة.", "error"); window.hidePageSpinner(); return; } if (typeof sendMethodDetails.minAmount === 'number' && sendAmountNum < sendMethodDetails.minAmount) { showToast(`الحد الأدنى للإرسال بعملة ${sendMethodDetails.name} هو ${sendMethodDetails.minAmount} ${sendMethodDetails.type}.`, 'warning'); window.hidePageSpinner(); return; } if (sendMethodDetails.requiresWholeNumber && sendAmountNum % 1 !== 0) { showToast(`المبلغ المرسل بعملة ${sendMethodDetails.name} يجب أن يكون رقمًا صحيحًا (بدون كسور).`, 'warning'); window.hidePageSpinner(); return; } try { const { getCurrentUser } = await import('./auth/auth.js'); const user = await getCurrentUser(); if (!user || !user.emailVerified) { showToast("يجب تسجيل الدخول والتحقق من بريدك الإلكتروني للمتابعة...", 'info', 3000); localStorage.setItem('pendingExchangeData', JSON.stringify({ sendCurrency: sendMethodKey, receiveCurrency: receiveMethodKey, sendAmount: sendAmountVal, receiveAmount: receiveAmountVal })); setTimeout(() => { window.location.href = `/auth/login.html?action=continueExchange&next=../exchange.html`; }, 2500); return; } } catch (e) { console.error("Error checking auth status:", e); showToast("حدث خطأ أثناء التحقق من حالة تسجيل الدخول.", 'error', 5000); window.hidePageSpinner(); return; } const params = new URLSearchParams({ sendAmount: sendAmountVal, sendCurrency: sendMethodKey, receiveAmount: receiveAmountVal, receiveCurrency: receiveMethodKey }); window.location.href = `exchange.html?${params.toString()}`; }
+        
+        // =============================================
+        // ========= START: FUNCTION WITH FIX ==========
+        // =============================================
+        async function validateAndProceed() {
+            window.showPageSpinner();
+            const sendMethodKey = sendCurrencySelect.value,
+                receiveMethodKey = receiveCurrencySelect.value,
+                sendAmountVal = sendAmountInput.value,
+                receiveAmountVal = receiveAmountInput.value,
+                sendAmountNum = parseFloat(sendAmountVal),
+                receiveAmountNum = parseFloat(receiveAmountVal);
+        
+            if (!allPaymentMethods || Object.keys(allPaymentMethods).length === 0 || !exchangeRatesAndFees) {
+                showToast("خطأ في تحميل إعدادات الموقع. يرجى تحديث الصفحة.", 'error');
+                window.hidePageSpinner();
+                return;
+            }
+        
+            if (!sendMethodKey || !receiveMethodKey) {
+                showToast("الرجاء اختيار عملتي الإرسال والاستلام.", 'error');
+                window.hidePageSpinner();
+                return;
+            }
+        
+            if (isNaN(sendAmountNum) || sendAmountNum <= 0 || isNaN(receiveAmountNum) || receiveAmountNum <= 0) {
+                showToast("الرجاء إدخال مبالغ صحيحة.", 'error');
+                window.hidePageSpinner();
+                return;
+            }
+        
+            // 1. Fetch details for both methods
+            const sendMethodDetails = allPaymentMethods[sendMethodKey];
+            const receiveMethodDetails = allPaymentMethods[receiveMethodKey]; // New addition
+        
+            if (!sendMethodDetails || !receiveMethodDetails) { // Check if both methods exist
+                showToast("وسيلة الإرسال أو الاستلام المختارة غير صالحة.", "error");
+                window.hidePageSpinner();
+                return;
+            }
+        
+            // 2. Check minimum for SENDING amount (original check)
+            if (typeof sendMethodDetails.minAmount === 'number' && sendAmountNum < sendMethodDetails.minAmount) {
+                showToast(`الحد الأدنى للإرسال بعملة ${sendMethodDetails.name} هو ${sendMethodDetails.minAmount} ${sendMethodDetails.type}.`, 'warning');
+                window.hidePageSpinner();
+                return;
+            }
+        
+            // 3. Check minimum for RECEIVING amount (new, crucial check)
+            if (typeof receiveMethodDetails.minAmount === 'number' && receiveAmountNum < receiveMethodDetails.minAmount) {
+                showToast(`الحد الأدنى للاستلام بعملة ${receiveMethodDetails.name} هو ${receiveMethodDetails.minAmount} ${receiveMethodDetails.type}.`, 'warning');
+                window.hidePageSpinner();
+                return;
+            }
+        
+            // 4. Check for whole number requirement (original check)
+            if (sendMethodDetails.requiresWholeNumber && sendAmountNum % 1 !== 0) {
+                showToast(`المبلغ المرسل بعملة ${sendMethodDetails.name} يجب أن يكون رقمًا صحيحًا (بدون كسور).`, 'warning');
+                window.hidePageSpinner();
+                return;
+            }
+        
+            try {
+                const { getCurrentUser } = await import('./auth/auth.js');
+                const user = await getCurrentUser();
+                if (!user || !user.emailVerified) {
+                    showToast("يجب تسجيل الدخول والتحقق من بريدك الإلكتروني للمتابعة...", 'info', 3000);
+                    localStorage.setItem('pendingExchangeData', JSON.stringify({
+                        sendCurrency: sendMethodKey,
+                        receiveCurrency: receiveMethodKey,
+                        sendAmount: sendAmountVal,
+                        receiveAmount: receiveAmountVal
+                    }));
+                    setTimeout(() => {
+                        window.location.href = `/auth/login.html?action=continueExchange&next=../exchange.html`;
+                    }, 2500);
+                    return;
+                }
+            } catch (e) {
+                console.error("Error checking auth status:", e);
+                showToast("حدث خطأ أثناء التحقق من حالة تسجيل الدخول.", 'error', 5000);
+                window.hidePageSpinner();
+                return;
+            }
+        
+            const params = new URLSearchParams({
+                sendAmount: sendAmountVal,
+                sendCurrency: sendMethodKey,
+                receiveAmount: receiveAmountVal,
+                receiveCurrency: receiveMethodKey
+            });
+            window.location.href = `exchange.html?${params.toString()}`;
+        }
+        // =============================================
+        // ========== END: FUNCTION WITH FIX ===========
+        // =============================================
+
         sendCurrencySelect.addEventListener('change', updateReceiveCurrencyOptions);
         receiveCurrencySelect.addEventListener('change', () => updateCurrencyLabelsAndClearAmounts('send'));
         sendAmountInput.addEventListener('input', () => handleAmountChange_local('send'));
