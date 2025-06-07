@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطأ - الصفحة غير موجودة</title>
+    
+    <!-- الأنماط الرئيسية للموقع -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- الأنماط الخاصة بصفحات المصادقة (لإعادة استخدام بعض التنسيقات العامة) -->
+    <link rel="stylesheet" href="/auth/auth-style.css">
+
+    <!-- الأنماط الخاصة بصفحة الخطأ -->
+    <link rel="stylesheet" href="error-page-styles.css">
+
+    <!-- خط Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- أيقونات Boxicons -->
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+
+    <!-- هذا الجزء سيقوم بتحميل الهيدر الديناميكي للموقع -->
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content">
+            <div class="error-container">
+                <div class="error-icon-wrapper">
+                    <box-icon name='unlink' size='6rem' color='#5b3bb0'></box-icon>
+                </div>
+                <h1>الصفحة غير موجودة</h1>
+                <p class="error-description">
+                    عذرًا، لا يمكننا العثور على الصفحة التي تبحث عنها. ربما تم حذفها أو أن الرابط الذي اتبعته غير صحيح.
+                </p>
+                <a href="/index.html" class="button primary cta-button">
+                    <box-icon name='home-alt' color='#ffffff'></box-icon>
+                    العودة إلى الصفحة الرئيسية
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- استدعاء السكربتات الرئيسية لتحميل الهيدر وتشغيل وظائف الموقع العامة -->
+    <script src="config.js"></script>
+    <script type="module" src="script.js"></script>
+
+</body>
+</html>

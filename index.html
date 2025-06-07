@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Exchange</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <div id="notification-placeholder"></div> 
+
+    <div class="main-content-wrapper">
+        <div class="content-wrapper-inner text-right-align"> <!-- استخدام الكلاس الجديد -->
+            <h1 style="font-size: 1.5rem; color: #495057; text-align:center; margin-bottom: 30px;">تبادل العملات بسهولة</h1>
+
+            <div class="form-group">
+                <label for="sendCurrency">أنت ترسل</label>
+                <select id="sendCurrency">
+                    <option value="">اختر العملة</option>
+                    <!-- Options will be populated by JS -->
+                </select>
+                <div class="input-wrapper" style="margin-top: 10px;">
+                    <input type="number" id="sendAmount" placeholder="أدخل المبلغ" step="any">
+                    <span id="sendCurrencyLabel" class="currency-label"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="receiveCurrency">أنت تحصل على</label>
+                <select id="receiveCurrency">
+                    <option value="">اختر عملة الإرسال أولاً</option>
+                    <!-- Options will be populated by JS -->
+                </select>
+                <div class="input-wrapper" style="margin-top: 10px;">
+                    <input type="number" id="receiveAmount" placeholder="المبلغ المستلم" step="any">
+                    <span id="receiveCurrencyLabel" class="currency-label"></span>
+                </div>
+            </div>
+
+            <button id="continueButton" class="site-button"> <!-- إضافة كلاس site-button -->
+                متابعة
+                <box-icon name='right-arrow-alt' color='#ffffff'></box-icon>
+            </button>
+        </div>
+    </div>
+    
+    <!-- زر المساعدة العائم سيتم إنشاؤه بواسطة script.js -->
+    <script src="config.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

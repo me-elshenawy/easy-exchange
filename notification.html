@@ -1,0 +1,41 @@
+<!-- notification.html -->
+<div id="site-top-header">
+    <div class="header-content container">
+        
+        <!-- تم نقل هذا القسم أولاً ليظهر على اليمين في تصميم RTL -->
+        <div class="navigation-container">
+            <!-- Hamburger icon for mobile view -->
+            <button id="hamburger-icon" aria-label="فتح القائمة" aria-expanded="false">
+                <box-icon name='menu' size='md'></box-icon>
+            </button>
+            
+            <!-- Main navigation menu (desktop) - Populated by script.js -->
+            <nav id="main-nav" class="main-navigation">
+                <!-- JavaScript will populate this section -->
+            </nav>
+        </div>
+
+        <!-- تم نقل هذا القسم ثانيًا ليظهر على اليسار -->
+        <div id="site-brand-title">
+            <a href="/index.html">
+                <box-icon name='transfer-alt' type='solid' color='#5b3bb0'></box-icon>
+                <h2>Easy Exchange</h2>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Professional Notification Bar (Remains Unchanged) -->
+<div id="professional-notification-bar" class="pro-notification-wrapper" style="display: none;">
+    <div class="pro-notification-content container">
+        <span id="pro-notification-icon" class="pro-notification-icon-span">
+             <box-icon name='bell' type='solid' color='#ffffff'></box-icon>
+        </span>
+        <span id="pro-notification-text" class="pro-notification-text-span">
+            <!-- Text added by JavaScript -->
+        </span>
+        <button id="pro-notification-close" class="pro-notification-close-btn" aria-label="إغلاق الإشعار">
+            <box-icon name='x' color='#ffffff' size='sm'></box-icon>
+        </button>
+    </div>
+</div>

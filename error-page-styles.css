@@ -1,0 +1,67 @@
+/* /error-page-styles.css */
+
+.error-container {
+    text-align: center;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-icon-wrapper {
+    margin-bottom: 25px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-color: #f0ecfb; /* لون بنفسجي فاتح جدًا متناسق */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.error-container h1 {
+    font-size: 2rem;
+    color: #34495e;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.error-description {
+    font-size: 1.1rem;
+    color: #6c757d;
+    max-width: 450px;
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.error-container .button {
+    min-width: 250px;
+    padding: 14px 25px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(91, 59, 176, 0.4);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 15px rgba(91, 59, 176, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(91, 59, 176, 0);
+    }
+}
+
+@media (max-width: 768px) {
+    .error-container h1 {
+        font-size: 1.7rem;
+    }
+    .error-description {
+        font-size: 1rem;
+    }
+}

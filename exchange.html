@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل العملية - Easy Exchange</title>
+    <link rel="stylesheet" href="style.css"> <!-- الأنماط الرئيسية -->
+    <!-- لا حاجة لـ auth-style.css هنا إلا إذا كنت تستخدم كلاسات منه مباشرة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <!-- !! مهم: مكان لوضع الشريط العلوي والإشعارات !! -->
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="content-wrapper-inner text-right-align">
+            <h1>تفاصيل عمليتك</h1>
+
+            <div class="details-container">
+                <div class="detail-item">
+                    <span class="label">أنت تدفع عبر:</span>
+                    <span id="sendCurrencyValue" class="value"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">المبلغ المرسل:</span>
+                    <span id="sendAmountValue" class="value"></span>
+                </div>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                <div class="detail-item">
+                    <span class="label">أنت تستلم عبر:</span>
+                    <span id="receiveCurrencyValue" class="value"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">المبلغ المستلم:</span>
+                    <span id="receiveAmountValue" class="value"></span>
+                </div>
+            </div>
+
+            <div class="note" id="instructionNote" style="margin-top: 25px;">
+                <!-- يتم ملؤه بواسطة exchange-script.js -->
+            </div>
+            
+            <div class="info-box-wrapper" style="margin-top: 25px;">
+                <div class="transfer-message" id="transferMessage">
+                    <!-- يتم ملؤه بواسطة exchange-script.js -->
+                </div>
+                <div class="info-box" id="recipientInfoBox" title="اضغط للنسخ">
+                    <span id="dynamicRecipientInfo"></span>
+                    <box-icon name='copy' color='#007bff' style="margin-right: 8px;"></box-icon>
+                </div>
+            </div>
+
+            <div class="report-problem">
+                <a href="#" id="reportProblemLink">الإبلاغ عن مشكلة بطريقة الدفع؟</a>
+            </div>
+
+            <button id="goToChatButton" class="site-button" style="margin-top: 30px;">
+                التوجه إلى الدردشة للتأكيد
+                <box-icon name='whatsapp' type='logo' animation='tada' color='#ffffff'></box-icon>
+            </button>
+        </div>
+    </div>
+    
+    <!-- !! ترتيب السكربتات مهم !! -->
+    <script src="config.js"></script> <!-- يجب تحميل CONFIG أولاً إذا كان script.js يعتمد عليه -->
+    <script type="module" src="script.js"></script> <!-- يحتوي على loadNotificationBar ودوال عامة -->
+    <script type="module" src="exchange-script.js"></script> <!-- السكربت الخاص بهذه الصفحة -->
+</body>
+</html>
