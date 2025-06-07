@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل العمليات - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content">
+            
+            <div class="dashboard-header">
+                <h2><box-icon name='history' style='margin-left: 10px;'></box-icon>سجل العمليات</h2>
+            </div>
+            
+            <div class="history-controls">
+                <div class="search-control">
+                    <input type="text" id="searchInput" placeholder="ابحث بالاسم، المبلغ، أو الحالة...">
+                    <box-icon name='search'></box-icon>
+                </div>
+                <div class="filter-control">
+                    <label for="statusFilter">الحالة:</label>
+                    <select id="statusFilter">
+                        <option value="all">الكل</option>
+                        <option value="Completed">مكتملة</option>
+                        <option value="Pending">قيد الانتظار</option>
+                        <option value="Processing">قيد المعالجة</option>
+                        <option value="Rejected">مرفوضة</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="transactionsContainer">
+                <p id="loadingMessage" style="text-align: center; padding: 20px; color: #555;">جارٍ تحميل سجل العمليات...</p>
+                
+                <div class="table-responsive-container">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>رقم العملية</th>
+                                <th>التاريخ</th>
+                                <th>تفاصيل الإرسال</th>
+                                <th>تفاصيل الاستلام</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transaction-table-body">
+                            <!-- Table rows will be injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="transaction-cards-container" class="transactions-list">
+                    <!-- Cards for mobile view will be injected by JavaScript -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script> 
+    <script type="module">
+        import { protectPage, getUserTransactions } from './auth.js';
+
+        const tableBody = document.getElementById('transaction-table-body');
+        const cardsContainer = document.getElementById('transaction-cards-container');
+        const transactionsContainer = document.getElementById('transactionsContainer');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+
+        let allTransactions = [];
+
+        const copyToClipboard = (text) => {
+            navigator.clipboard.writeText(text).then(() => {
+                window.showToast(`تم نسخ رقم العملية: ${text}`, 'success');
+            }).catch(err => {
+                console.error("Copy failed:", err);
+                window.showToast('فشل نسخ الرقم.', 'error');
+            });
+        };
+
+        const formatDate = (firebaseTimestamp) => {
+            if (!firebaseTimestamp || !firebaseTimestamp.toDate) return "غير متوفر";
+            const date = firebaseTimestamp.toDate();
+            return new Intl.DateTimeFormat('ar-EG-u-nu-latn', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+            }).format(date);
+        };
+
+        const renderTransactions = (transactions) => {
+            tableBody.innerHTML = '';
+            cardsContainer.innerHTML = '';
+
+            if (transactions.length === 0) {
+                const noResultsMessage = '<p style="text-align: center; padding: 20px; color: #777;">لا توجد عمليات تطابق بحثك.</p>';
+                tableBody.innerHTML = `<tr><td colspan="5">${noResultsMessage}</td></tr>`;
+                cardsContainer.innerHTML = noResultsMessage;
+                return;
+            }
+
+            transactions.forEach(tx => {
+                const statusClass = (tx.status || 'pending').toLowerCase().replace(/\s/g, '-');
+                const formattedDate = formatDate(tx.timestamp);
+
+                // Reusable HTML for Transaction ID with copy button
+                const txIdHtml = `
+                    <div class="tx-id-wrapper">
+                        <span class="tx-id-cell">${tx.transactionId}</span>
+                        <button class="copy-tx-id-btn" data-txid="${tx.transactionId}" title="نسخ رقم العملية">
+                            <box-icon name='copy' size='xs'></box-icon>
+                        </button>
+                    </div>`;
+
+                // Create Table Row for Desktop
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${txIdHtml}</td>
+                    <td>${formattedDate}</td>
+                    <td class="tx-amount-cell">
+                        <span class="amount">${tx.sendAmount.toFixed(2)} ${tx.sendCurrencyType}</span>
+                        <span class="method">${tx.sendCurrencyName}</span>
+                    </td>
+                    <td class="tx-amount-cell">
+                        <span class="amount">${tx.receiveAmount.toFixed(2)} ${tx.receiveCurrencyType}</span>
+                        <span class="method">${tx.receiveCurrencyName}</span>
+                    </td>
+                    <td><span class="tx-status status-${statusClass}">${tx.status || 'Pending'}</span></td>
+                `;
+                tableBody.appendChild(row);
+
+                // Create Card for Mobile
+                const card = document.createElement('div');
+                card.className = 'transaction-card';
+                card.innerHTML = `
+                    <div class="tx-header">
+                        ${txIdHtml}
+                        <span class="tx-date">${formattedDate}</span>
+                    </div>
+                    <div class="tx-detail-item">
+                        <span class="tx-label">أرسلت:</span>
+                        <span class="tx-value">${tx.sendAmount.toFixed(2)} ${tx.sendCurrencyType} <small>(${tx.sendCurrencyName})</small></span>
+                    </div>
+                    <div class="tx-detail-item">
+                        <span class="tx-label">استلمت:</span>
+                        <span class="tx-value">${tx.receiveAmount.toFixed(2)} ${tx.receiveCurrencyType} <small>(${tx.receiveCurrencyName})</small></span>
+                    </div>
+                    <div class="tx-footer">
+                        <span class="tx-status status-${statusClass}">${tx.status || 'Pending'}</span>
+                    </div>
+                `;
+                cardsContainer.appendChild(card);
+            });
+        };
+        
+        // Event Delegation for copy buttons
+        transactionsContainer.addEventListener('click', function(e) {
+            const copyBtn = e.target.closest('.copy-tx-id-btn');
+            if (copyBtn) {
+                const txId = copyBtn.dataset.txid;
+                copyToClipboard(txId);
+            }
+        });
+
+        const applyFilters = () => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const status = statusFilter.value;
+            
+            let filtered = allTransactions;
+
+            if (status !== 'all') {
+                filtered = filtered.filter(tx => (tx.status || 'pending').toLowerCase() === status.toLowerCase());
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(tx => 
+                    Object.values(tx).some(val => 
+                        String(val).toLowerCase().includes(searchTerm)
+                    )
+                );
+            }
+            
+            renderTransactions(filtered);
+        };
+
+        const loadUserTransactions = async () => {
+            if (window.showPageSpinner) window.showPageSpinner();
+            loadingMessage.style.display = 'block';
+            tableBody.innerHTML = '';
+            cardsContainer.innerHTML = '';
+            
+            try {
+                const user = await protectPage(true);
+                if (user) {
+                    allTransactions = await getUserTransactions(user.uid);
+                    if (allTransactions.length > 0) {
+                        renderTransactions(allTransactions);
+                    } else {
+                         cardsContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: #777;">لا يوجد عمليات سابقة لعرضها.</p>';
+                         tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color: #777;">لا يوجد عمليات سابقة لعرضها.</td></tr>';
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load transactions:", error);
+                 cardsContainer.innerHTML = '<p style="text-align: center; padding: 20px; color: red;">فشل تحميل العمليات.</p>';
+            } finally {
+                loadingMessage.style.display = 'none';
+                if (window.hidePageSpinner) window.hidePageSpinner();
+            }
+        };
+
+        searchInput.addEventListener('input', applyFilters);
+        statusFilter.addEventListener('change', applyFilters);
+        loadUserTransactions();
+    </script>
+</body>
+</html>

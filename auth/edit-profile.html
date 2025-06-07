@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل الملف الشخصي - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+    
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content">
+            
+            <div class="dashboard-header">
+                <h2>تعديل الملف الشخصي</h2>
+            </div>
+            
+            <div class="dashboard-grid">
+
+                <main class="dashboard-main-content">
+                    <div class="profile-card-enhanced">
+                        <div class="profile-card-header">
+                            <h3><box-icon name='edit-alt' type='solid'></box-icon>البيانات الشخصية</h3>
+                        </div>
+                        <div class="profile-card-body">
+                            <div id="messageBox" class="message-feedback" style="display:none;"></div>
+                            <form id="editProfileForm" class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group column">
+                                        <label for="firstName">الاسم الأول:</label>
+                                        <input type="text" id="firstName" name="firstName" required>
+                                    </div>
+                                    <div class="form-group column">
+                                        <label for="lastName">اسم العائلة:</label>
+                                        <input type="text" id="lastName" name="lastName" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phoneNumber">رقم الهاتف:</label>
+                                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="مثال: 01xxxxxxxxx">
+                                </div>
+                                <div class="form-group">
+                                    <label for="dateOfBirth">تاريخ الميلاد:</label>
+                                    <input type="date" id="dateOfBirth" name="dateOfBirth">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">البريد الإلكتروني (لا يمكن تعديله):</label>
+                                    <input type="email" id="email" name="email" readonly disabled>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" id="saveChangesBtn" class="button primary">
+                                        <box-icon name='save' color='#ffffff'></box-icon>
+                                        <span class="button-text">حفظ التغييرات</span>
+                                    </button>
+                                    <button type="button" id="cancelBtn" class="button secondary">
+                                         <box-icon name='x-circle' color='#ffffff'></box-icon>إلغاء
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </main>
+
+                <aside class="dashboard-sidebar">
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-icon" style="background-color: #fbe9e7; color: #d84315;">
+                            <box-icon name='lock-alt' type='solid' size='md'></box-icon>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <h4>أمان الحساب</h4>
+                            <p>هل تريد تغيير كلمة المرور الخاصة بك؟</p>
+                            <a href="forgot-password.html" id="changePasswordLink" class="sidebar-card-link">إعادة تعيين كلمة المرور <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-icon">
+                             <box-icon name='help-circle' type='solid' size='md'></box-icon>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <h4>تحتاج مساعدة؟</h4>
+                            <p>تصفح مركز المساعدة الخاص بنا للإجابة على استفساراتك.</p>
+                            <a href="help.html" id="viewHelpBtn" class="sidebar-card-link">اذهب إلى المساعدة <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script>
+    <script type="module">
+        import { protectPage, getUserProfile, updateUserProfileData } from './auth.js';
+
+        const editProfileForm = document.getElementById('editProfileForm');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const dateOfBirthInput = document.getElementById('dateOfBirth');
+        const emailInput = document.getElementById('email');
+        const saveChangesBtn = document.getElementById('saveChangesBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const messageBoxElement = document.getElementById('messageBox');
+        
+        let currentUserId = null;
+
+        const displayPageMessage = (message, isError = false) => {
+            messageBoxElement.textContent = message;
+            messageBoxElement.className = `message-feedback ${isError ? 'error' : 'success'}`;
+            messageBoxElement.style.display = 'block';
+        };
+
+        const loadUserProfile = async () => {
+            if (window.showPageSpinner) window.showPageSpinner();
+            try {
+                const user = await protectPage(true); 
+                if (user) {
+                    currentUserId = user.uid;
+                    emailInput.value = user.email; 
+                    const profile = await getUserProfile(user.uid);
+                    if (profile) {
+                        firstNameInput.value = profile.firstName || '';
+                        lastNameInput.value = profile.lastName || '';
+                        phoneNumberInput.value = profile.phoneNumber || '';
+                        dateOfBirthInput.value = profile.dateOfBirth || ''; 
+                    } else {
+                        displayPageMessage("لم يتم العثور على بيانات الملف الشخصي.", true);
+                    }
+                }
+            } finally {
+                if (window.hidePageSpinner) window.hidePageSpinner();
+            }
+        };
+
+        editProfileForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (window.showPageSpinner) window.showPageSpinner();
+            
+            saveChangesBtn.disabled = true;
+
+            const updatedData = {
+                firstName: firstNameInput.value.trim(),
+                lastName: lastNameInput.value.trim(),
+                phoneNumber: phoneNumberInput.value.trim(),
+                dateOfBirth: dateOfBirthInput.value 
+            };
+
+            const success = await updateUserProfileData(currentUserId, updatedData);
+            
+            if (success) {
+                window.location.href = 'dashboard.html?profile_updated=true';
+            } else {
+                saveChangesBtn.disabled = false;
+                if (window.hidePageSpinner) window.hidePageSpinner();
+                displayPageMessage("فشل تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.", true);
+            }
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            if (window.showPageSpinner) window.showPageSpinner();
+            window.location.href = 'dashboard.html';
+        });
+        
+        document.querySelectorAll('.sidebar-card-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if(this.href && !this.href.includes('#')) {
+                    if (window.showPageSpinner) window.showPageSpinner();
+                }
+            });
+        });
+
+        loadUserProfile();
+    </script>
+</body>
+</html>

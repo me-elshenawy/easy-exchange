@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز المساعدة - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page"> 
+
+    <div id="notification-placeholder"></div> 
+
+    <div class="main-content-wrapper"> 
+        <div class="auth-page-content"> 
+            
+            <div class="dashboard-header">
+                <h2><box-icon name='help-circle' type='solid'></box-icon>مركز المساعدة</h2>
+            </div>
+            
+            <p class="dashboard-intro-text">أهلاً بك في مركز مساعدة Easy Exchange! ابحث عن إجابة لاستفسارك أو تصفح الأقسام أدناه.</p>
+
+            <div class="help-search-bar">
+                <input type="text" id="faqSearchInput" placeholder="اكتب كلمة مفتاحية للبحث (مثال: كلمة المرور، RedotPay)">
+                <box-icon name='search'></box-icon>
+            </div>
+
+            <div class="dashboard-grid">
+                <main class="dashboard-main-content">
+                    <div id="faqContainer">
+                        <p id="noResultsMessage" style="display: none; text-align: center; padding: 20px; font-weight: 500;">لا توجد نتائج تطابق بحثك.</p>
+                        
+                        <!-- فئة: فهم Easy Exchange -->
+                        <div class="faq-section">
+                            <h3 class="faq-category-title">فهم Easy Exchange</h3>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ما هو موقع Easy Exchange وماذا يفعل؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>Easy Exchange هو منصة تساعدك على تبادل أنواع مختلفة من الأموال والعملات الرقمية بسهولة وأمان. يمكنك من خلالنا:</p><ul><li><strong>إرسال عملات محلية</strong> (مثل الجنيه المصري) <strong>مقابل الحصول على عملات رقمية</strong> (مثل USDT).</li><li><strong>إرسال عملات رقمية</strong> (مثل USDT) <strong>مقابل الحصول على عملات محلية</strong>.</li></ul><p>هدفنا هو توفير وسيلة سريعة وموثوقة لإجراء هذه التبادلات.</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>هل استخدام موقع Easy Exchange آمن؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>نعم، نحن نولي أهمية قصوى لأمان معاملاتك. هذا هو موقعنا الرسمي والوحيد، وتأكيد جميع العمليات يتم عبر محادثة مباشرة وآمنة على واتساب مع فريق الدعم لضمان التحقق من جميع التفاصيل.</p></div>
+                            </div>
+                        </div>
+
+                        <!-- فئة: إنشاء الحساب وتسجيل الدخول -->
+                        <div class="faq-section">
+                            <h3 class="faq-category-title">إنشاء الحساب وتسجيل الدخول</h3>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>كيف أقوم بإنشاء حساب جديد؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>إنشاء حساب عملية بسيطة:</p><ol><li>اضغط على رابط "إنشاء حساب".</li><li>قم بملء الحقول المطلوبة: الاسم، بريدك الإلكتروني، وكلمة مرور قوية.</li><li>بعد التسجيل، ستحتاج إلى <a href="#verify-email-q" class="faq-internal-link">التحقق من بريدك الإلكتروني</a> لإكمال العملية.</li></ol></div>
+                            </div>
+                            <div class="faq-item" id="verify-email-q">
+                                <div class="faq-question"><span>لماذا يجب عليّ التحقق من بريدي الإلكتروني؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>التحقق هو خطوة أمان مهمة للتأكد من أنك المالك الحقيقي للحساب.</p><ol><li>بعد التسجيل، سنرسل رسالة تحقق إلى بريدك.</li><li>افتح الرسالة واضغط على رابط التحقق الموجود بداخلها.</li><li>بمجرد الضغط على الرابط، سيتم تفعيل حسابك بالكامل.</li></ol></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>لقد نسيت كلمة المرور، ماذا أفعل؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>يمكنك إعادة تعيين كلمة المرور بسهولة:</p><ol><li>اذهب إلى صفحة "تسجيل الدخول".</li><li>اضغط على رابط "هل نسيت كلمة المرور؟".</li><li>أدخل بريدك الإلكتروني المسجل، وسنرسل لك رابطًا لإنشاء كلمة مرور جديدة.</li></ol></div>
+                            </div>
+                        </div>
+
+                        <!-- فئة: كيفية إجراء عملية تبادل -->
+                        <div class="faq-section">
+                            <h3 class="faq-category-title">كيفية إجراء عملية تبادل</h3>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>كيف أقوم بعملية تبادل (مثال: من إنستاباي إلى RedotPay)؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>الخطوات بسيطة:</p><ol><li><strong>من الصفحة الرئيسية:</strong> اختر "Instapay" في قسم "أنت ترسل"، و "RedotPay" في قسم "أنت تحصل على".</li><li>أدخل المبلغ الذي تريد دفعه، وسيقوم الموقع بحساب ما ستحصل عليه تلقائيًا.</li><li><strong>صفحة تفاصيل العملية:</strong> قم بنسخ معلومات حسابنا على إنستاباي.</li><li><strong>إجراء التحويل:</strong> اذهب لتطبيق إنستاباي وقم بتحويل المبلغ، ثم خذ لقطة شاشة للإيصال.</li><li><strong>العودة للموقع:</strong> اضغط على زر "التوجه للدردشة للتأكيد".</li><li><strong>محادثة واتساب:</strong> أرسل لنا لقطة الشاشة ومعرف RedotPay الخاص بك.</li></ol></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ما هي وسائل الدفع التي تقبلونها؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>يمكنك الدفع لنا باستخدام: إنستاباي، تيلدا، المحافظ الإلكترونية (فودافون كاش، اتصالات كاش، إلخ)، يلو كارد، ونكستا. (القائمة قد تتغير، راجع صفحة التبادل للخيارات المتاحة).</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ما هي العملات/الوسائل التي يمكنني استلامها منكم؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>يمكنك استلام رصيد USDT عبر: RedotPay، MuseWallet، و Binance. (القائمة قد تتغير، راجع صفحة التبادل للخيارات المتاحة).</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ما هي رسوم تبادل USDT إلى USDT؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>عند التحويل بين منصات USDT مختلفة (مثلاً من RedotPay إلى Binance)، يتم تطبيق رسوم خدمة: <strong>1% من المبلغ، بحد أدنى 0.5 USDT</strong>.</p></div>
+                            </div>
+                        </div>
+
+                        <!-- فئة: سجل العمليات والمشاكل -->
+                         <div class="faq-section">
+                            <h3 class="faq-category-title">سجل العمليات والمشاكل</h3>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>أين يمكنني رؤية عملياتي السابقة؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>يمكنك تتبع جميع عملياتك من خلال <a href="history.html">"سجل العمليات"</a> المتاح في لوحة التحكم الخاصة بك بعد تسجيل الدخول.</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ماذا يعني "رقم العملية" ولماذا هو مهم؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>لكل عملية تبادل رقم فريد (يبدأ بـ EZ-). هذا الرقم مهم جدًا لتتبع حالة عمليتك، ولتزويد فريق الدعم به عند وجود أي استفسار لتسريع عملية المساعدة.</p></div>
+                            </div>
+                         </div>
+                    </div>
+                </main>
+
+                <aside class="dashboard-sidebar">
+                     <div class="sidebar-card contact-cta-card">
+                        <div class="sidebar-card-icon" style="background-color: #e0f2f1; color: #00796b;">
+                            <box-icon name='whatsapp' type='logo' size='md'></box-icon>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <h4>لم تجد إجابتك؟</h4>
+                            <p>فريق الدعم لدينا جاهز لمساعدتك مباشرة.</p>
+                            <a href="#" id="dynamic-contact-link" target="_blank" class="sidebar-card-link">تواصل معنا الآن <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script> 
+    <script type="module">
+        import { getGlobalSettings } from './auth.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // --- NEW DYNAMIC LINK LOGIC ---
+            const contactLink = document.getElementById('dynamic-contact-link');
+            if (contactLink) {
+                try {
+                    const settings = await getGlobalSettings();
+                    if (settings && settings.whatsAppNumber) {
+                        contactLink.href = `https://wa.me/${settings.whatsAppNumber}`;
+                    } else {
+                        contactLink.textContent = "التواصل غير متاح حالياً";
+                        contactLink.style.pointerEvents = "none";
+                        contactLink.removeAttribute('href');
+                    }
+                } catch (error) {
+                    console.error("Failed to set dynamic contact link:", error);
+                    contactLink.textContent = "خطأ في تحميل الرابط";
+                    contactLink.style.pointerEvents = "none";
+                    contactLink.removeAttribute('href');
+                }
+            }
+
+            // --- EXISTING FAQ LOGIC ---
+            const faqContainer = document.getElementById('faqContainer');
+            const searchInput = document.getElementById('faqSearchInput');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+
+            if (faqContainer && searchInput && noResultsMessage) {
+                const faqItems = faqContainer.querySelectorAll('.faq-item');
+
+                const toggleAnswer = (questionElement) => {
+                    const item = questionElement.parentElement;
+                    item.classList.toggle('active');
+                };
+
+                faqContainer.addEventListener('click', function(e) {
+                    const questionElement = e.target.closest('.faq-question');
+                    if (questionElement) {
+                        toggleAnswer(questionElement);
+                    }
+
+                    const internalLink = e.target.closest('.faq-internal-link');
+                    if (internalLink && internalLink.hash) {
+                        e.preventDefault();
+                        const targetId = internalLink.hash.substring(1);
+                        const targetItem = document.getElementById(targetId);
+                        if (targetItem && !targetItem.classList.contains('active')) {
+                            toggleAnswer(targetItem.querySelector('.faq-question'));
+                        }
+                        if (targetItem) {
+                           targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                });
+
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    let visibleCount = 0;
+
+                    faqItems.forEach(item => {
+                        const itemText = item.textContent.toLowerCase();
+                        const isMatch = itemText.includes(searchTerm);
+                        item.style.display = isMatch ? '' : 'none';
+                        if (isMatch) visibleCount++;
+                    });
+
+                    noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

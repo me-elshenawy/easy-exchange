@@ -1,0 +1,284 @@
+/* =================================================================== */
+/* --- 1. General Auth Page Styles & Resets --- */
+/* =================================================================== */
+body.auth-page, body.auth-page-fullscreen {
+    font-family: 'Cairo', 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    direction: rtl;
+}
+
+.auth-page-content {
+    padding: 20px;
+    max-width: 1100px;
+    margin: 30px auto;
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+/* =================================================================== */
+/* --- 2. Fullscreen Auth Layout (Login, Register, etc.) --- */
+/* =================================================================== */
+.auth-page-fullscreen {
+    height: 100vh;
+    overflow-y: auto;
+}
+.auth-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+.auth-panel-left {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    padding: 40px;
+    box-sizing: border-box;
+}
+.form-wrapper {
+    width: 100%;
+    max-width: 420px;
+}
+.auth-page-title {
+    color: #34495e;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 2rem;
+    text-align: center;
+}
+.form-intro {
+    margin-bottom: 30px;
+    color: #6c757d;
+    font-size: 1rem;
+    text-align: center;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.auth-panel-right {
+    flex: 1;
+    background: linear-gradient(135deg, #5b3bb0 0%, #4a2f91 100%);
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    position: relative;
+}
+.auth-panel-right::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+}
+.brand-content { text-align: center; z-index: 2; }
+.brand-logo { display: inline-flex; flex-direction: column; align-items: center; text-decoration: none; color: #ffffff; margin-bottom: 20px; }
+.brand-logo h1 { margin: 10px 0 0 0; font-size: 2.5rem; letter-spacing: 1px; }
+.brand-content > p { font-size: 1.1rem; max-width: 350px; margin: 0 auto 30px auto; opacity: 0.9; }
+.features-list { list-style: none; padding: 0; margin: 0; display: inline-flex; flex-direction: column; align-items: flex-start; gap: 15px; font-size: 1rem; }
+.features-list li { display: flex; align-items: center; gap: 12px; opacity: 0.95; }
+.mobile-brand-header { display: none; text-align: center; margin-bottom: 30px; }
+.mobile-brand-header h2 { font-size: 2rem; color: #5b3bb0; margin: 0; }
+.form-icon-wrapper { margin-bottom: 20px; text-align: center; }
+.verify-actions { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+
+/* =================================================================== */
+/* --- 3. Dashboard, History, Help - Shared Header & Layout --- */
+/* =================================================================== */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+.dashboard-header h2 {
+    margin: 0;
+    color: #34495e;
+    font-size: 1.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+.dashboard-intro-text { font-size: 1.05rem; color: #555; text-align: center; max-width: 700px; margin: 0 auto 30px auto; }
+.dashboard-grid { display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+.dashboard-main-content { display: flex; flex-direction: column; gap: 30px; }
+.dashboard-sidebar { display: flex; flex-direction: column; gap: 25px; }
+
+/* =================================================================== */
+/* --- 4. Cards (Profile, Sidebar) --- */
+/* =================================================================== */
+.profile-card-enhanced, .sidebar-card { background-color: #ffffff; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07); overflow: hidden; }
+.profile-card-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background-color: #f8f9fa; border-bottom: 1px solid #e9ecef; }
+.profile-card-header h3 { margin: 0; font-size: 1.2rem; color: #343a40; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+.button-like-link { background: none; border: 1px solid #ced4da; color: #495057; padding: 6px 12px; font-family: inherit; font-size: 0.85rem; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease; }
+.button-like-link:hover { background-color: #e9ecef; color: #212529; border-color: #adb5bd; }
+.profile-card-body { padding: 30px 25px; }
+.profile-avatar-wrapper { text-align: center; margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px dashed #e0e0e0; }
+.profile-avatar { width: 90px; height: 90px; border-radius: 50%; background-color: #5b3bb0; color: #fff; display: inline-flex; justify-content: center; align-items: center; font-size: 2.2rem; font-weight: 600; margin-bottom: 15px; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(91, 59, 176, 0.3); }
+.profile-name-display { margin: 0 0 5px 0; font-size: 1.5rem; color: #2c3e50; }
+.profile-email-display { margin: 0; font-size: 1rem; color: #6c757d; direction: ltr; }
+.profile-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.info-item { background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; }
+.info-label { display: block; font-size: 0.85rem; color: #6c757d; margin-bottom: 5px; font-weight: 500; }
+.info-value { font-size: 1rem; color: #343a40; font-weight: 600; }
+.sidebar-card { padding: 20px; display: flex; align-items: center; gap: 20px; }
+.sidebar-card-icon { flex-shrink: 0; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; background-color: #e8eaf6; color: #5b3bb0; border-radius: 50%; }
+.sidebar-card-icon box-icon { fill: currentColor; }
+.sidebar-card-content h4 { margin: 0 0 5px 0; font-size: 1.1rem; color: #343a40; }
+.sidebar-card-content p { margin: 0 0 10px 0; font-size: 0.9rem; color: #6c757d; }
+.sidebar-card-link { color: #5b3bb0; font-weight: 600; text-decoration: none; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; transition: gap 0.2s ease; }
+.sidebar-card-link:hover { gap: 8px; text-decoration: underline; }
+
+/* =================================================================== */
+/* --- 5. Help Page - Specific Styles --- */
+/* =================================================================== */
+.help-search-bar { position: relative; margin-bottom: 30px; }
+.help-search-bar input { width: 100%; padding: 14px 50px 14px 20px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 1rem; box-sizing: border-box; transition: all 0.2s ease; background-color: #fff; }
+.help-search-bar input:focus { border-color: #5b3bb0; box-shadow: 0 0 0 3px rgba(91, 59, 176, 0.15); outline: none; }
+.help-search-bar box-icon { position: absolute; top: 50%; right: 18px; transform: translateY(-50%); fill: #adb5bd; }
+.faq-section { margin-bottom: 25px; }
+.faq-category-title { font-size: 1.3rem; font-weight: 700; color: #34495e; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #5b3bb0; }
+.faq-item { background-color: #fff; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: box-shadow 0.2s ease; overflow: hidden; }
+.faq-item:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+.faq-question { padding: 18px 20px; font-weight: 600; color: #333; cursor: pointer; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; }
+.faq-question .icon-toggle { transition: transform 0.3s ease; flex-shrink: 0; fill: #5b3bb0; }
+.faq-item.active .faq-question .icon-toggle { transform: rotate(180deg); }
+.faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out, padding 0.35s ease-out; color: #495057; line-height: 1.8; font-size: 0.95rem; }
+.faq-item.active .faq-answer { max-height: 500px; padding: 0 20px 20px 20px; border-top: 1px solid #f0f0f0; }
+.faq-answer a { color: #5b3bb0; font-weight: 600; }
+
+/* =================================================================== */
+/* --- 6. History Page - Specific Styles --- */
+/* =================================================================== */
+.history-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 15px; background-color: #fff; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+.search-control { position: relative; flex-grow: 1; min-width: 250px; }
+.search-control input { width: 100%; padding: 10px 45px 10px 15px; border-radius: 8px; }
+.search-control box-icon { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); fill: #adb5bd; }
+.filter-control { display: flex; align-items: center; gap: 10px; }
+.filter-control label { font-weight: 600; color: #495057; font-size: 0.9rem; }
+.filter-control select { padding: 10px 12px; border: 1px solid #ced4da; border-radius: 8px; background-color: #fff; font-size: 0.95rem; }
+.table-responsive-container { display: none; width: 100%; overflow-x: auto; background-color: #fff; border: 1px solid #e7e7e7; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.transaction-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.transaction-table th, .transaction-table td { padding: 15px; text-align: right; vertical-align: middle; border-bottom: 1px solid #e9ecef; white-space: nowrap; }
+.transaction-table thead th { background-color: #f8f9fa; font-weight: 600; color: #495057; }
+.transaction-table tbody tr:last-child td { border-bottom: none; }
+.transaction-table tbody tr:hover { background-color: #f8f9fa; }
+.tx-id-wrapper { display: flex; align-items: center; gap: 8px; }
+.tx-id-cell { font-family: 'Courier New', Courier, monospace; font-size: 0.9rem; color: #5b3bb0; font-weight: 600; }
+.copy-tx-id-btn { background: none; border: none; cursor: pointer; padding: 2px; border-radius: 4px; display: inline-flex; transition: background-color 0.2s; }
+.copy-tx-id-btn box-icon { fill: #888; }
+.copy-tx-id-btn:hover { background-color: #e9ecef; }
+.copy-tx-id-btn:hover box-icon { fill: #5b3bb0; }
+.tx-amount-cell span { display: block; line-height: 1.4; }
+.tx-amount-cell .amount { font-weight: 600; color: #343a40; }
+.tx-amount-cell .method { font-size: 0.85rem; color: #6c757d; }
+
+.transactions-list { margin-top: 0; display: grid; grid-template-columns: 1fr; gap: 15px; }
+.transaction-card { background-color: #fff; border: 1px solid #e7e7e7; border-radius: 10px; padding: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); }
+.transaction-card .tx-header { padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px dashed #eee; display: flex; justify-content: space-between; align-items: center; }
+.transaction-card .tx-date { font-size: 0.85rem; color: #6c757d; flex-shrink: 0; margin-left: 10px; }
+.transaction-card .tx-detail-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; padding: 6px 0; }
+.transaction-card .tx-label { font-weight: 600; color: #495057; }
+.transaction-card .tx-value { color: #343a40; font-weight: 500; text-align: left; }
+.transaction-card .tx-value small { color: #6c757d; font-size: 0.85em; }
+.transaction-card .tx-footer { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee; text-align: left; }
+
+.tx-status { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: #fff; display: inline-block; text-align: center; }
+.tx-status.status-pending { background-color: #ffc107; color: #212529; }
+.tx-status.status-completed, .tx-status.status-approved { background-color: #28a745; }
+.tx-status.status-rejected, .tx-status.status-canceled { background-color: #dc3545; }
+.tx-status.status-processing { background-color: #17a2b8; }
+
+/* =================================================================== */
+/* --- 7. General Form & Button Styles --- */
+/* =================================================================== */
+.profile-form { padding: 0; text-align: right; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; margin-bottom: 7px; font-weight: 600; color: #495057; font-size: 0.9rem; }
+.form-row { display: flex; gap: 15px; }
+.form-group.column { flex: 1; }
+.profile-form input[type="text"], .profile-form input[type="email"], .profile-form input[type="tel"], .profile-form input[type="date"], .profile-form input[type="password"] { width: 100%; padding: 12px 15px; border: 1px solid #dcdfe2; border-radius: 8px; font-size: 1rem; box-sizing: border-box; transition: all 0.2s ease; background-color: #f9fafb; }
+.profile-form input[readonly] { background-color: #e9ecef; cursor: not-allowed; opacity: 0.7; }
+.profile-form input:focus { border-color: #5b3bb0; background-color: #fff; box-shadow: 0 0 0 3px rgba(91, 59, 176, 0.15); outline: none; }
+.form-options { text-align: left; margin-bottom: 20px; }
+.forgot-password-link { font-size: 0.9rem; color: #6c757d; text-decoration: none; }
+.forgot-password-link:hover { text-decoration: underline; color: #5b3bb0; }
+.button { padding: 10px 20px; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: none; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; gap: 8px; }
+.button.primary { background-color: #5b3bb0; color:#fff; }
+.button.secondary { background-color: #6c757d; color:#fff; }
+.button.full-width { width: 100%; }
+.button.cta-button { padding: 14px; font-size: 1.1rem; border: none; color: #fff; background: linear-gradient(135deg, #5b3bb0 0%, #6a44c9 100%); box-shadow: 0 4px 15px rgba(91, 59, 176, 0.3); }
+.button.cta-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91, 59, 176, 0.4); }
+.button.secondary-action { background-color: transparent; border: 2px solid #5b3bb0; color: #5b3bb0; box-shadow: none; }
+.button.secondary-action:hover { background-color: #f0ecfb; }
+.button .spinner { display: none; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; width: 1.2em; height: 1.2em; border-radius: 50%; animation: spin 1s linear infinite; }
+.button:disabled { background: #a996d4; color: #fff; border-color: transparent; box-shadow: none; transform: none; cursor: not-allowed; }
+.button:disabled .button-text { display: none; }
+.button:disabled .spinner, .button:disabled .countdown-timer { display: inline-block; }
+.countdown-timer { font-weight: 600; }
+.form-footer { text-align: center; margin-top: 25px; color: #6c757d; font-size: 0.95rem; }
+.form-footer a { color: #5b3bb0; font-weight: 600; text-decoration: none; margin-right: 5px; }
+.form-footer a:hover { text-decoration: underline; }
+.form-actions { margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px; flex-wrap: wrap; }
+.form-actions .button { min-width: 160px; }
+
+/* =================================================================== */
+/* --- 8. Toast, & Message Styles --- */
+/* =================================================================== */
+#toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column-reverse; gap: 10px; align-items: center; }
+.toast { background-color: #333; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transform: translateY(20px); transition: opacity 0.3s ease-out, transform 0.3s ease-out; display: flex; align-items: center; min-width: 280px; }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.toast-success { background-color: #28a745; }
+.toast.toast-error { background-color: #dc3545; }
+.toast.toast-info { background-color: #17a2b8; }
+.toast.toast-warning { background-color: #ffc107; color: #212529; }
+.toast box-icon { margin-left: 10px; }
+.message-feedback { padding: 12px 18px; margin-bottom: 20px; border-radius: 8px; font-size: 0.95em; text-align: center; font-weight: 500; }
+.message-feedback.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.message-feedback.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* =================================================================== */
+/* --- 9. Responsive Adjustments --- */
+/* =================================================================== */
+@media (min-width: 851px) {
+    .table-responsive-container { display: block; }
+    #transaction-cards-container.transactions-list { display: none; }
+}
+@media (max-width: 992px) {
+    .auth-panel-right { display: none; }
+    .mobile-brand-header { display: block; }
+    .auth-container { flex-direction: column; }
+    .auth-page-fullscreen { height: auto; }
+    .auth-panel-left { min-height: 100vh; padding: 40px 20px; }
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .auth-page-content { padding: 15px; }
+}
+@media (max-width: 850px) {
+    .table-responsive-container { display: none; }
+    #transaction-cards-container.transactions-list { display: grid; }
+    .history-controls { flex-direction: column; align-items: stretch; }
+}
+@media (max-width: 768px) {
+    .form-row { flex-direction: column; gap: 0; }
+    .form-group.column { margin-bottom: 18px; }
+    .dashboard-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .dashboard-header h2 { font-size: 1.5rem; }
+    .profile-info-grid { grid-template-columns: 1fr; }
+    .form-actions { flex-direction: column; }
+    .form-actions .button { width: 100%; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page-fullscreen">
+
+    <div class="auth-container">
+        <!-- Right Panel (Branding) -->
+        <div class="auth-panel-right">
+            <div class="brand-content">
+                <a href="../index.html" class="brand-logo">
+                    <box-icon name='atom' type='solid' color='#ffffff' size='lg'></box-icon>
+                    <h1>Easy Exchange</h1>
+                </a>
+                <p>منصتك الآمنة والسريعة لتبادل العملات الرقمية والمحلية.</p>
+                <ul class="features-list">
+                    <li><box-icon name='zap' type='solid' color='#ffffff'></box-icon> عمليات سريعة وموثوقة</li>
+                    <li><box-icon name='shield-quarter' type='solid' color='#ffffff'></box-icon> أمان وحماية لمعاملاتك</li>
+                    <li><box-icon name='headphone' type='solid' color='#ffffff'></box-icon> دعم فني متاح للمساعدة</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Left Panel (Form) -->
+        <div class="auth-panel-left">
+            <div class="form-wrapper">
+                <div class="mobile-brand-header">
+                    <h2>Easy Exchange</h2>
+                </div>
+                <h2 class="auth-page-title">أهلاً بعودتك!</h2>
+                <p class="form-intro">سجل الدخول للمتابعة إلى لوحة التحكم الخاصة بك.</p>
+                
+                <form id="loginForm" class="profile-form">
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-options">
+                        <a href="forgot-password.html" class="forgot-password-link">هل نسيت كلمة المرور؟</a>
+                    </div>
+                    
+                    <button type="submit" id="loginBtn" class="button primary full-width cta-button">
+                        <span class="button-text">تسجيل الدخول</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                <div class="form-footer">
+                    <span>ليس لديك حساب؟</span>
+                    <a href="register.html">إنشاء حساب جديد</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast-container"></div>
+    
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script>
+    <script type="module">
+        import { loginUser, protectPage } from './auth.js';
+        
+        protectPage(false); 
+
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const spinner = loginBtn.querySelector('.spinner');
+        const buttonText = loginBtn.querySelector('.button-text');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            loginBtn.disabled = true;
+            buttonText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            const user = await loginUser(email, password, 'messageBox', window.showToast);
+
+            // If login fails (user not found, wrong password)
+            if (!user) { 
+                loginBtn.disabled = false;
+                buttonText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+            }
+            // On success or if email is not verified, loginUser handles redirection.
+        });
+    </script>
+</body>
+</html>

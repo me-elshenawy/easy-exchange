@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+    
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content"> 
+            
+            <div class="dashboard-header">
+                <h2 id="welcomeMessage">مرحباً بك في لوحة التحكم</h2>
+            </div>
+            
+            <div class="dashboard-grid">
+                
+                <main class="dashboard-main-content">
+                    <div class="profile-card-enhanced">
+                        <div class="profile-card-header">
+                            <h3><box-icon name='user-detail' type='solid'></box-icon>ملفك الشخصي</h3>
+                            <button id="editProfileBtn" class="button-like-link">
+                                <box-icon name='edit' size='sm'></box-icon>
+                                <span>تعديل</span>
+                            </button>
+                        </div>
+                        <div class="profile-card-body">
+                            <div class="profile-avatar-wrapper">
+                                <div class="profile-avatar" id="userAvatar"></div>
+                                <h4 class="profile-name-display" id="userDisplayName">جار التحميل...</h4>
+                                <p class="profile-email-display" id="userEmailDisplay">جار التحميل...</p>
+                            </div>
+                            <div class="profile-info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">رقم الهاتف</span>
+                                    <span class="info-value" id="userPhoneDisplay">...</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">تاريخ الميلاد</span>
+                                    <span class="info-value" id="userDobDisplay">...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <aside class="dashboard-sidebar">
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-icon">
+                            <box-icon name='history' type='solid' size='md'></box-icon>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <h4>سجل العمليات</h4>
+                            <p>عرض جميع عمليات التحويل السابقة الخاصة بك.</p>
+                            <a href="history.html" id="viewHistoryBtn" class="sidebar-card-link">عرض السجل <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="sidebar-card-icon">
+                             <box-icon name='help-circle' type='solid' size='md'></box-icon>
+                        </div>
+                        <div class="sidebar-card-content">
+                            <h4>مركز المساعدة</h4>
+                            <p>هل لديك أسئلة؟ ابحث عن إجابات هنا.</p>
+                            <a href="help.html" id="viewHelpBtn" class="sidebar-card-link">اذهب إلى المساعدة <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+                </aside>
+
+            </div>
+            <div id="messageBoxGlobal" class="message" style="display:none; margin-top:25px;"></div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script>
+    <script type="module">
+        import { protectPage, getUserProfile } from './auth.js';
+
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const userDisplayName = document.getElementById('userDisplayName');
+        const userEmailDisplay = document.getElementById('userEmailDisplay');
+        const userPhoneDisplay = document.getElementById('userPhoneDisplay');
+        const userDobDisplay = document.getElementById('userDobDisplay');
+        const userAvatar = document.getElementById('userAvatar');
+        const editProfileBtn = document.getElementById('editProfileBtn');
+
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            let iconName = 'info-circle';
+            if (type === 'success') iconName = 'check-circle';
+            else if (type === 'error') iconName = 'x-circle';
+            else if (type === 'warning') iconName = 'error-circle';
+            toast.innerHTML = `<box-icon name='${iconName}' color='${type === 'warning' ? '#212529' : '#ffffff'}'></box-icon> <span>${message}</span>`;
+            container.appendChild(toast);
+            toast.offsetHeight;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        const createAvatar = (name) => {
+            if (!name) return 'EX';
+            const nameParts = name.trim().split(' ');
+            const firstNameInitial = nameParts[0] ? nameParts[0][0] : '';
+            const lastNameInitial = nameParts.length > 1 ? nameParts[nameParts.length - 1][0] : '';
+            return `${firstNameInitial}${lastNameInitial}`.toUpperCase();
+        };
+
+        const initializeDashboard = async () => {
+            if (window.showPageSpinner) window.showPageSpinner();
+            try {
+                const user = await protectPage(true); 
+                if (user) {
+                    userEmailDisplay.textContent = user.email;
+                    const profile = await getUserProfile(user.uid);
+                    
+                    let fullName = "مستخدم";
+                    if (profile) {
+                        fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || user.displayName || "مستخدم";
+                        userPhoneDisplay.textContent = profile.phoneNumber || "غير متوفر";
+                        userDobDisplay.textContent = profile.dateOfBirth 
+                            ? new Date(profile.dateOfBirth + 'T00:00:00').toLocaleDateString('ar-EG-u-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' }) 
+                            : "غير متوفر";
+                    } else {
+                        fullName = user.displayName || "مستخدم";
+                        userPhoneDisplay.textContent = "غير متوفر";
+                        userDobDisplay.textContent = "غير متوفر";
+                    }
+
+                    userDisplayName.textContent = fullName;
+                    userAvatar.textContent = createAvatar(fullName);
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('profile_updated')) {
+                        showToast("تم تحديث الملف الشخصي بنجاح!", "success");
+                        const newUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                    }
+                }
+            } finally {
+                if(window.hidePageSpinner) window.hidePageSpinner();
+            }
+        };
+
+        initializeDashboard();
+
+        editProfileBtn.addEventListener('click', () => {
+            if (window.showPageSpinner) window.showPageSpinner();
+            window.location.href = 'edit-profile.html';
+        });
+        
+        document.querySelectorAll('.sidebar-card-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if(this.href && !this.href.includes('#')) {
+                    if (window.showPageSpinner) window.showPageSpinner();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

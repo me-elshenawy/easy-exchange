@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب جديد - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css"> <!-- Added to access main site styles -->
+    <link rel="stylesheet" href="auth-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page-fullscreen">
+
+    <div class="auth-container">
+        <!-- Right Panel (Branding) - Will be hidden on mobile -->
+        <div class="auth-panel-right">
+            <div class="brand-content">
+                <a href="../index.html" class="brand-logo">
+                    <box-icon name='atom' type='solid' color='#ffffff' size='lg'></box-icon>
+                    <h1>Easy Exchange</h1>
+                </a>
+                <p>منصتك الآمنة والسريعة لتبادل العملات الرقمية والمحلية.</p>
+                <ul class="features-list">
+                    <li><box-icon name='zap' type='solid' color='#ffffff'></box-icon> عمليات سريعة وموثوقة</li>
+                    <li><box-icon name='shield-quarter' type='solid' color='#ffffff'></box-icon> أمان وحماية لمعاملاتك</li>
+                    <li><box-icon name='headphone' type='solid' color='#ffffff'></box-icon> دعم فني متاح للمساعدة</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Left Panel (Form) -->
+        <div class="auth-panel-left">
+            <div class="form-wrapper">
+                <div class="mobile-brand-header">
+                    <h2>Easy Exchange</h2>
+                </div>
+                <h2 class="auth-page-title">إنشاء حساب جديد</h2>
+                <p class="form-intro">انضم إلينا الآن وابدأ التبادل في دقائق.</p>
+                
+                <form id="registerForm" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group column">
+                            <label for="firstName">الاسم الأول</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group column">
+                            <label for="lastName">اسم العائلة</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">البريد الإلكتروني</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">كلمة المرور (6 أحرف على الأقل)</label>
+                        <input type="password" id="password" name="password" required minlength="6">
+                    </div>
+                     <div class="form-group">
+                        <label for="confirmPassword">تأكيد كلمة المرور</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">رقم الهاتف (اختياري)</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="مثال: 01xxxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="dateOfBirth">تاريخ الميلاد (اختياري)</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth">
+                    </div>
+                    
+                    <button type="submit" id="registerBtn" class="button primary full-width cta-button">
+                        <span class="button-text">إنشاء الحساب</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                <div class="form-footer">
+                    <span>هل لديك حساب بالفعل؟</span>
+                    <a href="login.html">تسجيل الدخول</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- This container is used by the global showToast function -->
+    <div id="toast-container"></div> 
+    
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script>
+    <script type="module">
+        import { registerUser, protectPage } from './auth.js';
+        
+        // The global showToast function is now available from script.js
+        // No need for a fallback here.
+
+        protectPage(false); 
+
+        const registerForm = document.getElementById('registerForm');
+        const registerBtn = document.getElementById('registerBtn');
+        const spinner = registerBtn.querySelector('.spinner');
+        const buttonText = registerBtn.querySelector('.button-text');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const dateOfBirth = document.getElementById('dateOfBirth').value;
+
+            if (password !== confirmPassword) {
+                window.showToast("كلمتا المرور غير متطابقتين!", 'error');
+                return;
+            }
+            
+            registerBtn.disabled = true;
+            buttonText.style.display = 'none';
+            spinner.style.display = 'inline-block';
+
+            const additionalData = { firstName, lastName, phoneNumber, dateOfBirth };
+            
+            // Pass the global window.showToast function
+            const user = await registerUser(email, password, additionalData, 'messageBox', window.showToast); 
+
+            if (!user) { // If registration fails
+                registerBtn.disabled = false;
+                buttonText.style.display = 'inline-block';
+                spinner.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
