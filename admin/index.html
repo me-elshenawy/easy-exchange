@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المشرف - Easy Exchange</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <div id="admin-login-prompt" class="login-prompt-container">
+        <h2>تسجيل دخول المشرف</h2>
+        <p>الرجاء إدخال بيانات اعتماد المشرف للوصول.</p>
+    </div>
+
+    <div id="admin-panel-content" class="admin-container" style="display: none;">
+        <header class="admin-header">
+            <h1><box-icon name='shield-quarter' type='solid' style='margin-left: 10px;'></box-icon>لوحة تحكم Easy Exchange</h1>
+            <button id="admin-logout-button" class="button danger">تسجيل الخروج</button>
+        </header>
+
+        <main class="admin-main">
+            <section id="transactions-section" class="admin-section">
+                <h2><box-icon name='list-ul' style='margin-left: 8px;'></box-icon>إدارة العمليات</h2>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="status-filter">تصفية حسب الحالة:</label>
+                        <select id="status-filter">
+                            <option value="all">الكل</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <button id="refresh-transactions" class="button secondary" title="تحديث قائمة العمليات">
+                            <box-icon name='refresh' color='#ffffff'></box-icon> تحديث
+                        </button>
+                    </div>
+                    <div class="control-group search-control-group">
+                        <label for="search-transactions">بحث:</label>
+                        <input type="text" id="search-transactions" placeholder="ID، اسم، حالة، تاريخ...">
+                    </div>
+                </div>
+                <div id="transactions-table-container" class="table-responsive"> 
+                    <p id="transactions-loading">جارٍ تحميل العمليات...</p>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <section id="global-exchange-settings-section" class="admin-section">
+                <h2><box-icon name='cog' style='margin-left: 8px;'></box-icon>إعدادات التبادل العامة</h2>
+                <form id="globalExchangeSettingsForm">
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <label for="gs-usdtToEgpBuyRate">سعر شراء الموقع لـ USDT (مقابل EGP):</label>
+                            <input type="number" step="any" id="gs-usdtToEgpBuyRate" required>
+                        </div>
+                        <div class="setting-item">
+                            <label for="gs-usdtToEgpSellRate">سعر بيع الموقع لـ USDT (مقابل EGP):</label>
+                            <input type="number" step="any" id="gs-usdtToEgpSellRate" required>
+                        </div>
+                        <div class="setting-item">
+                            <label for="gs-whatsAppNumber">رقم الواتساب (للتواصل والعمليات):</label>
+                            <input type="text" id="gs-whatsAppNumber" placeholder="مثال: 201200145314 (بدون +)" required>
+                        </div>
+                    </div>
+                    <div class="fees-section-container" style="border: 1px solid #e0e0e0; padding: 15px; margin-top: 20px; border-radius: 6px;">
+                         <h4 style="margin-top:0; color: #5b3bb0; font-size: 1.1rem; margin-bottom: 15px;">رسوم خدمة التحويل بين USDT و USDT (منصات مختلفة)</h4>
+                        <div class="form-grid-2col">
+                            <div class="form-group">
+                                <label for="gs-usdt-service-fee-type">نوع رسوم خدمة USDT-to-USDT:</label>
+                                <select id="gs-usdt-service-fee-type">
+                                    <option value="none">لا توجد رسوم</option>
+                                    <option value="fixed">رسوم ثابتة</option>
+                                    <option value="percentage">رسوم بنسبة مئوية</option>
+                                </select>
+                            </div>
+                            <div class="form-group gs-usdt-service-fee-value-group" style="display: none;">
+                                <label for="gs-usdt-service-fee-value">قيمة رسوم الخدمة (بالـ USDT):</label>
+                                <input type="number" step="any" id="gs-usdt-service-fee-value" placeholder="القيمة أو النسبة (0.01)">
+                            </div>
+                        </div>
+                        <div class="form-grid-2col">
+                            <div class="form-group gs-usdt-service-fee-mincap-group" style="display: none;">
+                                <label for="gs-usdt-service-fee-mincap">الحد الأدنى لرسوم الخدمة (للنسبة):</label>
+                                <input type="number" step="any" id="gs-usdt-service-fee-mincap" placeholder="مثال: 0.5">
+                            </div>
+                            <div class="form-group gs-usdt-service-fee-maxcap-group" style="display: none;">
+                                <label for="gs-usdt-service-fee-maxcap">الحد الأقصى لرسوم الخدمة (للنسبة):</label>
+                                <input type="number" step="any" id="gs-usdt-service-fee-maxcap" placeholder="مثال: 5">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="button primary" style="margin-top: 20px;">
+                        <box-icon name='save' color='#ffffff'></box-icon> حفظ إعدادات التبادل
+                    </button>
+                </form>
+                <p id="global-settings-loading" style="display:none;">جارٍ تحميل الإعدادات...</p>
+                <p id="global-settings-message" style="display:none; margin-top: 10px;"></p>
+            </section>
+
+            <hr class="section-divider">
+
+            <section id="payment-methods-management-section" class="admin-section">
+                <h2><box-icon name='credit-card-alt' style='margin-left: 8px;'></box-icon>إدارة وسائل الدفع (`paymentMethods`)</h2>
+                <p style="font-size: 0.9em; color: #555; margin-bottom:15px;">
+                    هنا يمكنك إدارة جميع وسائل الدفع وتحديد خصائصها ورسومها الفردية.
+                </p>
+                <button id="add-new-payment-method-btn" class="button primary" style="margin-bottom: 15px;">
+                    <box-icon name='plus-circle' color='#ffffff'></box-icon> إضافة وسيلة دفع جديدة
+                </button>
+                <div id="payment-methods-container" class="payment-method-grid">
+                    <p id="payment-methods-loading">جارٍ تحميل وسائل الدفع...</p>
+                </div>
+            </section>
+
+            <hr class="section-divider">
+
+            <section id="marquee-settings-section" class="admin-section">
+                 <h2><box-icon name='volume-full' style='margin-left: 8px;'></box-icon>إدارة شريط الإشعارات</h2>
+                <form id="marqueeSettingsForm">
+                    <div class="form-group">
+                        <label for="mq-messages">نصوص الإشعارات (كل نص في سطر منفصل):</label>
+                        <textarea id="mq-messages" rows="5" placeholder="اكتب كل إشعار في سطر جديد..."></textarea>
+                    </div>
+                    <div class="form-group" style="max-width: 300px;">
+                        <label for="mq-speed">مدة عرض كل رسالة (ثواني):</label>
+                        <input type="number" id="mq-speed" step="0.1" min="3" value="7" required>
+                        <small>(مثال: 7 ثواني لكل رسالة)</small>
+                    </div>
+                    <button type="submit" class="button primary" style="margin-top: 15px;">
+                        <box-icon name='save' color='#ffffff'></box-icon> حفظ إعدادات الشريط
+                    </button>
+                </form>
+                <p id="marquee-settings-loading" style="display:none;">جارٍ تحميل إعدادات الشريط...</p>
+                <p id="marquee-settings-message" style="display:none; margin-top: 10px;"></p>
+            </section>
+        </main>
+
+        <footer class="admin-footer">
+            <p>© 2024 Easy Exchange - لوحة تحكم المشرف</p>
+        </footer>
+    </div>
+
+    <div id="payment-method-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn">×</span>
+            <h3 id="modal-title">إضافة/تعديل وسيلة دفع</h3>
+            <form id="payment-method-form">
+                <input type="hidden" id="pm-document-id">
+                <div class="form-grid-2col">
+                    <div class="form-group"><label for="pm-key">المفتاح (Key):</label><input type="text" id="pm-key" required><small>إنجليزي، فريد، لا يفضل تغييره.</small></div>
+                    <div class="form-group"><label for="pm-name">الاسم المعروض:</label><input type="text" id="pm-name" required></div>
+                    <div class="form-group"><label for="pm-type">نوع العملة:</label><select id="pm-type" required><option value="EGP">EGP</option><option value="USDT">USDT</option></select></div>
+                    <div class="form-group"><label for="pm-sortOrder">رقم الترتيب:</label><input type="number" id="pm-sortOrder" value="100"></div>
+                    <div class="form-group"><label for="pm-minAmount">الحد الأدنى للتحويل:</label><input type="number" step="any" id="pm-minAmount" required></div>
+                    <div class="form-group"><label for="pm-userIdentifierType">نوع معرف المستخدم (للشات):</label><input type="text" id="pm-userIdentifierType" placeholder="مثال: رقم الهاتف، الـID"></div>
+                </div>
+                <div class="form-group"><input type="checkbox" id="pm-requiresWholeNumber"><label for="pm-requiresWholeNumber">يتطلب رقمًا صحيحًا</label></div>
+                <div class="form-group"><input type="checkbox" id="pm-isActive"><label for="pm-isActive">مفعلة</label></div>
+                <div class="form-group"><input type="checkbox" id="pm-isSiteAccount"><label for="pm-isSiteAccount">تمثل حساب موقع</label></div>
+                <div id="site-account-fields" style="display: none; border:1px solid #e0e0e0; padding:15px; margin-top:15px; border-radius:6px;">
+                    <h4 style="margin-top:0;color:#5b3bb0;font-size:1rem;">تفاصيل حساب الموقع</h4>
+                    <div class="form-grid-2col">
+                        <div class="form-group"><label for="pm-recipientInfo">معلومات المستلم:</label><input type="text" id="pm-recipientInfo"></div>
+                        <div class="form-group"><label for="pm-recipientType">نوع معلومات المستلم:</label><input type="text" id="pm-recipientType"></div>
+                    </div>
+                </div>
+                <div class="fees-section-container" style="border:1px solid #e0e0e0;padding:15px;margin-top:20px;border-radius:6px;">
+                    <h4 style="margin-top:0;color:#5b3bb0;font-size:1.1rem;margin-bottom:15px;">إعدادات الرسوم لهذه الوسيلة</h4>
+                    <div class="fee-group" style="margin-bottom:20px;padding-bottom:15px;border-bottom:1px dashed #ccc;">
+                        <h5 style="font-size:1rem;color:#333;margin-bottom:10px;">رسوم الإرسال:</h5>
+                        <div class="form-grid-2col">
+                            <div class="form-group"><label for="pm-sending-fee-type">نوع الرسوم:</label><select id="pm-sending-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                            <div class="form-group pm-sending-fee-value-group" style="display:none;"><label for="pm-sending-fee-value">القيمة/النسبة:</label><input type="number" step="any" id="pm-sending-fee-value" placeholder="0.01 لـ 1%"></div>
+                        </div>
+                        <div class="form-grid-2col">
+                            <div class="form-group pm-sending-fee-mincap-group" style="display:none;"><label for="pm-sending-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="pm-sending-fee-mincap" placeholder="اتركه فارغًا لـ لا يوجد"></div>
+                            <div class="form-group pm-sending-fee-maxcap-group" style="display:none;"><label for="pm-sending-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="pm-sending-fee-maxcap" placeholder="اتركه فارغًا لـ لا يوجد"></div>
+                        </div>
+                    </div>
+                    <div class="fee-group">
+                        <h5 style="font-size:1rem;color:#333;margin-bottom:10px;">رسوم الاستلام:</h5>
+                        <div class="form-grid-2col">
+                            <div class="form-group"><label for="pm-receiving-fee-type">نوع الرسوم:</label><select id="pm-receiving-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                            <div class="form-group pm-receiving-fee-value-group" style="display:none;"><label for="pm-receiving-fee-value">القيمة/النسبة:</label><input type="number" step="any" id="pm-receiving-fee-value" placeholder="0.01 لـ 1%"></div>
+                        </div>
+                        <div class="form-grid-2col">
+                            <div class="form-group pm-receiving-fee-mincap-group" style="display:none;"><label for="pm-receiving-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="pm-receiving-fee-mincap" placeholder="اتركه فارغًا لـ لا يوجد"></div>
+                            <div class="form-group pm-receiving-fee-maxcap-group" style="display:none;"><label for="pm-receiving-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="pm-receiving-fee-maxcap" placeholder="اتركه فارغًا لـ لا يوجد"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:20px;"><label for="pm-iconName">اسم أيقونة Boxicon (اختياري):</label><input type="text" id="pm-iconName" placeholder="credit-card, wallet"></div>
+                <div class="form-group"><label for="pm-notes">ملاحظات (للمشرف):</label><textarea id="pm-notes"></textarea></div>
+                <div class="form-actions">
+                    <button type="submit" id="save-payment-method-btn" class="button primary">حفظ</button>
+                    <button type="button" id="cancel-payment-method-btn" class="button secondary">إلغاء</button>
+                </div>
+            </form>
+            <p id="modal-message" style="display:none; margin-top:10px; text-align:center;"></p>
+        </div>
+    </div>
+    
+    <script src="admin-script.js" type="module"></script>
+</body>
+</html>
