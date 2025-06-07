@@ -133,7 +133,7 @@ export const sendPasswordReset = async (email, messageElementId, toastFn) => {
         await sendPasswordResetEmail(auth, email);
         const successMsg = "تم إرسال الرابط بنجاح. يرجى تفقد بريدك الإلكتروني (بما في ذلك مجلد الرسائل غير المرغوب فيها) لإكمال العملية.";
         showMessage(toastFn, successMsg, 'success', 8000);
-    } catch (error) { // تم إصلاح الخطأ هنا بإضافة القوس {
+    } catch (error) {
         console.error("خطأ في إرسال بريد إعادة تعيين كلمة المرور:", error);
         let friendlyMessage = `فشل إرسال رابط إعادة التعيين.`;
         if (error.code === 'auth/user-not-found') {
@@ -213,22 +213,35 @@ export const protectPage = async (requiresVerification = true) => {
     const publicAuthPages = ['/auth/login.html', '/auth/register.html', '/auth/forgot-password.html'];
 
     if (!user) {
+        // إذا لم يكن المستخدم مسجلاً دخوله ويحاول الوصول إلى صفحة محمية، أعد توجيهه إلى صفحة تسجيل الدخول.
         if (!publicAuthPages.includes(currentPathname) && !currentPathname.endsWith('verify-email.html')) {
             window.location.href = onAuthDir ? 'login.html' : 'auth/login.html';
         }
-        return null;
+        return null; // اسمح بالوصول إلى الصفحات العامة.
     }
     
+    // إذا كان المستخدم مسجلاً ومُتحققًا منه
     if (user.emailVerified) {
+        // إذا حاول الوصول إلى صفحات المصادقة العامة، أعد توجيهه إلى لوحة التحكم.
         if (publicAuthPages.includes(currentPathname) || currentPathname.endsWith('verify-email.html')) {
             handleSuccessfulAuth(user);
         }
         return user;
-    } else {
+    } 
+    // إذا كان المستخدم مسجلاً ولكن غير مُتحقق منه
+    else {
+        // إذا كان المستخدم غير المُتحقق منه يحاول الوصول إلى صفحات المصادقة العامة (لأنه عالق ويريد البدء من جديد)،
+        // فقم بتسجيل خروجه تلقائيًا لمسح الجلسة السيئة.
+        if (publicAuthPages.includes(currentPathname)) {
+            await signOut(auth);
+            return null; // تعامل معه كمستخدم غير مسجل للسماح بتحميل الصفحة.
+        }
+
+        // إذا كانت الصفحة تتطلب التحقق، أعد توجيهه إلى صفحة التحقق.
         if (requiresVerification && !currentPathname.endsWith('verify-email.html')) {
             window.location.href = onAuthDir ? 'verify-email.html' : 'auth/verify-email.html';
         }
-        return user;
+        return user; // اسمح للمستخدم غير المُتحقق منه بالبقاء في صفحة التحقق.
     }
 };
 
