@@ -1,6 +1,6 @@
 // This script handles the main page logic, dynamic header/navigation, and global utilities.
 import { db } from './auth/firebase-config.js'; 
-import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     // --- START: Full Page Spinner Logic ---
@@ -372,18 +372,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             closeToast();
         };
 
+        // --- التعديل النهائي هنا ---
         toast.querySelector('.toast-btn.cancel').onclick = async () => {
             if (confirm("هل أنت متأكد من رغبتك في إلغاء هذه العملية؟")) {
                 const txRef = doc(db, "transactions", tx.id);
-                await updateDoc(txRef, { status: "Rejected" });
+                // تحديث الحالة وإضافة سجل تاريخي
+                await updateDoc(txRef, {
+                    status: "Rejected",
+                    statusHistory: arrayUnion({ status: "Rejected", timestamp: new Date() })
+                });
                 alert("تم إلغاء العملية بنجاح.");
                 closeToast();
             }
         };
         
+        // --- والتعديل النهائي هنا ---
         toast.querySelector('.toast-btn.complete').onclick = async () => {
             const txRef = doc(db, "transactions", tx.id);
-            await updateDoc(txRef, { status: "Processing" });
+             // تحديث الحالة وإضافة سجل تاريخي
+            await updateDoc(txRef, {
+                status: "Processing",
+                statusHistory: arrayUnion({ status: "Processing", timestamp: new Date() })
+            });
             alert("شكراً لك! سيقوم المشرف بمراجعة عمليتك وتأكيدها في أقرب وقت.");
             closeToast();
         };
