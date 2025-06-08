@@ -308,7 +308,122 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     // --- END: Exchange Form Logic ---
 
-    // --- START: PENDING TRANSACTION NOTIFIER ---
+    // --- START: NEW Confirmation and Info Modal Logic ---
+    function showConfirmationModal({
+        title = 'تأكيد الإجراء',
+        message,
+        confirmText = 'تأكيد',
+        cancelText = 'إلغاء',
+        iconName = 'error-warning',
+        iconColor = 'var(--warning-color)'
+    }) {
+        return new Promise(resolve => {
+            // Remove any existing modal
+            const existingModal = document.getElementById('custom-confirmation-modal');
+            if (existingModal) existingModal.remove();
+
+            const modalOverlay = document.createElement('div');
+            modalOverlay.id = 'custom-confirmation-modal';
+            modalOverlay.className = 'custom-modal-overlay';
+            modalOverlay.innerHTML = `
+                <div class="custom-modal">
+                    <div class="modal-header">
+                        <span class="modal-icon" style="color: ${iconColor};">
+                            <box-icon name='${iconName}' type='solid'></box-icon>
+                        </span>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="modal-body">
+                        ${message}
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-button confirm">${confirmText}</button>
+                        <button class="modal-button cancel">${cancelText}</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modalOverlay);
+            
+            const confirmBtn = modalOverlay.querySelector('.modal-button.confirm');
+            const cancelBtn = modalOverlay.querySelector('.modal-button.cancel');
+
+            const closeModal = (result) => {
+                modalOverlay.classList.remove('show');
+                setTimeout(() => {
+                    modalOverlay.remove();
+                    resolve(result);
+                }, 200);
+            };
+
+            confirmBtn.onclick = () => closeModal(true);
+            cancelBtn.onclick = () => closeModal(false);
+            modalOverlay.onclick = (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal(false);
+                }
+            };
+
+            // Show the modal
+            setTimeout(() => modalOverlay.classList.add('show'), 10);
+        });
+    }
+
+    function showInfoModal({
+        title = 'تنبيه',
+        message,
+        confirmText = 'حسناً',
+        iconName = 'info-circle',
+        iconColor = 'var(--info-color)'
+    }) {
+         return new Promise(resolve => {
+            const existingModal = document.getElementById('custom-confirmation-modal');
+            if (existingModal) existingModal.remove();
+
+            const modalOverlay = document.createElement('div');
+            modalOverlay.id = 'custom-confirmation-modal';
+            modalOverlay.className = 'custom-modal-overlay';
+            modalOverlay.innerHTML = `
+                <div class="custom-modal">
+                    <div class="modal-header">
+                        <span class="modal-icon" style="color: ${iconColor};">
+                            <box-icon name='${iconName}' type='solid'></box-icon>
+                        </span>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="modal-body">
+                        ${message}
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-button confirm">${confirmText}</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modalOverlay);
+            const confirmBtn = modalOverlay.querySelector('.modal-button.confirm');
+
+            const closeModal = (result) => {
+                modalOverlay.classList.remove('show');
+                setTimeout(() => {
+                    modalOverlay.remove();
+                    resolve(result);
+                }, 200);
+            };
+
+            confirmBtn.onclick = () => closeModal(true);
+             modalOverlay.onclick = (e) => {
+                if (e.target === modalOverlay) {
+                    closeModal(false);
+                }
+            };
+
+            setTimeout(() => modalOverlay.classList.add('show'), 10);
+        });
+    }
+
+    // --- END: NEW Confirmation and Info Modal Logic ---
+
+    // --- START: PENDING TRANSACTION NOTIFIER (MODIFIED) ---
     async function checkAndNotifyPendingTransactions(user) {
         if (!user) return;
 
@@ -330,19 +445,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const toastId = `toast-${Date.now()}`;
         const toast = document.createElement('div');
         toast.id = toastId;
-        toast.className = 'toast-notification info persistent';
+        toast.className = 'toast-notification persistent';
         
         toast.innerHTML = `
+            <div class="toast-persistent-header">
+                <h4>
+                    <box-icon name='info-circle' type='solid'></box-icon>
+                    عملية معلقة
+                </h4>
+                <button class="toast-close-btn" aria-label="إغلاق">
+                    <box-icon name='x'></box-icon>
+                </button>
+            </div>
             <div class="toast-content">
-                <p>لديك عملية معلقة برقم <strong>${tx.transactionId}</strong>.</p>
-                <p>ماذا تود أن تفعل؟</p>
+                <p>لديك عملية تبادل برقم <strong>${tx.transactionId}</strong> لم تكتمل بعد. ماذا تود أن تفعل؟</p>
                 <div class="toast-actions">
                     <button class="toast-btn continue">متابعة العملية</button>
                     <button class="toast-btn complete">لقد أتممتها</button>
                     <button class="toast-btn cancel">إلغاء العملية</button>
                 </div>
             </div>
-            <button class="toast-close-btn">×</button>
         `;
 
         document.body.appendChild(toast);
@@ -367,35 +489,66 @@ document.addEventListener('DOMContentLoaded', async () => {
                  const whatsappUrl = `https://wa.me/${settings.whatsAppNumber}?text=${encodeURIComponent(message)}`;
                  window.open(whatsappUrl, '_blank');
             } else {
-                alert("لا يمكن المتابعة، خطأ في تحميل رقم التواصل.");
+                await showInfoModal({
+                    title: 'خطأ',
+                    message: 'لا يمكن المتابعة، خطأ في تحميل رقم التواصل.',
+                    iconName: 'error',
+                    iconColor: 'var(--danger-color)'
+                });
             }
             closeToast();
         };
 
-        // --- التعديل النهائي هنا ---
         toast.querySelector('.toast-btn.cancel').onclick = async () => {
-            if (confirm("هل أنت متأكد من رغبتك في إلغاء هذه العملية؟")) {
+            const confirmed = await showConfirmationModal({
+                title: 'تأكيد الإلغاء',
+                message: 'هل أنت متأكد من رغبتك في إلغاء هذه العملية؟ لا يمكن التراجع عن هذا الإجراء.',
+                confirmText: 'نعم، قم بالإلغاء',
+                cancelText: 'تراجع',
+                iconName: 'trash',
+                iconColor: 'var(--danger-color)'
+            });
+
+            if (confirmed) {
                 const txRef = doc(db, "transactions", tx.id);
-                // تحديث الحالة وإضافة سجل تاريخي
                 await updateDoc(txRef, {
                     status: "Rejected",
                     statusHistory: arrayUnion({ status: "Rejected", timestamp: new Date() })
                 });
-                alert("تم إلغاء العملية بنجاح.");
+                await showInfoModal({
+                    title: 'تم الإلغاء',
+                    message: 'تم إلغاء العملية بنجاح.',
+                    iconName: 'check-circle',
+                    iconColor: 'var(--success-color)'
+                });
                 closeToast();
             }
         };
         
-        // --- والتعديل النهائي هنا ---
         toast.querySelector('.toast-btn.complete').onclick = async () => {
-            const txRef = doc(db, "transactions", tx.id);
-             // تحديث الحالة وإضافة سجل تاريخي
-            await updateDoc(txRef, {
-                status: "Processing",
-                statusHistory: arrayUnion({ status: "Processing", timestamp: new Date() })
+             const confirmed = await showConfirmationModal({
+                title: 'تأكيد الإتمام',
+                message: 'هل أنت متأكد أنك قمت بتحويل المبلغ وإرسال الإيصال للدعم؟ سيتم تحديث حالة العملية إلى "قيد المعالجة".',
+                confirmText: 'نعم، أؤكد',
+                cancelText: 'تراجع',
+                iconName: 'send',
+                iconColor: 'var(--primary-color)'
             });
-            alert("شكراً لك! سيقوم المشرف بمراجعة عمليتك وتأكيدها في أقرب وقت.");
-            closeToast();
+
+            if (confirmed) {
+                const txRef = doc(db, "transactions", tx.id);
+                await updateDoc(txRef, {
+                    status: "Processing",
+                    statusHistory: arrayUnion({ status: "Processing", timestamp: new Date() })
+                });
+                await showInfoModal({
+                    title: 'شكرًا لك',
+                    message: 'سيقوم المشرف بمراجعة عمليتك وتأكيدها في أقرب وقت. يمكنك متابعة حالة العملية من صفحة "سجل العمليات".',
+                    iconName: 'check-circle',
+                    iconColor: 'var(--success-color)'
+                });
+                closeToast();
+            }
         };
     }
 
