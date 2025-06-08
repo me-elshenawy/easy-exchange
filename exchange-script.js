@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { user, saveTransactionToFirestore, generateTransactionId, getGlobalSettings } = authContext;
         const contentWrapper = document.querySelector('.main-content-wrapper .content-wrapper-inner') || document.body;
         
-        // Fetch global settings from Firestore
         const globalSettings = await getGlobalSettings();
         if (!globalSettings || !globalSettings.whatsAppNumber) {
             contentWrapper.innerHTML = `<h1>خطأ فني</h1><p>لم يتم تحميل إعدادات التواصل. يرجى المحاولة لاحقاً أو إبلاغ الدعم.</p> <a href='index.html' class='site-button' style='text-decoration:none; display:inline-block; width:auto; padding:10px 20px;'>العودة للصفحة الرئيسية</a>`;
@@ -162,7 +161,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     receiveAmount: receiveAmount,
                     receiveCurrencyType: receiveMethodDetails.type,
                     transactionId: generateTransactionId(),
-                    status: "Pending" 
+                    status: "Pending",
+                    // ========= START: NEW LINE ADDED =========
+                    receiveUserIdentifierType: userIdentifierForChat 
+                    // ========= END: NEW LINE ADDED =========
                 };
 
                 const savedTxId = await saveTransactionToFirestore(user.uid, transactionDetails);
@@ -172,7 +174,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const whatsappUrl = `https://wa.me/${globalSettings.whatsAppNumber}?text=${encodeURIComponent(message)}`;
                     window.open(whatsappUrl, '_blank');
                     goToChatButton.textContent = 'تم التوجيه للدردشة';
-                    // The spinner will be hidden by the browser when the new tab opens.
                 } else {
                     console.error("لم يتم حفظ العملية، لن يتم فتح الواتساب.");
                     window.showToast("فشل حفظ العملية. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.", 'error', 4000);
@@ -183,7 +184,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
     } finally {
-        // Hide spinner after all initial setup is done
         if(window.hidePageSpinner) window.hidePageSpinner();
     }
 });
