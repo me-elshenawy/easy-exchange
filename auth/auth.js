@@ -8,7 +8,10 @@ import {
     updateProfile,
     sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, setDoc, getDoc, serverTimestamp, updateDoc, collection, addDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+    doc, setDoc, getDoc, serverTimestamp, updateDoc, 
+    collection, addDoc, query, where, getDocs, orderBy, arrayUnion 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // A utility function to show messages, primarily using a toast function if available.
 const showMessage = (toastFn, message, type = 'info', duration = 4000) => {
@@ -137,7 +140,6 @@ export const sendPasswordReset = async (email, messageElementId, toastFn) => {
         console.error("خطأ في إرسال بريد إعادة تعيين كلمة المرور:", error);
         let friendlyMessage = `فشل إرسال رابط إعادة التعيين.`;
         if (error.code === 'auth/user-not-found') {
-            // To prevent user enumeration, we show the success message even if the user is not found.
             const successMsg = "تم إرسال الرابط بنجاح. يرجى تفقد بريدك الإلكتروني (بما في ذلك مجلد الرسائل غير المرغوب فيها) لإكمال العملية.";
             showMessage(toastFn, successMsg, 'success', 8000);
         } else if (error.code === 'auth/invalid-email') {
@@ -146,7 +148,6 @@ export const sendPasswordReset = async (email, messageElementId, toastFn) => {
             friendlyMessage = "لقد طلبت إعادة تعيين كلمة المرور عدة مرات. يرجى المحاولة مرة أخرى لاحقًا.";
         }
         
-        // Only show an error toast if the error is not 'user-not-found'.
         if(error.code !== 'auth/user-not-found') {
             showMessage(toastFn, friendlyMessage, 'error');
         }
@@ -206,14 +207,6 @@ export const getCurrentUser = () => {
     });
 };
 
-/**
- * --- START: NEW AND IMPROVED PAGE PROTECTION ---
- * This function handles all authentication-based page access logic.
- * It's based on a strict state machine:
- * 1. LOGGED OUT: Can only access public pages.
- * 2. LOGGED IN & VERIFIED: Can access protected pages, is redirected from public pages.
- * 3. LOGGED IN & UNVERIFIED: Is forced to the 'verify-email' page from anywhere else.
- */
 export const protectPage = async (requiresVerification = true) => {
     const user = await getCurrentUser();
     const currentPathname = window.location.pathname;
@@ -224,39 +217,24 @@ export const protectPage = async (requiresVerification = true) => {
     const isVerifyPage = currentPathname.endsWith('verify-email.html');
 
     if (!user) {
-        // STATE: LOGGED OUT
-        // If trying to access a page that requires a user (e.g., dashboard, history),
-        // redirect them to the login page. The `requiresVerification` parameter serves as a
-        // flag for these protected pages.
         if (requiresVerification) {
             window.location.href = onAuthDir ? 'login.html' : 'auth/login.html';
         }
-        // Otherwise, they are on a public page, so allow access.
         return null;
     }
 
     if (user.emailVerified) {
-        // STATE: LOGGED IN AND VERIFIED
-        // If a verified user somehow lands on a public auth page or the verify page,
-        // redirect them away to their dashboard or intended destination.
         if (isPublicAuthPage || isVerifyPage) {
             handleSuccessfulAuth(user);
         }
-        // Otherwise, they are on a valid protected page (like dashboard), so allow access.
         return user;
     } else {
-        // STATE: LOGGED IN, BUT NOT VERIFIED
-        // This is a strict rule: An unverified user's session is only valid on the
-        // 'verify-email.html' page. This prevents all redirect loops and edge cases.
         if (!isVerifyPage) {
-            // If they are on ANY other page, force them to the verification page.
             window.location.href = onAuthDir ? 'verify-email.html' : 'auth/verify-email.html';
         }
-        // If they are already on the verification page, let them stay.
         return user;
     }
 };
-// --- END: NEW AND IMPROVED PAGE PROTECTION ---
 
 export const getUserProfile = async (uid) => {
     if (!uid) return null;
@@ -277,7 +255,21 @@ export const updateUserProfileData = async (uid, dataToUpdate) => {
         if (!user || user.uid !== uid) return false;
 
         const userDocRef = doc(db, "users", uid);
-        await updateDoc(userDocRef, { ...dataToUpdate, updatedAt: serverTimestamp() });
+        const docSnap = await getDoc(userDocRef);
+
+        let finalUpdateData = { ...dataToUpdate };
+
+        if (docSnap.exists()) {
+            const currentData = docSnap.data();
+            const oldPhoneNumber = currentData.phoneNumber;
+            const newPhoneNumber = dataToUpdate.phoneNumber;
+
+            if (newPhoneNumber && newPhoneNumber !== oldPhoneNumber && oldPhoneNumber) {
+                finalUpdateData.previousPhoneNumbers = arrayUnion(oldPhoneNumber);
+            }
+        }
+        
+        await updateDoc(userDocRef, { ...finalUpdateData, updatedAt: serverTimestamp() });
         
         const newDisplayName = `${dataToUpdate.firstName || ''} ${dataToUpdate.lastName || ''}`.trim();
         if (newDisplayName && newDisplayName !== user.displayName) {
@@ -296,23 +288,48 @@ export const generateTransactionId = () => {
     return `EZ-${timestampPart}${randomPart}`;
 };
 
+/**
+ * @description يحفظ بيانات العملية في Firestore. (الإصدار النهائي)
+ * @param {string} userId - معرف المستخدم.
+ * @param {object} transactionData - بيانات العملية.
+ * @returns {Promise<string|null>} - يعيد transactionId عند النجاح، و null عند الفشل.
+ */
 export const saveTransactionToFirestore = async (userId, transactionData) => {
     if (!userId || !transactionData) return null;
     try {
-        const transactionWithTimestamp = {
+        // 1. إعداد البيانات الأساسية للعملية مع الطابع الزمني من الخادم
+        const baseTransactionData = {
             ...transactionData,
             userId: userId,
             transactionId: transactionData.transactionId || generateTransactionId(),
             status: transactionData.status || "Pending",
-            timestamp: serverTimestamp()
+            timestamp: serverTimestamp() // الطابع الزمني الرسمي للإنشاء
         };
-        const docRef = await addDoc(collection(db, "transactions"), transactionWithTimestamp);
-        return transactionWithTimestamp.transactionId;
+
+        // 2. إنشاء المستند أولاً
+        const docRef = await addDoc(collection(db, "transactions"), baseTransactionData);
+
+        // --- الحل النهائي للمشكلة ---
+        // 3. إنشاء سجل الحالة الأول باستخدام طابع زمني من جهاز العميل (new Date())
+        // هذا يتجنب خطأ Firebase المتعلق باستخدام serverTimestamp داخل مصفوفة عند الإنشاء
+        const initialStatusEntry = {
+            status: baseTransactionData.status,
+            timestamp: new Date() 
+        };
+
+        // 4. تحديث المستند لإضافة سجل الحالة الأولي
+        await updateDoc(docRef, {
+            statusHistory: [initialStatusEntry] // تعيين المصفوفة مباشرة
+        });
+        
+        return baseTransactionData.transactionId;
+
     } catch (error) {
         console.error("Error saving transaction:", error);
         return null;
     }
 };
+
 
 export const getUserTransactions = async (uid) => {
     if (!uid) return [];
@@ -327,19 +344,9 @@ export const getUserTransactions = async (uid) => {
     }
 };
 
-// ==============================================
-// ==== SECTION: Global Settings Management =====
-// ==============================================
-
-// Cache to store settings on the client for the current session to reduce reads.
 let globalSettingsCache = null;
 
-/**
- * Fetches global settings from Firestore. Uses a cache to prevent multiple reads per page load.
- * @returns {Promise<Object|null>} A promise that resolves to the settings object or null if not found/error.
- */
 export const getGlobalSettings = async () => {
-    // If settings are already in cache, return them immediately.
     if (globalSettingsCache) {
         return globalSettingsCache;
     }
@@ -349,7 +356,6 @@ export const getGlobalSettings = async () => {
         const docSnap = await getDoc(settingsRef);
         
         if (docSnap.exists()) {
-            // Store in cache for subsequent calls
             globalSettingsCache = docSnap.data();
             return globalSettingsCache;
         } else {
