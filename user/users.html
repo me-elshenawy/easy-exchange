@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة المستخدمين - Easy Exchange</title>
+    <link rel="stylesheet" href="user-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-prompt" class="login-container">
+        <div class="login-box">
+            <box-icon name='user-shield' type='solid' color='#5b3bb0' size='lg'></box-icon>
+            <h2>لوحة المستخدمين</h2>
+            <p>الرجاء إدخال بيانات الاعتماد للوصول.</p>
+            <button id="login-button" class="button primary">تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي بعد تسجيل الدخول -->
+    <main id="main-content" style="display: none;">
+        <header class="main-header">
+            <h1><box-icon name='group' type='solid'></box-icon> بيانات المستخدمين</h1>
+            <button id="logout-button" class="button secondary">تسجيل الخروج</button>
+        </header>
+        
+        <div class="content-area">
+            <div class="controls-section">
+                <div class="search-control">
+                    <label for="search-input">بحث عن مستخدم</label>
+                    <input type="text" id="search-input" placeholder="ابحث بالاسم، البريد الإلكتروني، أو رقم الهاتف...">
+                </div>
+                <div class="sort-control">
+                    <label for="sort-select">فرز المستخدمين حسب</label>
+                    <select id="sort-select">
+                        <option value="name_asc">الاسم (أ-ي)</option>
+                        <option value="name_desc">الاسم (ي-أ)</option>
+                        <option value="total_desc">إجمالي العمليات (الأعلى)</option>
+                        <option value="total_asc">إجمالي العمليات (الأقل)</option>
+                        <option value="completed_desc">العمليات الناجحة (الأعلى)</option>
+                        <option value="completed_asc">العمليات الناجحة (الأقل)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="users-container">
+                <p id="loading-message">جارٍ تحميل بيانات المستخدمين...</p>
+                <!-- سيتم ملء بطاقات المستخدمين هنا بواسطة JS -->
+            </div>
+        </div>
+
+        <!-- ============================================= -->
+        <!-- ========= القسم الجديد: سجل العمليات ========= -->
+        <!-- ============================================= -->
+        <div class="content-area" style="margin-top: 40px;">
+            <header class="main-header">
+                <h1><box-icon name='history' type='solid'></box-icon> سجل تتبع العمليات</h1>
+            </header>
+            
+            <div class="controls-section">
+                <div class="search-control">
+                    <label for="log-search-input">بحث برقم العملية</label>
+                    <input type="text" id="log-search-input" placeholder="مثال: EZ-XYZ123">
+                </div>
+                <div class="sort-control">
+                    <label for="log-filter-select">فلترة حسب الحالة</label>
+                    <select id="log-filter-select">
+                        <option value="all">الكل</option>
+                        <option value="Completed">ناجحة</option>
+                        <option value="Pending">قيد الانتظار</option>
+                        <option value="Processing">قيد المعالجة</option>
+                        <option value="Rejected">مرفوضة</option>
+                    </select>
+                </div>
+                <div class="sort-control">
+                    <label for="log-sort-select">فرز حسب التاريخ</label>
+                    <select id="log-sort-select">
+                        <option value="date_desc">الأحدث أولاً</option>
+                        <option value="date_asc">الأقدم أولاً</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="transactions-log-table">
+                    <thead>
+                        <tr>
+                            <th>رقم العملية</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>العميل</th>
+                            <th>تفاصيل العملية</th>
+                            <th>سجل الحالات</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-log-body">
+                        <!-- سيتم ملء الصفوف هنا بواسطة JS -->
+                    </tbody>
+                </table>
+            </div>
+            <p id="log-loading-message" class="no-results" style="padding: 40px; text-align: center;">جارٍ تحميل سجل العمليات...</p>
+        </div>
+    </main>
+
+    <script src="../auth/firebase-config.js" type="module"></script>
+    <script src="user-script.js" type="module"></script>
+</body>
+</html>
