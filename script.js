@@ -1,6 +1,6 @@
 // This script handles the main page logic, dynamic header/navigation, and global utilities.
 import { db } from './auth/firebase-config.js'; 
-import { collection, query, where, getDocs, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     // --- START: Full Page Spinner Logic ---
@@ -92,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let navHtml = '';
                 const isHelpPage = window.location.pathname.includes('/help.html');
                 
-                // CORRECTED: This logic now correctly determines the path to the help page.
                 const helpLinkPath = window.location.pathname.startsWith('/auth/') ? 'help.html' : 'auth/help.html';
                 
                 if (user && user.emailVerified) {
@@ -199,7 +198,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, false); 
     }
     
-    window.showToast = function(message, type = 'info', duration = 3000) { const existingToast = document.querySelector('.toast-notification'); if (existingToast) existingToast.remove(); const toast = document.createElement('div'); toast.className = 'toast-notification'; if (type === 'success') toast.classList.add('success'); else if (type === 'error') toast.classList.add('error'); else if (type === 'info') toast.classList.add('info'); else if (type === 'warning') toast.classList.add('warning'); toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, duration); };
+    window.showToast = function(message, type = 'info', duration = 3000) { const existingToast = document.querySelector('.toast-notification'); if (existingToast && !existingToast.classList.contains('persistent')) existingToast.remove(); const toast = document.createElement('div'); toast.className = 'toast-notification'; if (type === 'success') toast.classList.add('success'); else if (type === 'error') toast.classList.add('error'); else if (type === 'info') toast.classList.add('info'); else if (type === 'warning') toast.classList.add('warning'); toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, duration); };
 
     // --- START: Exchange Form Logic (Main Page) ---
     if (document.getElementById('sendCurrency')) {
@@ -213,9 +212,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         function calculateExchange(sendMethodKey, receiveMethodKey, amount, calculationSource) { if (!exchangeRatesAndFees || !allPaymentMethods[sendMethodKey] || !allPaymentMethods[receiveMethodKey] || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) return "0.00"; const sendMethod = allPaymentMethods[sendMethodKey], receiveMethod = allPaymentMethods[receiveMethodKey], rates = exchangeRatesAndFees; let result = 0; if (calculationSource === 'send') { let amountToConvert = parseFloat(amount); if (sendMethod.fees && sendMethod.fees.sending && sendMethod.fees.sending.type !== 'none') { const feeConfig = sendMethod.fees.sending; let calculatedFee = 0; if (feeConfig.type === 'fixed') calculatedFee = feeConfig.value || 0; else if (feeConfig.type === 'percentage') { calculatedFee = amountToConvert * (feeConfig.value || 0); if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; } amountToConvert -= calculatedFee; } if (amountToConvert <= 0) return "0.00"; let receivedAmountBeforeFees = 0; if (sendMethod.type === "USDT" && receiveMethod.type === "EGP") receivedAmountBeforeFees = amountToConvert * (rates.usdtToEgpBuyRate || 0); else if (sendMethod.type === "EGP" && receiveMethod.type === "USDT") receivedAmountBeforeFees = amountToConvert / (rates.usdtToEgpSellRate || 1); else if (sendMethod.type === "USDT" && receiveMethod.type === "USDT") { receivedAmountBeforeFees = amountToConvert; if (sendMethod.key !== receiveMethod.key && rates.usdtToUsdtServiceFeeType && rates.usdtToUsdtServiceFeeType !== 'none') { let serviceFee = 0; if (rates.usdtToUsdtServiceFeeType === 'fixed') serviceFee = rates.usdtToUsdtServiceFeeValue || 0; else if (rates.usdtToUsdtServiceFeeType === 'percentage') { serviceFee = amountToConvert * (rates.usdtToUsdtServiceFeeValue || 0); if (rates.usdtToUsdtServiceFeeMinCap != null && serviceFee < rates.usdtToUsdtServiceFeeMinCap) serviceFee = rates.usdtToUsdtServiceFeeMinCap; if (rates.usdtToUsdtServiceFeeMaxCap != null && serviceFee > rates.usdtToUsdtServiceFeeMaxCap) serviceFee = rates.usdtToUsdtServiceFeeMaxCap; } receivedAmountBeforeFees -= serviceFee; } } else if (sendMethod.type === "EGP" && receiveMethod.type === "EGP") receivedAmountBeforeFees = amountToConvert; else return "0.00"; if (receivedAmountBeforeFees <= 0) return "0.00"; let finalAmount = receivedAmountBeforeFees; if (receiveMethod.fees && receiveMethod.fees.receiving && receiveMethod.fees.receiving.type !== 'none') { const feeConfig = receiveMethod.fees.receiving; let calculatedFee = 0; if (feeConfig.type === 'fixed') calculatedFee = feeConfig.value || 0; else if (feeConfig.type === 'percentage') { calculatedFee = receivedAmountBeforeFees * (feeConfig.value || 0); if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; } finalAmount -= calculatedFee; } result = finalAmount; } else if (calculationSource === 'receive') { let amountToCalculateFrom = parseFloat(amount); let amountBeforeReceivingFee = amountToCalculateFrom; if (receiveMethod.fees && receiveMethod.fees.receiving && receiveMethod.fees.receiving.type !== 'none') { const feeConfig = receiveMethod.fees.receiving; if (feeConfig.type === 'fixed') { amountBeforeReceivingFee += feeConfig.value || 0; } else if (feeConfig.type === 'percentage') { const percentage = feeConfig.value || 0; if (percentage < 1) { let initialGuess = amountToCalculateFrom / (1 - percentage); let calculatedFee = initialGuess * percentage; if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; amountBeforeReceivingFee = amountToCalculateFrom + calculatedFee; } } } if (amountBeforeReceivingFee <= 0) return "0.00"; let amountAfterSendingFee = 0; if (sendMethod.type === "USDT" && receiveMethod.type === "EGP") { amountAfterSendingFee = amountBeforeReceivingFee / (rates.usdtToEgpBuyRate || 1); } else if (sendMethod.type === "EGP" && receiveMethod.type === "USDT") { amountAfterSendingFee = amountBeforeReceivingFee * (rates.usdtToEgpSellRate || 0); } else if (sendMethod.type === "USDT" && receiveMethod.type === "USDT") { if (sendMethod.key === receiveMethod.key) { amountAfterSendingFee = amountBeforeReceivingFee; } else { const feeConfig = { type: rates.usdtToUsdtServiceFeeType, value: rates.usdtToUsdtServiceFeeValue, minCap: rates.usdtToUsdtServiceFeeMinCap, maxCap: rates.usdtToUsdtServiceFeeMaxCap }; if (feeConfig.type === 'none' || !feeConfig.type) { amountAfterSendingFee = amountBeforeReceivingFee; } else if (feeConfig.type === 'fixed') { amountAfterSendingFee = amountBeforeReceivingFee + (feeConfig.value || 0); } else if (feeConfig.type === 'percentage') { const p = feeConfig.value || 0; if (p < 1) { let potentialSend_A = amountBeforeReceivingFee / (1 - p); let calculatedFee_A = potentialSend_A * p; if ((feeConfig.minCap == null || calculatedFee_A >= feeConfig.minCap) && (feeConfig.maxCap == null || calculatedFee_A <= feeConfig.maxCap)) { amountAfterSendingFee = potentialSend_A; } else if (feeConfig.minCap != null && calculatedFee_A < feeConfig.minCap) { amountAfterSendingFee = amountBeforeReceivingFee + feeConfig.minCap; } else if (feeConfig.maxCap != null && calculatedFee_A > feeConfig.maxCap) { amountAfterSendingFee = amountBeforeReceivingFee + feeConfig.maxCap; } else { amountAfterSendingFee = potentialSend_A; } } } else { amountAfterSendingFee = amountBeforeReceivingFee; } } } else if (sendMethod.type === "EGP" && receiveMethod.type === "EGP") { amountAfterSendingFee = amountBeforeReceivingFee; } else { return "0.00"; } if (amountAfterSendingFee <= 0) return "0.00"; let initialSendAmount = amountAfterSendingFee; if (sendMethod.fees && sendMethod.fees.sending && sendMethod.fees.sending.type !== 'none') { const feeConfig = sendMethod.fees.sending; if (feeConfig.type === 'fixed') { initialSendAmount += feeConfig.value || 0; } else if (feeConfig.type === 'percentage') { const percentage = feeConfig.value || 0; if (percentage < 1) { let initialGuess = amountAfterSendingFee / (1 - percentage); let calculatedFee = initialGuess * percentage; if (feeConfig.minCap != null && calculatedFee < feeConfig.minCap) calculatedFee = feeConfig.minCap; if (feeConfig.maxCap != null && calculatedFee > feeConfig.maxCap) calculatedFee = feeConfig.maxCap; initialSendAmount = amountAfterSendingFee + calculatedFee; } } } result = initialSendAmount; } if (result <= 0 || isNaN(result)) return "0.00"; let finalValue; if (calculationSource === 'send') { finalValue = Math.floor(result * 100) / 100; } else { finalValue = Math.ceil(result * 100) / 100; } return finalValue.toFixed(2); }
         function handleAmountChange_local(source) { if (isCalculating) return; const sendKey = sendCurrencySelect.value, receiveKey = receiveCurrencySelect.value; if (!sendKey || !receiveKey || !exchangeRatesAndFees) { if (source === 'send') receiveAmountInput.value = ""; else sendAmountInput.value = ""; return; } isCalculating = true; try { if (source === 'send') { const amountToConvert = parseFloat(sendAmountInput.value); if (isNaN(amountToConvert) || amountToConvert <= 0) { receiveAmountInput.value = ""; } else { receiveAmountInput.value = calculateExchange(sendKey, receiveKey, amountToConvert, 'send'); } } else if (source === 'receive') { const amountToConvert = parseFloat(receiveAmountInput.value); if (isNaN(amountToConvert) || amountToConvert <= 0) { sendAmountInput.value = ""; } else { sendAmountInput.value = calculateExchange(sendKey, receiveKey, amountToConvert, 'receive'); } } } catch (e) { console.error("Calculation error:", e); sendAmountInput.value = ""; receiveAmountInput.value = ""; } finally { isCalculating = false; } }
         
-        // =============================================
-        // ========= START: FUNCTION WITH FIX ==========
-        // =============================================
         async function validateAndProceed() {
             window.showPageSpinner();
             const sendMethodKey = sendCurrencySelect.value,
@@ -243,31 +239,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
         
-            // 1. Fetch details for both methods
             const sendMethodDetails = allPaymentMethods[sendMethodKey];
-            const receiveMethodDetails = allPaymentMethods[receiveMethodKey]; // New addition
+            const receiveMethodDetails = allPaymentMethods[receiveMethodKey];
         
-            if (!sendMethodDetails || !receiveMethodDetails) { // Check if both methods exist
+            if (!sendMethodDetails || !receiveMethodDetails) {
                 showToast("وسيلة الإرسال أو الاستلام المختارة غير صالحة.", "error");
                 window.hidePageSpinner();
                 return;
             }
         
-            // 2. Check minimum for SENDING amount (original check)
             if (typeof sendMethodDetails.minAmount === 'number' && sendAmountNum < sendMethodDetails.minAmount) {
                 showToast(`الحد الأدنى للإرسال بعملة ${sendMethodDetails.name} هو ${sendMethodDetails.minAmount} ${sendMethodDetails.type}.`, 'warning');
                 window.hidePageSpinner();
                 return;
             }
         
-            // 3. Check minimum for RECEIVING amount (new, crucial check)
             if (typeof receiveMethodDetails.minAmount === 'number' && receiveAmountNum < receiveMethodDetails.minAmount) {
                 showToast(`الحد الأدنى للاستلام بعملة ${receiveMethodDetails.name} هو ${receiveMethodDetails.minAmount} ${receiveMethodDetails.type}.`, 'warning');
                 window.hidePageSpinner();
                 return;
             }
         
-            // 4. Check for whole number requirement (original check)
             if (sendMethodDetails.requiresWholeNumber && sendAmountNum % 1 !== 0) {
                 showToast(`المبلغ المرسل بعملة ${sendMethodDetails.name} يجب أن يكون رقمًا صحيحًا (بدون كسور).`, 'warning');
                 window.hidePageSpinner();
@@ -305,9 +297,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             window.location.href = `exchange.html?${params.toString()}`;
         }
-        // =============================================
-        // ========== END: FUNCTION WITH FIX ===========
-        // =============================================
 
         sendCurrencySelect.addEventListener('change', updateReceiveCurrencyOptions);
         receiveCurrencySelect.addEventListener('change', () => updateCurrencyLabelsAndClearAmounts('send'));
@@ -318,6 +307,102 @@ document.addEventListener('DOMContentLoaded', async () => {
         initializePage();
     }
     // --- END: Exchange Form Logic ---
+
+    // --- START: PENDING TRANSACTION NOTIFIER ---
+    async function checkAndNotifyPendingTransactions(user) {
+        if (!user) return;
+
+        const notificationClosedTimestamp = sessionStorage.getItem('pendingTxNotificationClosed');
+        if (notificationClosedTimestamp && (Date.now() - notificationClosedTimestamp < 1 * 60 * 60 * 1000)) { // 1 hour cooldown
+            return;
+        }
+
+        const { getUserTransactions } = await import('./auth/auth.js');
+        const transactions = await getUserTransactions(user.uid);
+        const pendingTx = transactions.find(tx => tx.status === 'Pending');
+
+        if (pendingTx) {
+            showPendingTransactionToast(pendingTx);
+        }
+    }
+
+    function showPendingTransactionToast(tx) {
+        const toastId = `toast-${Date.now()}`;
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = 'toast-notification info persistent';
+        
+        toast.innerHTML = `
+            <div class="toast-content">
+                <p>لديك عملية معلقة برقم <strong>${tx.transactionId}</strong>.</p>
+                <p>ماذا تود أن تفعل؟</p>
+                <div class="toast-actions">
+                    <button class="toast-btn continue">متابعة العملية</button>
+                    <button class="toast-btn complete">لقد أتممتها</button>
+                    <button class="toast-btn cancel">إلغاء العملية</button>
+                </div>
+            </div>
+            <button class="toast-close-btn">×</button>
+        `;
+
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        const closeToast = () => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 500);
+        };
+        
+        toast.querySelector('.toast-close-btn').onclick = () => {
+             sessionStorage.setItem('pendingTxNotificationClosed', Date.now());
+             closeToast();
+        };
+
+        toast.querySelector('.toast-btn.continue').onclick = async () => {
+            const { getGlobalSettings } = await import('./auth/auth.js');
+            const settings = await getGlobalSettings();
+            if (settings && settings.whatsAppNumber) {
+                 const userIdentifierForChat = tx.receiveUserIdentifierType || "المعرف الخاص بي";
+                 const message = `مرحبًا، أرغب في إتمام عملية التبادل التالية (رقم العملية: ${tx.transactionId}):\n\nأرسل:\n- المبلغ: ${tx.sendAmount.toFixed(2)} ${tx.sendCurrencyType}\n- عبر: ${tx.sendCurrencyName}\n\nأستلم:\n- المبلغ: ${tx.receiveAmount.toFixed(2)} ${tx.receiveCurrencyType}\n- عبر: ${tx.receiveCurrencyName}\n\nسأقوم بإرسال إيصال التحويل و ${userIdentifierForChat} الآن.`;
+                 const whatsappUrl = `https://wa.me/${settings.whatsAppNumber}?text=${encodeURIComponent(message)}`;
+                 window.open(whatsappUrl, '_blank');
+            } else {
+                alert("لا يمكن المتابعة، خطأ في تحميل رقم التواصل.");
+            }
+            closeToast();
+        };
+
+        toast.querySelector('.toast-btn.cancel').onclick = async () => {
+            if (confirm("هل أنت متأكد من رغبتك في إلغاء هذه العملية؟")) {
+                const txRef = doc(db, "transactions", tx.id);
+                await updateDoc(txRef, { status: "Rejected" });
+                alert("تم إلغاء العملية بنجاح.");
+                closeToast();
+            }
+        };
+        
+        toast.querySelector('.toast-btn.complete').onclick = async () => {
+            const txRef = doc(db, "transactions", tx.id);
+            await updateDoc(txRef, { status: "Processing" });
+            alert("شكراً لك! سيقوم المشرف بمراجعة عمليتك وتأكيدها في أقرب وقت.");
+            closeToast();
+        };
+    }
+
+    // Initialize the notifier trigger
+    (async () => {
+        try {
+            const { auth, onAuthStateChanged } = await import('./auth/auth.js');
+            onAuthStateChanged(auth, (user) => {
+                if (user && user.emailVerified) {
+                    setTimeout(() => checkAndNotifyPendingTransactions(user), 3000);
+                }
+            });
+        } catch (e) {
+            console.error("Could not initialize pending transaction notifier:", e);
+        }
+    })();
+    // --- END: PENDING TRANSACTION NOTIFIER ---
 
     // --- Global Initializers ---
     loadNotificationBar(); 
