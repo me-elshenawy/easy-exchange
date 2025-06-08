@@ -178,7 +178,6 @@ body {
     box-sizing: border-box; /* Ensures padding is included in width */
 }
 
-/* CORRECTED: This rule fixes the text overflow issue */
 .dropdown-nav a span, .dropdown-nav button span {
     flex-grow: 1;
     min-width: 0; /* Allows the element to shrink below its content size */
@@ -269,7 +268,6 @@ button.site-button:active, .button-like.site-button:active { transform: translat
 @media (max-width: 768px) { 
     #site-top-header .header-content.container { height: 65px; padding: 0 15px; }
     
-    /* CORRECTED: Removed order properties to allow natural flexbox ordering */
     #site-brand-title h2 { font-size: 1.4rem; }
     #site-brand-title box-icon { display: none; }
     
@@ -338,4 +336,214 @@ button.site-button:active, .button-like.site-button:active { transform: translat
     h1 {font-size: 1.4rem;}
     select, input[type="number"], input[type="text"] { font-size: 0.95rem; }
     button.site-button, .button-like.site-button { font-size: 0.95rem; padding: 11px 18px; }
+}
+
+/* =================================================================== */
+/* --- 9. NEW: Styles for Persistent Transaction Notifier (MODIFIED) --- */
+/* =================================================================== */
+.toast-notification.persistent {
+    width: 90%;
+    max-width: 400px;
+    bottom: -100%; /* Start off-screen */
+    left: 20px;
+    transform: translateX(0);
+    text-align: right;
+    padding: 0; /* Remove padding, will be on inner elements */
+    background-color: #fff; /* Card-like look */
+    color: var(--text-primary, #1e293b);
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    overflow: hidden; /* For border-radius on children */
+    transition: bottom 0.4s ease-out, opacity 0.4s ease-out; /* Add opacity transition */
+}
+.toast-notification.persistent.show {
+    bottom: 20px;
+}
+.toast-persistent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+.toast-persistent-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-color, #5b3bb0);
+}
+.toast-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 0;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+.toast-close-btn:hover {
+    background-color: #e2e8f0;
+}
+.toast-close-btn box-icon {
+    display: block;
+    fill: var(--text-secondary, #64748b);
+}
+.toast-content {
+    padding: 18px;
+}
+.toast-content p {
+    margin: 0 0 15px 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+.toast-content p strong {
+    font-weight: 700;
+}
+.toast-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+.toast-btn {
+    flex-grow: 1;
+    border: 1px solid var(--border-color, #e2e8f0);
+    background-color: #fff;
+    color: var(--text-primary, #1e293b);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.toast-btn.continue {
+    background-color: var(--primary-color, #5b3bb0);
+    color: #fff;
+    border-color: var(--primary-color, #5b3bb0);
+}
+.toast-btn.continue:hover {
+    background-color: var(--primary-color-dark, #4a2f91);
+}
+.toast-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #b3c0d1;
+}
+
+/* =================================================================== */
+/* --- 10. NEW: Custom Confirmation Modal --- */
+/* =================================================================== */
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+.custom-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+.custom-modal {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px;
+    text-align: right;
+    transform: scale(0.95);
+    transition: transform 0.2s ease-in-out;
+    overflow: hidden;
+}
+.custom-modal-overlay.show .custom-modal {
+    transform: scale(1);
+}
+.modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+}
+.modal-header .modal-icon {
+    color: var(--warning-color, #ffc107); /* Default to warning for confirmations */
+}
+.modal-header .modal-icon.info {
+    color: var(--info-color, #17a2b8);
+}
+.modal-body {
+    padding: 25px 20px;
+    font-size: 1rem;
+    color: #6c757d;
+    line-height: 1.7;
+}
+.modal-footer {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: flex-start; /* Aligns buttons to the left for RTL */
+    gap: 12px;
+}
+.modal-button {
+    padding: 9px 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+.modal-button.confirm {
+    background-color: var(--primary-color, #5b3bb0);
+    color: #fff;
+}
+.modal-button.confirm:hover {
+    background-color: var(--primary-color-dark, #4a2f91);
+}
+.modal-button.cancel {
+    background-color: #fff;
+    color: var(--text-primary, #1e293b);
+    border-color: var(--border-color, #e2e8f0);
+}
+.modal-button.cancel:hover {
+    background-color: #f1f5f9;
+}
+
+@media (max-width: 480px) {
+    .toast-notification.persistent {
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 20px);
+        bottom: -100%;
+    }
+    .toast-notification.persistent.show {
+        bottom: 10px;
+    }
+    .modal-footer {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .modal-button {
+        width: 100%;
+    }
 }
