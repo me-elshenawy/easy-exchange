@@ -1,7 +1,7 @@
 import { db } from '../auth/firebase-config.js';
 import {
     collection, getDocs, doc, updateDoc, addDoc, deleteDoc,
-    orderBy, query, where, getDoc, setDoc, serverTimestamp
+    orderBy, query, where, getDoc, setDoc, serverTimestamp, arrayUnion
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -145,16 +145,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==============================================
     // SECTION: إدارة العمليات (Transactions)
     // ==============================================
+    /**
+     * @description تحديث حالة العملية (الإصدار النهائي والمعدل).
+     * @param {string} transactionDocId - معرف مستند العملية.
+     * @param {string} newStatus - الحالة الجديدة المراد تطبيقها.
+     */
     async function updateTransactionStatus(transactionDocId, newStatus) {
         if (!transactionDocId || !newStatus) return;
         const transactionRef = doc(db, "transactions", transactionDocId);
         try {
-            await updateDoc(transactionRef, { status: newStatus, lastAdminUpdate: serverTimestamp() });
+            // إنشاء كائن الحالة الجديد
+            const newStatusEntry = {
+                status: newStatus,
+                // الحل: استخدام طابع زمني من جهاز العميل (new Date()) هنا
+                // لأن serverTimestamp() غير مدعوم داخل arrayUnion
+                timestamp: new Date()
+            };
+
+            // تحديث المستند: 
+            await updateDoc(transactionRef, {
+                status: newStatus,
+                statusHistory: arrayUnion(newStatusEntry),
+                lastAdminUpdate: serverTimestamp() // هذا مقبول لأنه حقل رئيسي
+            });
+
+            // إعادة تحميل القائمة لعرض التغييرات فوراً
             loadTransactions(statusFilterSelect.value);
+
         } catch (error) {
+            console.error("Error updating transaction status:", error);
+            // عرض رسالة الخطأ للمستخدم
             alert(`فشل تحديث حالة العملية: ${error.message}`);
         }
     }
+
 
     async function loadTransactions(statusFilter = "all") {
         if (!transactionsTableContainer || !transactionsLoadingMsg) return;
@@ -210,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (confirm(`هل أنت متأكد من تغيير الحالة إلى ${selectedStatus}؟`)) {
                         updateTransactionStatus(e.target.dataset.id, selectedStatus);
                     } else {
+                        // إعادة القيمة للحالة الأصلية إذا ألغى المستخدم
                         e.target.value = currentStatus;
                     }
                 });
@@ -282,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==============================================
-    // SECTION: إدارة وسائل الدفع (RESTORED FULL FUNCTIONALITY)
+    // SECTION: إدارة وسائل الدفع
     // ==============================================
     function toggleFeeFields(feeTypeSelect, valueGroup, valueInput, maxCapGroup, maxCapInput, minCapGroup, minCapInput) {
         const selectedType = feeTypeSelect.value;
@@ -458,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let siteAccountInfoHTML = method.isSiteAccount ? `<p style="background-color: #e9f5ff; padding: 5px; border-radius: 4px;"><strong>حساب الموقع:</strong> ${method.recipientInfo}</p>` : '';
                 let feesHTML = '';
                 if(method.fees?.sending?.type !== 'none' || method.fees?.receiving?.type !== 'none') {
-                    feesHTML = `<p><strong>الرسوم:</strong> <span>يوجد</span></p>`; // Simplified for brevity
+                    feesHTML = `<p><strong>الرسوم:</strong> <span>يوجد</span></p>`;
                 }
 
                 card.innerHTML = `
