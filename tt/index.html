@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Easy Exchange</title>
+    <!-- Link to the admin-specific styles -->
+    <link rel="stylesheet" href="admin-style.css">
+    <!-- Link to the general site styles if needed for shared components, but admin-style.css should override/include -->
+    <!-- <link rel="stylesheet" href="../style.css"> -->
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <!-- شاشة تسجيل الدخول - تظهر إذا لم يتم المصادقة -->
+    <!-- This container and its minimal content is only a visual prompt background.
+         The actual login is handled by JS prompt() calls. -->
+    <div id="admin-login-prompt" class="login-prompt-container">
+        <div class="login-box">
+             <box-icon name='user-shield' type='solid' color='#5b3bb0' size='lg'></box-icon>
+             <h2>تسجيل دخول المشرف</h2>
+             <p>الرجاء إدخال بيانات اعتماد المشرف للوصول.</p>
+             <!-- Add a button here with ID="prompt-login-button" if you want manual prompt triggering -->
+             <!-- <button id="prompt-login-button" class="button primary">تسجيل الدخول</button> -->
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الكاملة بعد تسجيل الدخول - مخفية افتراضياً -->
+    <div id="admin-panel-content" class="admin-panel-container" style="display: none;">
+
+        <!-- ================== القائمة الجانبية (Sidebar) ================== -->
+        <aside id="admin-sidebar">
+            <div class="sidebar-header">
+                <box-icon name='atom' type='solid' color='#ffffff'></box-icon>
+                <h3>Easy Exchange</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <!-- nav-link elements trigger view switching -->
+                    <li><a href="#" class="nav-link active" data-target="dashboard-view"><box-icon name='dashboard' type='solid'></box-icon> <span>لوحة المعلومات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="transactions-view"><box-icon name='transfer-alt'></box-icon> <span>إدارة العمليات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="settings-view"><box-icon name='cog'></box-icon> <span>الإعدادات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="payment-methods-view"><box-icon name='credit-card-alt'></box-icon> <span>وسائل الدفع</span></a></li>
+                    <!-- NEW: Platform Fees Report Link -->
+                    <li><a href="#" class="nav-link" data-target="fees-report-view"><box-icon name='dollar-circle' type='solid'></box-icon> <span>تقرير رسوم المنصة</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="admin-logout-button" class="button danger full-width">
+                    <box-icon name='log-out-circle' color='#ffffff'></box-icon>
+                    <span>تسجيل الخروج</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ================== المحتوى الرئيسي ================== -->
+        <main id="admin-main-content">
+            <!-- Header with title and mobile menu toggle -->
+            <header class="main-content-header">
+                <button id="mobile-menu-toggle" class="mobile-only-btn"><box-icon name='menu'></box-icon></button>
+                <h1 id="main-content-title">لوحة المعلومات</h1> <!-- Title will be updated by JS -->
+            </header>
+
+            <!-- Area where content views are displayed -->
+            <div class="content-area">
+
+                <!-- ========= عرض لوحة المعلومات (Dashboard View) ========= -->
+                <div id="dashboard-view" class="content-view active"> <!-- Active by default -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon orange"><box-icon name='time-five' type='solid' color='#fff'></box-icon></div>
+                            <div class="stat-card-info">
+                                <span class="stat-title">عمليات قيد الانتظار</span>
+                                <span class="stat-value" id="pending-transactions-count">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon green"><box-icon name='check-double' type='solid' color='#fff'></box-icon></div>
+                            <div class="stat-card-info">
+                                <span class="stat-title">عمليات مكتملة (اليوم)</span>
+                                <span class="stat-value" id="completed-transactions-count">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon blue"><box-icon name='wallet' type='solid' color='#fff'></box-icon></div>
+                            <div class="stat-card-info">
+                                <span class="stat-title">وسائل دفع نشطة</span>
+                                <span class="stat-value" id="active-methods-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-section" style="margin-top: 30px;">
+                        <h2><box-icon name='list-ul'></box-icon> آخر العمليات</h2>
+                        <div class="table-responsive">
+                            <table id="recent-transactions-table">
+                                <thead>
+                                    <tr><th>ID العملية</th><th>العميل</th><th>المبلغ</th><th>الحالة</th></tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Recent transactions loaded by JS -->
+                                    <tr><td colspan="4" style="text-align:center; padding: 20px;">جارٍ تحميل آخر العمليات...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="view-all-link">
+                            <!-- nav-link-faux is handled by JS to switch view -->
+                            <a href="#" class="nav-link-faux" data-target="transactions-view">عرض كل العمليات <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= عرض إدارة العمليات (Transactions View) ========= -->
+                <div id="transactions-view" class="content-view">
+                    <div id="transactions-section" class="admin-section">
+                        <h2><box-icon name='transfer-alt'></box-icon>إدارة كل العمليات</h2>
+                        <div class="controls">
+                            <div class="control-group">
+                                <label for="status-filter">تصفية حسب الحالة:</label>
+                                <select id="status-filter">
+                                    <option value="all">الكل</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Processing">Processing</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="control-group search-control-group">
+                                <label for="search-transactions">بحث:</label>
+                                <div class="input-with-button">
+                                    <input type="text" id="search-transactions" placeholder="ID، اسم، حالة، تاريخ...">
+                                    <button id="refresh-transactions" class="button secondary" title="تحديث قائمة العمليات">
+                                        <box-icon name='refresh' color='#ffffff'></box-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Table will be loaded here by JS -->
+                        <div id="transactions-table-container" class="table-responsive">
+                            <p id="transactions-loading">جارٍ تحميل العمليات...</p>
+                            <!-- Table HTML will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= عرض الإعدادات (Settings View) ========= -->
+                <div id="settings-view" class="content-view">
+                    <div id="global-exchange-settings-section" class="admin-section">
+                        <h2><box-icon name='cog'></box-icon>إعدادات التبادل العامة</h2>
+                        <form id="globalExchangeSettingsForm">
+                            <div class="settings-grid">
+                                <div class="setting-item"><label for="gs-usdtToEgpBuyRate">سعر شراء الموقع لـ USDT:</label><input type="number" step="any" id="gs-usdtToEgpBuyRate" required></div>
+                                <div class="setting-item"><label for="gs-usdtToEgpSellRate">سعر بيع الموقع لـ USDT:</label><input type="number" step="any" id="gs-usdtToEgpSellRate" required></div>
+                                <div class="setting-item"><label for="gs-whatsAppNumber">رقم الواتساب:</label><input type="text" id="gs-whatsAppNumber" required></div>
+                            </div>
+                            <div class="fees-section-container">
+                                 <h4 class="sub-section-title">رسوم خدمة التحويل بين USDT و USDT</h4>
+                                <div class="form-grid-2col">
+                                    <div class="form-group"><label for="gs-usdt-service-fee-type">نوع الرسوم:</label><select id="gs-usdt-service-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                                    <div class="form-group gs-usdt-service-fee-value-group" style="display: none;"><label for="gs-usdt-service-fee-value">قيمة الرسوم (USDT):</label><input type="number" step="any" id="gs-usdt-service-fee-value"></div>
+                                </div>
+                                <div class="form-grid-2col">
+                                    <div class="form-group gs-usdt-service-fee-mincap-group" style="display: none;"><label for="gs-usdt-service-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="gs-usdt-service-fee-mincap"></div>
+                                    <div class="form-group gs-usdt-service-fee-maxcap-group" style="display: none;"><label for="gs-usdt-service-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="gs-usdt-service-fee-maxcap"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="button primary" style="margin-top: 20px;"><box-icon name='save' color='#ffffff'></box-icon> حفظ</button>
+                        </form>
+                        <p id="global-settings-loading" style="display:none;">جارٍ تحميل...</p> <!-- Loading message -->
+                        <p id="global-settings-message" class="form-message"></p> <!-- Message area -->
+                    </div>
+                    <div id="marquee-settings-section" class="admin-section">
+                         <h2><box-icon name='volume-full'></box-icon>إدارة شريط الإشعارات</h2>
+                        <form id="marqueeSettingsForm">
+                            <div class="form-group"><label for="mq-messages">النصوص (كل نص بسطر):</label><textarea id="mq-messages" rows="5"></textarea></div>
+                            <div class="form-group" style="max-width: 300px;"><label for="mq-speed">مدة العرض (ثواني):</label><input type="number" id="mq-speed" step="0.1" min="3" value="7" required></div>
+                            <button type="submit" class="button primary" style="margin-top: 15px;"><box-icon name='save' color='#ffffff'></box-icon> حفظ</button>
+                        </form>
+                        <p id="marquee-settings-loading" style="display:none;">جارٍ تحميل...</p> <!-- Loading message -->
+                        <p id="marquee-settings-message" class="form-message"></p> <!-- Message area -->
+                    </div>
+                </div>
+
+                <!-- ========= عرض وسائل الدفع (Payment Methods View) ========= -->
+                <div id="payment-methods-view" class="content-view">
+                    <section id="payment-methods-management-section" class="admin-section">
+                        <h2><box-icon name='credit-card-alt'></box-icon>إدارة وسائل الدفع</h2>
+                        <p>هنا يمكنك إدارة جميع وسائل الدفع وتحديد خصائصها ورسومها.</p>
+                        <button id="add-new-payment-method-btn" class="button primary" style="margin-bottom: 20px;"><box-icon name='plus-circle' color='#ffffff'></box-icon> إضافة وسيلة جديدة</button>
+                        <!-- Payment method cards loaded by JS -->
+                        <div id="payment-methods-container" class="payment-method-grid">
+                            <p id="payment-methods-loading">جارٍ تحميل وسائل الدفع...</p>
+                             <!-- Payment method cards will be inserted here by JavaScript -->
+                        </div>
+                    </section>
+                </div>
+
+                 <!-- ========= NEW: عرض تقرير رسوم المنصة (Platform Fees Report View) ========= -->
+                <div id="fees-report-view" class="content-view">
+                    <div id="fees-report-section" class="admin-section">
+                        <h2><box-icon name='dollar-circle' type='solid'></box-icon>تقرير رسوم المنصة</h2>
+                        <p>استعرض العمليات المكتملة والرسوم المحسوبة للمنصة شهرياً.</p>
+
+                        <div class="controls" id="fees-report-controls">
+                            <div class="control-group">
+                                <label for="fees-report-month-select">الشهر:</label>
+                                <!-- Month options populated by JS -->
+                                <select id="fees-report-month-select"></select>
+                            </div>
+                            <div class="control-group">
+                                 <label for="fees-report-year-select">السنة:</label>
+                                <!-- Year options populated by JS -->
+                                <select id="fees-report-year-select"></select>
+                            </div>
+                             <div class="control-group">
+                                 <button id="load-fees-report-btn" class="button primary"><box-icon name='filter-alt' color='#ffffff'></box-icon> عرض التقرير</button>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid" id="fees-report-stats" style="margin-bottom: 20px;">
+                             <div class="stat-card">
+                                <div class="stat-card-icon blue"><box-icon name='transfer-alt' type='solid' color='#fff'></box-icon></div>
+                                <div class="stat-card-info">
+                                    <span class="stat-title">عمليات مكتملة (شهر)</span>
+                                    <span class="stat-value" id="completed-tx-month-count">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-icon green"><box-icon name='dollar-circle' type='solid' color='#fff'></box-icon></div>
+                                <div class="stat-card-info">
+                                    <span class="stat-title">إجمالي رسوم المنصة (شهر)</span>
+                                    <span class="stat-value" id="total-platform-fees">0.00 EGP</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table loaded by JS -->
+                        <div id="fees-report-table-container" class="table-responsive">
+                            <p id="fees-report-loading">جارٍ تحميل بيانات التقرير...</p>
+                             <!-- Table HTML will be inserted here by JavaScript -->
+                        </div>
+                        <!-- Message shown if no data is found for the selected period -->
+                         <p id="fees-report-no-data" style="text-align:center; padding: 20px; display: none;">لا توجد عمليات مكتملة في الشهر المحدد.</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ================== النماذج المنبثقة (Modals) ================== -->
+    <!-- Payment Method Modal - Hidden by default, managed by JS -->
+    <div id="payment-method-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">×</button>
+            <h3 id="modal-title">إضافة/تعديل وسيلة دفع</h3>
+            <form id="payment-method-form">
+                <input type="hidden" id="pm-document-id"> <!-- Stores document ID for edit -->
+                <div class="form-grid-2col">
+                    <div class="form-group"><label for="pm-key">المفتاح (Key):</label><input type="text" id="pm-key" required><small>إنجليزي، فريد، لا يفضل تغييره.</small></div>
+                    <div class="form-group"><label for="pm-name">الاسم المعروض:</label><input type="text" id="pm-name" required></div>
+                    <div class="form-group"><label for="pm-type">نوع العملة:</label><select id="pm-type" required><option value="EGP">EGP</option><option value="USDT">USDT</option></select></div>
+                    <div class="form-group"><label for="pm-sortOrder">رقم الترتيب:</label><input type="number" id="pm-sortOrder" value="100"></div>
+                    <div class="form-group"><label for="pm-minAmount">الحد الأدنى للتحويل:</label><input type="number" step="any" id="pm-minAmount" required></div>
+                    <div class="form-group">
+                        <label for="pm-balance">الرصيد الحالي المتاح:</label>
+                        <input type="number" step="any" id="pm-balance" placeholder="اتركه فارغًا لعدم وضع حد">
+                    </div>
+                    <div class="form-group"><label for="pm-userIdentifierType">نوع معرف المستخدم (للشات):</label><input type="text" id="pm-userIdentifierType" placeholder="مثال: رقم الهاتف، الـID"></div>
+                </div>
+                <div class="form-group-inline"><input type="checkbox" id="pm-requiresWholeNumber"><label for="pm-requiresWholeNumber">يتطلب رقمًا صحيحًا</label></div>
+                <div class="form-group-inline"><input type="checkbox" id="pm-isActive"><label for="pm-isActive">مفعلة</label></div>
+                <div class="form-group-inline"><input type="checkbox" id="pm-isSiteAccount"><label for="pm-isSiteAccount">تمثل حساب موقع</label></div>
+
+                <!-- Fields specific to site accounts -->
+                <div id="site-account-fields" class="sub-form-section">
+                    <h4 class="sub-section-title">تفاصيل حساب الموقع</h4>
+                    <div class="form-grid-2col">
+                        <div class="form-group"><label for="pm-recipientInfo">معلومات المستلم:</label><input type="text" id="pm-recipientInfo"></div>
+                        <div class="form-group"><label for="pm-recipientType">نوع معلومات المستلم:</label><input type="text" id="pm-recipientType"></div>
+                    </div>
+                </div>
+
+                <!-- Fee settings for this method -->
+                <div class="sub-form-section-visible">
+                    <h4 class="sub-section-title">إعدادات الرسوم لهذه الوسيلة</h4>
+                    <div class="fee-group">
+                        <h5>رسوم الإرسال:</h5>
+                        <div class="form-grid-2col">
+                            <div class="form-group"><label for="pm-sending-fee-type">نوع الرسوم:</label><select id="pm-sending-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                            <div class="form-group pm-sending-fee-value-group" style="display:none;"><label for="pm-sending-fee-value">القيمة/النسبة:</label><input type="number" step="any" id="pm-sending-fee-value"></div>
+                        </div>
+                        <div class="form-grid-2col">
+                            <div class="form-group pm-sending-fee-mincap-group" style="display:none;"><label for="pm-sending-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="pm-sending-fee-mincap"></div>
+                            <div class="form-group pm-sending-fee-maxcap-group" style="display:none;"><label for="pm-sending-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="pm-sending-fee-maxcap"></div>
+                        </div>
+                    </div>
+                    <div class="fee-group">
+                        <h5>رسوم الاستلام:</h5>
+                        <div class="form-grid-2col">
+                            <div class="form-group"><label for="pm-receiving-fee-type">نوع الرسوم:</label><select id="pm-receiving-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                            <div class="form-group pm-receiving-fee-value-group" style="display:none;"><label for="pm-receiving-fee-value">القيمة/النسبة:</label><input type="number" step="any" id="pm-receiving-fee-value"></div>
+                        </div>
+                         <div class="form-grid-2col">
+                            <div class="form-group pm-receiving-fee-mincap-group" style="display:none;"><label for="pm-receiving-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="pm-receiving-fee-mincap"></div>
+                            <div class="form-group pm-receiving-fee-maxcap-group" style="display:none;"><label for="pm-receiving-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="pm-receiving-fee-maxcap"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group"><label for="pm-iconName">اسم أيقونة Boxicon (اختياري):</label><input type="text" id="pm-iconName" placeholder="credit-card, wallet"></div>
+                <div class="form-group"><label for="pm-notes">ملاحظات (للمشرف):</label><textarea id="pm-notes"></textarea></div>
+                <div class="form-actions">
+                    <button type="submit" id="save-payment-method-btn" class="button primary">حفظ</button>
+                    <button type="button" id="cancel-payment-method-btn" class="button secondary">إلغاء</button>
+                </div>
+            </form>
+            <p id="modal-message" class="form-message"></p> <!-- Message area inside modal -->
+        </div>
+    </div>
+
+    <!-- Overlay for mobile menu -->
+    <div id="overlay"></div>
+
+    <!-- Link to the main admin script, type="module" is crucial -->
+    <script src="admin-script.js" type="module"></script>
+
+    <!-- The previous inline script block for view switching is now REMOVED
+         because the logic is moved into admin-script.js -->
+
+</body>
+</html>
