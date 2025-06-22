@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - Easy Exchange</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="manage-rewards-style.css"> <!-- Add the new rewards admin style -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <!-- شاشة تسجيل الدخول -->
+    <div id="admin-login-prompt" class="login-prompt-container">
+        <h2>تسجيل دخول المشرف</h2>
+        <p>الرجاء إدخال بيانات اعتماد المشرف للوصول.</p>
+    </div>
+
+    <!-- لوحة التحكم الكاملة بعد تسجيل الدخول -->
+    <div id="admin-panel-content" class="admin-panel-container" style="display: none;">
+
+        <!-- ================== القائمة الجانبية (Sidebar) ================== -->
+        <aside id="admin-sidebar">
+            <div class="sidebar-header">
+                <box-icon name='atom' type='solid' color='#ffffff'></box-icon>
+                <h3>Easy Exchange</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-target="dashboard-view"><box-icon name='dashboard' type='solid'></box-icon> <span>لوحة المعلومات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="transactions-view"><box-icon name='transfer-alt'></box-icon> <span>إدارة العمليات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="settings-view"><box-icon name='cog'></box-icon> <span>الإعدادات</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="payment-methods-view"><box-icon name='credit-card-alt'></box-icon> <span>وسائل الدفع</span></a></li>
+            <!--        <li><a href="#" class="nav-link" data-target="fees-report-view"><box-icon name='dollar-circle'></box-icon> <span>تقرير رسوم المنصة</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="manage-rewards-view"><box-icon name='gift'></box-icon> <span>إدارة المكافآت</span></a></li>   -->
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="admin-logout-button" class="button danger full-width">
+                    <box-icon name='log-out-circle' color='#ffffff'></box-icon>
+                    <span>تسجيل الخروج</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ================== المحتوى الرئيسي ================== -->
+        <main id="admin-main-content">
+            <header class="main-content-header">
+                <button id="mobile-menu-toggle" class="mobile-only-btn"><box-icon name='menu'></box-icon></button>
+                <h1 id="main-content-title">لوحة المعلومات</h1>
+            </header>
+
+            <div class="content-area">
+
+                <!-- ========= عرض لوحة المعلومات (Dashboard View) ========= -->
+                <div id="dashboard-view" class="content-view active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-icon orange"><box-icon name='time-five' type='solid' color='#fff'></box-icon></div>
+                            <div class="stat-card-info">
+                                <span class="stat-title">عمليات قيد الانتظار</span>
+                                <span class="stat-value" id="pending-transactions-count">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon green"><box-icon name='check-double' type='solid' color='#fff'></box-icon></div>
+                            <div class="stat-card-info">
+                                <span class="stat-title">عمليات مكتملة (اليوم)</span>
+                                <span class="stat-value" id="completed-transactions-count">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon blue"><box-icon name='wallet' type='solid' color='#fff'></box-icon></div>
+                            <div class="stat-card-info">
+                                <span class="stat-title">وسائل دفع نشطة</span>
+                                <span class="stat-value" id="active-methods-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-section" style="margin-top: 30px;">
+                        <h2><box-icon name='list-ul'></box-icon> آخر العمليات</h2>
+                        <div class="table-responsive">
+                            <table id="recent-transactions-table">
+                                <thead>
+                                    <tr><th>ID العملية</th><th>العميل</th><th>المبلغ</th><th>الحالة</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="4" style="text-align:center; padding: 20px;">جارٍ تحميل آخر العمليات...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="view-all-link">
+                            <a href="#" class="nav-link-faux" data-target="transactions-view">عرض كل العمليات <box-icon name='left-arrow-alt'></box-icon></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= عرض إدارة العمليات (Transactions View) ========= -->
+                <div id="transactions-view" class="content-view">
+                    <div id="transactions-section" class="admin-section">
+                        <h2><box-icon name='transfer-alt'></box-icon>إدارة كل العمليات</h2>
+                        <div class="controls">
+                            <div class="control-group">
+                                <label for="status-filter">تصفية حسب الحالة:</label>
+                                <select id="status-filter">
+                                    <option value="all">الكل</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Processing">Processing</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="control-group search-control-group">
+                                <label for="search-transactions">بحث:</label>
+                                <div class="input-with-button">
+                                    <input type="text" id="search-transactions" placeholder="ID، اسم، حالة، تاريخ...">
+                                    <button id="refresh-transactions" class="button secondary" title="تحديث قائمة العمليات">
+                                        <box-icon name='refresh' color='#ffffff'></box-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="transactions-table-container" class="table-responsive">
+                            <p id="transactions-loading" style="text-align:center; padding: 20px;">جارٍ تحميل العمليات...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= عرض الإعدادات (Settings View) ========= -->
+                <div id="settings-view" class="content-view">
+                    <div id="global-exchange-settings-section" class="admin-section">
+                        <h2><box-icon name='cog'></box-icon>إعدادات التبادل العامة</h2>
+                        <form id="globalExchangeSettingsForm">
+                            <div class="settings-grid">
+                                <div class="setting-item"><label for="gs-usdtToEgpBuyRate">سعر شراء الموقع لـ USDT:</label><input type="number" step="any" id="gs-usdtToEgpBuyRate" required></div>
+                                <div class="setting-item"><label for="gs-usdtToEgpSellRate">سعر بيع الموقع لـ USDT:</label><input type="number" step="any" id="gs-usdtToEgpSellRate" required></div>
+                                <div class="setting-item"><label for="gs-whatsAppNumber">رقم الواتساب:</label><input type="text" id="gs-whatsAppNumber" required></div>
+                            </div>
+                            <div class="fees-section-container">
+                                 <h4 class="sub-section-title">رسوم خدمة التحويل بين USDT و USDT</h4>
+                                <div class="form-grid-2col">
+                                    <div class="form-group"><label for="gs-usdt-service-fee-type">نوع الرسوم:</label><select id="gs-usdt-service-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                                    <div class="form-group gs-usdt-service-fee-value-group" style="display: none;"><label for="gs-usdt-service-fee-value">قيمة الرسوم (USDT):</label><input type="number" step="any" id="gs-usdt-service-fee-value"></div>
+                                </div>
+                                <div class="form-grid-2col">
+                                    <div class="form-group gs-usdt-service-fee-mincap-group" style="display: none;"><label for="gs-usdt-service-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="gs-usdt-service-fee-mincap"></div>
+                                    <div class="form-group gs-usdt-service-fee-maxcap-group" style="display: none;"><label for="gs-usdt-service-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="gs-usdt-service-fee-maxcap"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="button primary" style="margin-top: 20px;"><box-icon name='save' color='#ffffff'></box-icon> حفظ</button>
+                        </form>
+                        <p id="global-settings-loading" style="display:none;">جارٍ تحميل...</p>
+                        <p id="global-settings-message" class="form-message"></p>
+                    </div>
+                    <div id="marquee-settings-section" class="admin-section">
+                         <h2><box-icon name='volume-full'></box-icon>إدارة شريط الإشعارات</h2>
+                        <form id="marqueeSettingsForm">
+                            <div class="form-group"><label for="mq-messages">النصوص (كل نص بسطر):</label><textarea id="mq-messages" rows="5"></textarea></div>
+                            <div class="form-group" style="max-width: 300px;"><label for="mq-speed">مدة العرض (ثواني):</label><input type="number" id="mq-speed" step="0.1" min="3" value="7" required></div>
+                            <button type="submit" class="button primary" style="margin-top: 15px;"><box-icon name='save' color='#ffffff'></box-icon> حفظ</button>
+                        </form>
+                        <p id="marquee-settings-loading" style="display:none;">جارٍ تحميل...</p>
+                        <p id="marquee-settings-message" class="form-message"></p>
+                    </div>
+                </div>
+
+                <!-- ========= عرض وسائل الدفع (Payment Methods View) ========= -->
+                <div id="payment-methods-view" class="content-view">
+                    <section id="payment-methods-management-section" class="admin-section">
+                        <h2><box-icon name='credit-card-alt'></box-icon>إدارة وسائل الدفع</h2>
+                        <p>هنا يمكنك إدارة جميع وسائل الدفع وتحديد خصائصها ورسومها.</p>
+                        <button id="add-new-payment-method-btn" class="button primary" style="margin-bottom: 20px;"><box-icon name='plus-circle' color='#ffffff'></box-icon> إضافة وسيلة جديدة</button>
+                        <div id="payment-methods-container" class="payment-method-grid">
+                            <p id="payment-methods-loading" style="text-align:center; padding: 20px;">جارٍ تحميل وسائل الدفع...</p>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- NEW: Platform Fees Report View -->
+                <div id="fees-report-view" class="content-view">
+                    <div id="platform-fees-section" class="admin-section">
+                        <h2><box-icon name='dollar-circle'></box-icon>تقرير رسوم المنصة</h2>
+                        <p>استعرض العمليات المكتملة والرسوم المحسوبة للمنصة شهرياً.</p>
+
+                        <div class="controls">
+                            <div class="control-group">
+                                <label for="report-month">الشهر:</label>
+                                <select id="report-month">
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label for="report-year">السنة:</label>
+                                <select id="report-year">
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <button id="load-fees-report-btn" class="button primary" style="min-width: 120px;"><box-icon name='file-find' color='#ffffff'></box-icon> عرض التقرير</button>
+                            </div>
+                        </div>
+
+                        <div id="fees-summary-stats" class="stats-grid" style="margin-top: 20px; display: none;">
+                            <div class="stat-card">
+                                <div class="stat-card-icon blue"><box-icon name='transfer' type='solid' color='#fff'></box-icon></div>
+                                <div class="stat-card-info">
+                                    <span class="stat-title">عمليات مكتملة (شهر)</span>
+                                    <span class="stat-value" id="completed-tx-count-month">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-icon green"><box-icon name='wallet' type='solid' color='#fff'></box-icon></div>
+                                <div class="stat-card-info">
+                                    <span class="stat-title">إجمالي رسوم المنصة (شهر - EGP)</span>
+                                    <span class="stat-value" id="total-fees-month">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="fees-details-section" class="admin-section" style="margin-top: 30px;">
+                            <h2><box-icon name='list-ul'></box-icon>تفاصيل العمليات المكتملة</h2>
+                            <p id="fees-loading-msg" style="display:none; text-align: center; padding: 20px;">جارٍ تحميل بيانات التقرير...</p>
+                            <div id="fees-table-container" class="table-responsive">
+                                <!-- Table will be generated here by JavaScript -->
+                                <p style="text-align:center; padding: 20px;">اختر الشهر والسنة واضغط "عرض التقرير".</p> <!-- Initial message -->
+                            </div>
+                            <p id="fees-no-data-msg" style="display:none; text-align: center; padding: 20px;">لا توجد عمليات مكتملة في الشهر المحدد.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- END NEW: Platform Fees Report View -->
+
+                <!-- ========= NEW: عرض إدارة المكافآت (Manage Rewards View) ========= -->
+                <div id="manage-rewards-view" class="content-view">
+                    <div id="rewards-management-section" class="admin-section">
+                        <h2><box-icon name='gift'></box-icon> إدارة المكافآت</h2>
+                        <p>هنا يمكنك إنشاء المكافآت، تعديلها، حذفها، وإدارة الأكواد الخاصة بها.</p>
+                        <button id="add-new-reward-btn" class="button primary" style="margin-bottom: 20px;"><box-icon name='plus-circle' color='#ffffff'></box-icon> إضافة مكافأة جديدة</button>
+
+                        <div id="rewards-list-container" class="table-responsive">
+                            <p id="rewards-loading" style="text-align:center; padding: 20px;">جارٍ تحميل المكافآت...</p>
+                            <!-- Rewards table will be injected here -->
+                            <table id="rewards-table" style="display: none;">
+                                 <thead>
+                                     <tr>
+                                         <th>الاسم</th>
+                                         <th>النوع</th>
+                                         <th>القيمة</th>
+                                         <th>الشرط</th>
+                                         <th>الحد الأقصى</th>
+                                         <th>تم المطالبة (إجمالي)</th>
+                                         <th>حالة</th>
+                                         <th>إجراءات</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody id="rewards-table-body"></tbody>
+                             </table>
+                             <p id="no-rewards-message" class="no-results" style="display: none;">لا توجد مكافآت حاليًا.</p>
+                        </div>
+                    </div>
+
+                     <div id="user-reward-history-section" class="admin-section">
+                        <h2><box-icon name='history'></box-icon> سجل مطالبات المستخدمين</h2>
+                        <p>استعرض جميع المطالبات التي قام بها المستخدمون.</p>
+                         <!-- User Reward History table will be injected here -->
+                         <div id="user-claims-table-container" class="table-responsive">
+                             <p id="user-claims-loading" style="text-align:center; padding: 20px;">جارٍ تحميل سجل المطالبات...</p>
+                             <table id="user-claims-table" style="display: none;">
+                                  <thead>
+                                      <tr>
+                                          <th>المستخدم</th>
+                                          <th>المكافأة</th>
+                                          <th>القيمة</th>
+                                          <th>الكود</th>
+                                          <th>تاريخ المطالبة</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="user-claims-table-body"></tbody>
+                              </table>
+                              <p id="no-user-claims-message" class="no-results" style="display: none;">لا توجد مطالبات مستخدمين حاليًا.</p>
+                         </div>
+                    </div>
+                </div>
+                 <!-- END NEW: عرض إدارة المكافآت (Manage Rewards View) ========= -->
+
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ================== النماذج المنبثقة (Modals) ================== -->
+    <div id="payment-method-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">×</button>
+            <h3 id="modal-title">إضافة/تعديل وسيلة دفع</h3>
+            <form id="payment-method-form">
+                <input type="hidden" id="pm-document-id">
+                <div class="form-grid-2col">
+                    <div class="form-group"><label for="pm-key">المفتاح (Key):</label><input type="text" id="pm-key" required><small>إنجليزي، فريد، لا يفضل تغييره.</small></div>
+                    <div class="form-group"><label for="pm-name">الاسم المعروض:</label><input type="text" id="pm-name" required></div>
+                    <div class="form-group"><label for="pm-type">نوع العملة:</label><select id="pm-type" required><option value="EGP">EGP</option><option value="USDT">USDT</option></select></div>
+                    <div class="form-group"><label for="pm-sortOrder">رقم الترتيب:</label><input type="number" id="pm-sortOrder" value="100"></div>
+                    <div class="form-group"><label for="pm-minAmount">الحد الأدنى للتحويل:</label><input type="number" step="any" id="pm-minAmount" required></div>
+                    <div class="form-group">
+                        <label for="pm-balance">الرصيد الحالي المتاح:</label>
+                        <input type="number" step="any" id="pm-balance" placeholder="اتركه فارغًا لعدم وضع حد">
+                    </div>
+                    <div class="form-group"><label for="pm-userIdentifierType">نوع معرف المستخدم (للشات):</label><input type="text" id="pm-userIdentifierType" placeholder="مثال: رقم الهاتف، الـID"></div>
+                </div>
+                <div class="form-group-inline"><input type="checkbox" id="pm-requiresWholeNumber"><label for="pm-requiresWholeNumber">يتطلب رقمًا صحيحًا</label></div>
+                <div class="form-group-inline"><input type="checkbox" id="pm-isActive"><label for="pm-isActive">مفعلة</label></div>
+                <div class="form-group-inline"><input type="checkbox" id="pm-isSiteAccount"><label for="pm-isSiteAccount">تمثل حساب موقع</label></div>
+
+                <div id="site-account-fields" class="sub-form-section">
+                    <h4 class="sub-section-title">تفاصيل حساب الموقع</h4>
+                    <div class="form-grid-2col">
+                        <div class="form-group"><label for="pm-recipientInfo">معلومات المستلم:</label><input type="text" id="pm-recipientInfo"></div>
+                        <div class="form-group"><label for="pm-recipientType">نوع معلومات المستلم:</label><input type="text" id="pm-recipientType"></div>
+                    </div>
+                </div>
+
+                <div class="sub-form-section-visible">
+                    <h4 class="sub-section-title">إعدادات الرسوم لهذه الوسيلة</h4>
+                    <div class="fee-group">
+                        <h5>رسوم الإرسال:</h5>
+                        <div class="form-grid-2col">
+                            <div class="form-group"><label for="pm-sending-fee-type">نوع الرسوم:</label><select id="pm-sending-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                            <div class="form-group pm-sending-fee-value-group" style="display:none;"><label for="pm-sending-fee-value">القيمة/النسبة:</label><input type="number" step="any" id="pm-sending-fee-value"></div>
+                        </div>
+                         <div class="form-grid-2col">
+                            <div class="form-group pm-sending-fee-mincap-group" style="display:none;"><label for="pm-sending-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="pm-sending-fee-mincap"></div>
+                            <div class="form-group pm-sending-fee-maxcap-group" style="display:none;"><label for="pm-sending-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="pm-sending-fee-maxcap"></div>
+                        </div>
+                    </div>
+                    <div class="fee-group">
+                        <h5>رسوم الاستلام:</h5>
+                        <div class="form-grid-2col">
+                            <div class="form-group"><label for="pm-receiving-fee-type">نوع الرسوم:</label><select id="pm-receiving-fee-type"><option value="none">لا توجد</option><option value="fixed">ثابتة</option><option value="percentage">نسبة</option></select></div>
+                            <div class="form-group pm-receiving-fee-value-group" style="display:none;"><label for="pm-receiving-fee-value">القيمة/النسبة:</label><input type="number" step="any" id="pm-receiving-fee-value"></div>
+                        </div>
+                         <div class="form-grid-2col">
+                            <div class="form-group pm-receiving-fee-mincap-group" style="display:none;"><label for="pm-receiving-fee-mincap">الحد الأدنى (للنسبة):</label><input type="number" step="any" id="pm-receiving-fee-mincap"></div>
+                            <div class="form-group pm-receiving-fee-maxcap-group" style="display:none;"><label for="pm-receiving-fee-maxcap">الحد الأقصى (للنسبة):</label><input type="number" step="any" id="pm-receiving-fee-maxcap"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group"><label for="pm-iconName">اسم أيقونة Boxicon (اختياري):</label><input type="text" id="pm-iconName" placeholder="credit-card, wallet"></div>
+                <div class="form-group"><label for="pm-notes">ملاحظات (للمشرف):</label><textarea id="pm-notes"></textarea></div>
+                <div class="form-actions">
+                    <button type="submit" id="save-payment-method-btn" class="button primary">حفظ</button>
+                    <button type="button" id="cancel-payment-method-btn" class="button secondary">إلغاء</button>
+                </div>
+            </form>
+            <p id="modal-message" class="form-message"></p>
+        </div>
+    </div>
+
+    <!-- NEW: Modal for adding/editing Rewards -->
+    <div id="reward-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">×</button>
+            <h3 id="reward-modal-title">إضافة/تعديل مكافأة</h3>
+            <form id="reward-form">
+                <input type="hidden" id="reward-document-id">
+                <div class="form-grid-2col">
+                    <div class="form-group"><label for="reward-name">الاسم:</label><input type="text" id="reward-name" required></div>
+                    <div class="form-group"><label for="reward-value">القيمة:</label><input type="text" id="reward-value" placeholder="مثال: 10 EGP" required></div>
+                </div>
+                <div class="form-group"><label for="reward-description">الوصف:</label><textarea id="reward-description" rows="3" required></textarea></div>
+
+                 <div class="form-grid-2col">
+                    <div class="form-group"><label for="reward-type">نوع المكافأة:</label><select id="reward-type" required><option value="no_code">لا يوجد كود</option><option value="fixed_code">كود ثابت</option><option value="unique_code">أكواد فريدة</option></select></div>
+                    <div class="form-group" id="fixed-code-group" style="display: none;"><label for="fixed-code">الكود الثابت:</label><input type="text" id="fixed-code"></div>
+                 </div>
+
+                 <div class="form-grid-2col">
+                     <div class="form-group"><label for="condition-type">نوع الشرط:</label><select id="condition-type" required><option value="manual">يدوي</option><option value="transactions_count">عدد عمليات التبادل</option></select></div>
+                     <div class="form-group" id="condition-value-group" style="display: none;"><label for="condition-value">قيمة الشرط:</label><input type="number" step="1" min="1" id="condition-value"></div>
+                      <div class="form-group" id="condition-unit-group" style="display: none;"><label for="condition-unit">وحدة الشرط (اختياري):</label><input type="text" id="condition-unit" placeholder="مثال: عملية"></div>
+                 </div>
+
+                 <div class="form-grid-2col">
+                    <div class="form-group"><label for="claim-limit-type">نوع حد المطالبة:</label><select id="claim-limit-type" required><option value="none">لا يوجد حد</option><option value="per_user">لكل مستخدم</option><option value="global">إجمالي</option></select></div>
+                     <div class="form-group" id="claim-limit-value-group" style="display: none;"><label for="claim-limit-value">قيمة حد المطالبة:</label><input type="number" step="1" min="1" id="claim-limit-value"></div>
+                 </div>
+
+                <div class="form-group-inline"><input type="checkbox" id="reward-is-active"><label for="reward-is-active">مفعلة (ظاهرة للمستخدمين)</label></div>
+                 <div class="form-group"><label for="reward-sort-order">رقم الترتيب:</label><input type="number" id="reward-sort-order" value="100"></div>
+
+
+                <div class="form-actions">
+                    <button type="submit" class="button primary"><box-icon name='save' color='#ffffff'></box-icon> حفظ</button>
+                    <button type="button" class="button secondary cancel-modal-btn">إلغاء</button>
+                </div>
+            </form>
+            <p id="reward-modal-message" class="form-message"></p>
+        </div>
+    </div>
+
+    <!-- NEW: Modal for managing unique Codes -->
+    <div id="manage-codes-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">×</button>
+            <h3 id="manage-codes-modal-title">إدارة أكواد المكافأة: <span id="reward-name-for-codes"></span></h3>
+             <input type="hidden" id="reward-id-for-codes">
+
+            <div class="admin-section" style="margin-top: 15px; padding: 15px; border-radius: 8px; background-color: #f8f9fa;">
+                <h4><box-icon name='plus-circle'></box-icon> إضافة أكواد جديدة</h4>
+                <p style="font-size: 0.9em; color: #555;">أدخل الأكواد الجديدة (كل كود على سطر منفصل):</p>
+                <div class="form-group"><textarea id="new-codes-textarea" rows="6"></textarea></div>
+                <button id="add-codes-btn" class="button primary"><box-icon name='upload' color='#ffffff'></box-icon> إضافة الأكواد</button>
+                 <p id="add-codes-message" class="form-message"></p>
+            </div>
+
+            <div class="admin-section" style="margin-top: 20px; padding: 15px; border-radius: 8px; background-color: #f8f9fa;">
+                 <h4><box-icon name='list-ul'></box-icon> الأكواد الموجودة</h4>
+                 <div class="controls" style="margin-bottom: 15px;">
+                    <div class="control-group">
+                        <label for="code-status-filter">تصفية حسب الحالة:</label>
+                         <select id="code-status-filter">
+                             <option value="all">الكل</option>
+                             <option value="claimed">تم المطالبة بها</option>
+                             <option value="unused">غير مستخدمة</option>
+                         </select>
+                    </div>
+                 </div>
+                 <div id="codes-list-container" class="table-responsive">
+                     <p id="codes-loading" style="text-align:center; padding: 20px;">جارٍ تحميل الأكواد...</p>
+                     <table id="codes-table" style="display: none;">
+                         <thead>
+                             <tr>
+                                 <th>الكود</th>
+                                 <th>الحالة</th>
+                                 <th>تم المطالبة بواسطة</th>
+                                 <th>تاريخ المطالبة</th>
+                                 <th>إجراء</th>
+                             </tr>
+                         </thead>
+                         <tbody id="codes-table-body"></tbody>
+                     </table>
+                      <p id="no-codes-message" class="no-results" style="display: none;">لا توجد أكواد فريدة لهذه المكافأة بعد.</p>
+                 </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="overlay"></div> <!-- Overlay for modals and mobile sidebar -->
+
+    <!-- Import the admin-script.js module first -->
+    <script src="admin-script.js" type="module"></script>
+    <!-- Import the manage-rewards-script.js module second -->
+    <script src="./manage-rewards-script.js" type="module"></script>
+
+    <script>
+    // JavaScript لتفعيل التنقل في لوحة التحكم الجديدة
+    // هذا السكربت يعمل بعد تحميل جميع السكربتات من نوع "module"
+    document.addEventListener('DOMContentLoaded', () => {
+        const navLinks = document.querySelectorAll('.sidebar-nav .nav-link, .nav-link-faux');
+        const contentViews = document.querySelectorAll('.content-view');
+        const mainContentTitle = document.getElementById('main-content-title');
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const sidebar = document.getElementById('admin-sidebar');
+        const overlay = document.getElementById('overlay');
+        const adminPanelContent = document.getElementById('admin-panel-content'); // Get the main panel div
+
+
+        // Map view IDs to *names* of initialization functions defined globally
+        // These functions should be attached to `window` in their respective scripts
+        const viewInitializerNames = {
+            'dashboard-view': 'initializeAdminDashboardView', // Renamed for clarity, assuming admin-script provides this
+            'transactions-view': 'initializeTransactionsView', // Helper initializer for transactions view
+            'settings-view': 'initializeSettingsView', // Helper initializer for settings view
+            'payment-methods-view': 'initializePaymentMethodsView', // Helper initializer for payment methods view
+            'fees-report-view': 'initializeFeesReportView', // Helper initializer for fees report view
+            'manage-rewards-view': 'initializeManageRewardsView' // Name of the new rewards initializer
+        };
+
+         // Define helper initializer functions globally if they are not defined elsewhere
+         // These will be called by the switchView function
+         window.initializeTransactionsView = async () => {
+             // Assumes loadTransactions is global and exists in admin-script.js
+             if (window.loadTransactions) await window.loadTransactions('all');
+             // You might also need to re-attach search/filter listeners if they are not persistent
+         };
+
+         window.initializeSettingsView = async () => {
+             // Assumes loadGlobalExchangeSettings and loadMarqueeSettings are global
+             if (window.loadGlobalExchangeSettings) await window.loadGlobalExchangeSettings();
+             if (window.loadMarqueeSettings) await window.loadMarqueeSettings();
+             // You might also need to re-attach form submit/change listeners if not persistent
+         };
+
+          window.initializePaymentMethodsView = async () => {
+             // Assumes loadManagedPaymentMethods is global
+             if (window.loadManagedPaymentMethods) await window.loadManagedPaymentMethods();
+             // You might need to re-attach modal/button listeners if not persistent
+         };
+
+         window.initializeFeesReportView = async () => {
+             // This view primarily loads data on button click (load-fees-report-btn)
+             // We just need to ensure the filters are populated and the button listener is attached.
+             // Assumes populateReportFilters is global in admin-script.js
+             if (window.populateReportFilters) window.populateReportFilters();
+             // The event listener for load-fees-report-btn should ideally be attached once in admin-script.js
+             // but if it's attached on view initialization, ensure it doesn't create duplicates.
+         };
+
+
+        // Expose the switchView function globally so admin-script.js can call it after auth
+        window.adminSwitchView = async (targetId) => {
+            console.log("adminSwitchView called with target:", targetId);
+            // Use the core switchView logic
+            await switchView(targetId);
+        };
+
+
+        // Core function to handle view switching and initialization
+        const switchView = async (targetId) => {
+            console.log("Executing core switchView for:", targetId);
+
+            // Remove 'active' from all links and views
+            document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => link.classList.remove('active'));
+            contentViews.forEach(view => view.classList.remove('active'));
+
+            // Add 'active' to the clicked link and target view
+            const targetLink = document.querySelector(`.sidebar-nav .nav-link[data-target="${targetId}"]`);
+            const targetView = document.getElementById(targetId);
+
+            // Update main title
+            if (targetLink) {
+                targetLink.classList.add('active');
+                const linkTextSpan = targetLink.querySelector('span');
+                mainContentTitle.textContent = linkTextSpan ? linkTextSpan.textContent : 'لوحة التحكم';
+            } else {
+                 mainContentTitle.textContent = 'لوحة التحكم'; // Fallback
+            }
+
+
+            // Activate the target view and call its initializer
+            if (targetView) {
+                 targetView.classList.add('active');
+
+                 const initializerName = viewInitializerNames[targetId];
+                 const initializerFn = window[initializerName]; // Look up the function by name
+
+                 if (initializerName && initializerFn && typeof initializerFn === 'function') {
+                      console.log(`Calling initializer: ${initializerName}`);
+                      // Call the initializer. Pass arguments if needed (like 'all' for transactions).
+                      if (targetId === 'transactions-view') {
+                          await initializerFn('all'); // Pass default filter for transactions
+                      } else {
+                           await initializerFn();
+                      }
+                 } else if (initializerName) {
+                      console.warn(`Initializer function "${initializerName}" not found or is not a function for view: ${targetId}`, initializerFn);
+                      // You might want to display a user-friendly error on the page here
+                 } else {
+                      console.log(`No specific initializer defined for view: ${targetId}`);
+                 }
+
+             } else {
+                  console.error(`Target view element not found in the DOM: #${targetId}`);
+             }
+
+
+            // Close mobile menu if open
+            if (window.innerWidth < 992) {
+                sidebar.classList.remove('mobile-active');
+                overlay.classList.remove('active');
+                mobileMenuToggle.querySelector('box-icon').setAttribute('name', 'menu'); // Reset hamburger icon
+            } else {
+                 mobileMenuToggle.querySelector('box-icon').setAttribute('name', 'menu'); // Ensure icon is menu on desktop too
+            }
+        };
+
+        // Add click listeners for sidebar navigation links and faux links
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                const targetId = e.currentTarget.dataset.target;
+                 if (targetId) {
+                     // Use the global switchView function
+                     window.adminSwitchView(targetId);
+                 }
+            });
+        });
+
+        // Add click listener for mobile menu toggle
+        mobileMenuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-active');
+            overlay.classList.toggle('active');
+            const isMobileActive = sidebar.classList.contains('mobile-active');
+            mobileMenuToggle.querySelector('box-icon').setAttribute('name', isMobileActive ? 'x' : 'menu');
+        });
+
+        // Add click listener for overlay to close mobile menu
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-active');
+            overlay.classList.remove('active');
+             mobileMenuToggle.querySelector('box-icon').setAttribute('name', 'menu'); // Reset hamburger icon
+        });
+
+
+        // --- Initial Setup ---
+        // The checkAdminAuth function in admin-script.js should now call:
+        // `adminPanelContent.style.display = 'flex';`
+        // `window.adminSwitchView('dashboard-view');`
+        // after successful authentication instead of its old initializeAdminPanel().
+
+        // Set the initial title based on the active link that's set by default in HTML
+         const initialActiveLink = document.querySelector('.sidebar-nav .nav-link.active');
+         if(initialActiveLink) {
+             const linkTextSpan = initialActiveLink.querySelector('span');
+             mainContentTitle.textContent = linkTextSpan ? linkTextSpan.textContent : 'لوحة التحكم';
+         } else {
+             mainContentTitle.textContent = 'لوحة التحكم'; // Fallback if no active link initially
+         }
+
+         // Note: The actual loading of the initial dashboard view data will happen when
+         // admin-script.js calls window.adminSwitchView('dashboard-view') after auth.
+         // Until then, the loading message in the dashboard view might be visible based on HTML.
+    });
+    </script>
+</body>
+</html>
