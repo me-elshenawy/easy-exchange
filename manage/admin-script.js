@@ -4,7 +4,7 @@ import { db } from '../auth/firebase-config.js';
 import {
     collection, getDocs, doc, updateDoc, addDoc, deleteDoc,
     orderBy, query, where, getDoc, setDoc, serverTimestamp, arrayUnion,
-    writeBatch, increment
+    writeBatch, increment, limit
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -86,10 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // SECTION: Constants & Global Variables
     // ==============================================
     
-    // --- [CORRECTION START] ---
-    // 1. Re-added the constant for the platform fee percentage.
     const PLATFORM_FEE_PERCENTAGE = 0.005; // 0.5% Fee
-    // --- [CORRECTION END] ---
     
     let globalSettings = {};
 
@@ -108,6 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
              loginPromptContainer.addEventListener('click', (e) => {
                  if(e.target === loginPromptContainer) requestAdminCredentials();
              });
+
+            // --- [IMPROVEMENT] ---
+            // Call the login prompt function immediately on page load instead of waiting for a click.
+            requestAdminCredentials();
         }
     }
 
@@ -132,43 +133,80 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    
     // ==============================================
-    // SECTION: Dashboard Logic
+    // SECTION: Dashboard Logic (Optimized)
     // ==============================================
-    function updateDashboardAndStats(transactions) {
-        const pendingCount = transactions.filter(tx => tx.status === 'Pending').length;
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const completedTodayCount = transactions.filter(tx =>
-            tx.status === 'Completed' && tx.timestamp?.toDate() >= today
-        ).length;
-
-        document.getElementById('pending-transactions-count').textContent = pendingCount;
-        document.getElementById('completed-transactions-count').textContent = completedTodayCount;
-
+    /**
+     * @description Fetches only the necessary data for the dashboard view efficiently.
+     * Runs targeted queries in parallel to get pending counts, completed today counts,
+     * and the 5 most recent transactions. This is much faster than loading all transactions.
+     */
+    async function loadDashboardStatsAndRecent() {
+        const pendingCountSpan = document.getElementById('pending-transactions-count');
+        const completedTodayCountSpan = document.getElementById('completed-transactions-count');
         const recentTableBody = document.querySelector('#recent-transactions-table tbody');
-        if (recentTableBody) {
-            recentTableBody.innerHTML = '';
 
-            if (transactions.length === 0) {
+        if (!pendingCountSpan || !completedTodayCountSpan || !recentTableBody) return;
+
+        // Set loading states
+        pendingCountSpan.textContent = '...';
+        completedTodayCountSpan.textContent = '...';
+        recentTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">جارٍ تحميل آخر العمليات...</td></tr>';
+
+        try {
+            const transactionsRef = collection(db, "transactions");
+
+            // Query for pending transactions
+            const pendingQuery = query(transactionsRef, where("status", "==", "Pending"));
+
+            // Query for transactions completed today
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const completedTodayQuery = query(transactionsRef,
+                where("status", "==", "Completed"),
+                where("timestamp", ">=", today)
+            );
+
+            // Query for the 5 most recent transactions
+            const recentQuery = query(transactionsRef, orderBy("timestamp", "desc"), limit(5));
+
+            // Run all three queries in parallel for maximum speed
+            const [pendingSnapshot, completedTodaySnapshot, recentSnapshot] = await Promise.all([
+                getDocs(pendingQuery),
+                getDocs(completedTodayQuery),
+                getDocs(recentQuery)
+            ]);
+
+            // Update dashboard stats
+            pendingCountSpan.textContent = pendingSnapshot.size;
+            completedTodayCountSpan.textContent = completedTodaySnapshot.size;
+
+            // Update recent transactions table
+            recentTableBody.innerHTML = ''; // Clear loading message
+            if (recentSnapshot.empty) {
                 recentTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;">لا توجد عمليات لعرضها.</td></tr>';
-                return;
+            } else {
+                recentSnapshot.forEach(doc => {
+                    const tx = doc.data();
+                    const statusClassSuffix = (tx.status || 'pending').toLowerCase().replace(/\s+/g, '-');
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${tx.transactionId || 'N/A'}</td>
+                        <td>${tx.exchangerName || tx.userId || 'غير معروف'}</td>
+                        <td>${(tx.sendAmount || 0).toFixed(2)} ${tx.sendCurrencyName || tx.sendCurrencyType || ''}</td>
+                        <td><span class="status-tag status-${statusClassSuffix}">${tx.status}</span></td>
+                    `;
+                    recentTableBody.appendChild(row);
+                });
             }
 
-            const recentTransactions = transactions.slice(0, 5);
-            recentTransactions.forEach(tx => {
-                const statusClassSuffix = (tx.status || 'pending').toLowerCase().replace(/\s+/g, '-');
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${tx.transactionId || 'N/A'}</td>
-                    <td>${tx.exchangerName || tx.userId || 'غير معروف'}</td>
-                    <td>${(tx.sendAmount || 0).toFixed(2)} ${tx.sendCurrencyName || tx.sendCurrencyType || ''}</td>
-                    <td><span class="status-tag status-${statusClassSuffix}">${tx.status}</span></td>
-                `;
-                recentTableBody.appendChild(row);
-            });
+        } catch (error) {
+            console.error("Error loading dashboard stats:", error);
+            pendingCountSpan.textContent = 'خطأ';
+            completedTodayCountSpan.textContent = 'خطأ';
+            recentTableBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center; padding: 20px;">فشل تحميل البيانات: ${error.message}</td></tr>`;
         }
     }
 
@@ -230,12 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const querySnapshot = await getDocs(q);
             transactionsLoadingMsg.style.display = 'none';
 
-            const transactionsArray = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            
-            if (statusFilter === 'all' && document.getElementById('dashboard-view')?.classList.contains('active')) {
-                updateDashboardAndStats(transactionsArray);
-            }
-
             if (querySnapshot.empty) {
                 transactionsTableContainer.innerHTML = "<p style='text-align:center; padding: 20px;'>لا توجد عمليات لعرضها حاليًا.</p>";
                 return;
@@ -245,7 +277,8 @@ document.addEventListener('DOMContentLoaded', () => {
             table.innerHTML = `<thead><tr><th>ID العملية</th><th>العميل</th><th>يرسل</th><th>يستلم</th><th>التاريخ</th><th>الحالة</th><th>تغيير الحالة</th></tr></thead><tbody></tbody>`;
             const tbody = table.querySelector('tbody');
 
-            transactionsArray.forEach(tx => {
+            querySnapshot.forEach(doc => {
+                const tx = { id: doc.id, ...doc.data() };
                 const row = tbody.insertRow();
                 const currentStatus = tx.status || 'Pending';
                 const statusClassSuffix = currentStatus.toLowerCase().replace(/\s+/g, '-');
@@ -562,18 +595,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- [CORRECTION START] ---
     // ==============================================
-    // SECTION: Platform Fees Report (Corrected Logic)
+    // SECTION: Platform Fees Report Logic
     // ==============================================
-
-    /**
-     * @description Calculates the platform fee for a single completed transaction.
-     * Fee is 0.5% of the send amount, converted to EGP if necessary.
-     * @param {object} transaction - The transaction object.
-     * @param {number} usdtBuyRate - The current USDT to EGP buy rate.
-     * @returns {number} The calculated fee amount in EGP.
-     */
     function calculatePlatformFee(transaction, usdtBuyRate) {
         // Only calculate for completed transactions
         if (transaction.status !== 'Completed') {
@@ -640,7 +664,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             querySnapshot.forEach(docSnapshot => {
                 const tx = { id: docSnapshot.id, ...docSnapshot.data() };
-                // Call the corrected fee calculation function
                 const fee = calculatePlatformFee(tx, usdtBuyRate);
                 tx.platformFeeEGP = fee;
                 totalCompletedCount++;
@@ -659,7 +682,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 feesNoDataMsg.style.display = 'none';
                 const table = document.createElement('table');
-                // Updated the table header from 'Platform Profit' to 'Platform Fees'
                 table.innerHTML = `<thead><tr><th>ID العملية</th><th>العميل</th><th>المبلغ المرسل</th><th>المبلغ المستلم</th><th>تاريخ الإنشاء</th><th>رسوم المنصة (EGP)</th></tr></thead><tbody>${reportTransactions.map(tx => { const creationTimestampDisplay = tx.timestamp?.toDate() ? tx.timestamp.toDate().toLocaleString('ar-EG-u-nu-latn') : 'غير محدد'; return `<tr><td>${tx.transactionId || 'N/A'}</td><td>${tx.exchangerName || tx.userId || 'غير معروف'}</td><td>${(tx.sendAmount || 0).toFixed(2)} ${tx.sendCurrencyName || tx.sendCurrencyType || ''}</td><td>${(tx.receiveAmount || 0).toFixed(2)} ${tx.receiveCurrencyName || tx.receiveCurrencyType || ''}</td><td>${creationTimestampDisplay}</td><td>${(tx.platformFeeEGP || 0).toFixed(2)} EGP</td></tr>`; }).join('')}</tbody>`;
                 feesTableContainer.appendChild(table);
             }
@@ -671,24 +693,33 @@ document.addEventListener('DOMContentLoaded', () => {
             feesTableContainer.innerHTML = `<p style="color:red; text-align:center; padding: 20px;">فشل تحميل تقرير الرسوم: ${error.message}</p>`;
         }
     }
-    // --- [CORRECTION END] ---
 
 
     // --- View Initializers and Main Setup ---
 
     // This function acts as the main entry point after successful login.
     function initializeAdminPanel() {
-        // These functions are now called based on the view that is currently active.
-        // This is handled by the main HTML file's navigation logic.
-        // For example, when the dashboard tab is clicked, `initializeAdminDashboardView()` is called.
+        // --- [FIX START] ---
+        // Automatically switch to and load the dashboard view upon successful authentication.
+        // This was previously empty, causing the initial data loading delay.
+        if (window.adminSwitchView) {
+            window.adminSwitchView('dashboard-view');
+        }
+        // --- [FIX END] ---
     }
+
 
     // Making functions globally accessible so they can be called from HTML event attributes (e.g., onclick)
     window.initializeAdminDashboardView = () => {
         console.log("Initializing Dashboard View...");
-        loadTransactions("all"); 
+        // --- [OPTIMIZATION] ---
+        // Use the new, fast function for dashboard stats instead of loading all transactions.
+        loadDashboardStatsAndRecent();
+        // Still load payment methods count as before.
         loadManagedPaymentMethods();
+        // --- [OPTIMIZATION END] ---
     };
+
 
     window.initializeTransactionsView = () => {
         console.log("Initializing Transactions View...");
