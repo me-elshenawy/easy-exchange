@@ -1,0 +1,69 @@
+<!-- auth/rewards.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكافآتي - Easy Exchange</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <link rel="stylesheet" href="rewards-style.css"> <!-- New styles for rewards -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+
+    <!-- Notification Placeholder - Handled by script.js -->
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content">
+
+            <div class="dashboard-header">
+                <h2><box-icon name='gift' type='solid'></box-icon>مكافآتي</h2>
+            </div>
+
+            <p class="dashboard-intro-text">استكشف المكافآت المتاحة التي يمكنك الحصول عليها، واستعرض المكافآت التي حصلت عليها سابقًا.</p>
+
+            <div id="messageBoxGlobal" class="message-feedback" style="display:none; margin-top:25px;"></div>
+            
+            <div class="rewards-container dashboard-grid">
+                
+                <main class="dashboard-main-content">
+                    <div class="rewards-section">
+                        <h3><box-icon name='star' type='solid'></box-icon> مكافآت متاحة</h3>
+                        <div id="availableRewardsList" class="rewards-list-grid">
+                            <p class="loading-message">جارٍ تحميل المكافآت المتاحة...</p>
+                            <!-- Available reward cards will be injected here -->
+                        </div>
+                         <p id="noAvailableRewardsMessage" class="no-items-message" style="display: none;">لا توجد مكافآت متاحة حاليًا.</p>
+                    </div>
+                </main>
+
+                 <aside class="dashboard-sidebar">
+                    <div class="rewards-section claimed-rewards-section">
+                         <h3><box-icon name='badge-check' type='solid'></box-icon> مكافآت حصلت عليها</h3>
+                         <div id="claimedRewardsList" class="claimed-rewards-list">
+                             <p class="loading-message">جارٍ تحميل المكافآت التي حصلت عليها...</p>
+                             <!-- Claimed reward items will be injected here -->
+                         </div>
+                          <p id="noClaimedRewardsMessage" class="no-items-message" style="display: none;">لم تحصل على أي مكافآت بعد.</p>
+                    </div>
+                 </aside>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Container - Handled by script.js -->
+    <div id="toast-container"></div>
+    
+     <!-- Custom Modals - Handled by script.js -->
+    <div id="custom-confirmation-modal" class="custom-modal-overlay"></div>
+
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script>
+    <script type="module" src="./rewards-script.js"></script> <!-- New script for rewards logic -->
+</body>
+</html>
