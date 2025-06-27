@@ -11,14 +11,12 @@
     border-radius: 12px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
     padding: 25px;
-    margin-bottom: 25px; /* Added margin bottom for sections in main content */
+    margin-bottom: 25px;
 }
 
 .claimed-rewards-section {
-     /* Specific styles if needed, otherwise inherits from rewards-section */
-     margin-bottom: 0; /* No margin bottom for sidebar section */
+     margin-bottom: 0;
 }
-
 
 .rewards-section h3 {
     margin-top: 0;
@@ -69,7 +67,7 @@
 .reward-card .value {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #28a745; /* Success color for value */
+    color: #28a745;
     margin-bottom: 15px;
 }
 
@@ -78,14 +76,12 @@
     color: #6c757d;
     margin-bottom: 15px;
     line-height: 1.6;
+    flex-grow: 1;
 }
 
 .reward-card .condition {
     font-size: 0.9rem;
     color: #343a40;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed #e0e0e0;
 }
 
 .reward-card .condition strong {
@@ -108,8 +104,57 @@
     border-radius: 4px;
 }
 
+.reward-actions {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+.reward-info-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 0;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+    transition: color 0.2s ease;
+}
+
+.reward-info-toggle:hover {
+    color: var(--primary-color, #5b3bb0);
+}
+
+.reward-info-toggle .toggle-icon {
+    transition: transform 0.3s ease-in-out;
+    fill: currentColor;
+}
+
+.reward-info-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease-out, padding 0.35s ease-out;
+    font-size: 0.9rem;
+    color: #6c757d;
+    line-height: 1.7;
+    padding: 0 5px;
+}
+
+.reward-info-content.expanded {
+    max-height: 500px;
+    padding: 0 5px 10px 5px;
+}
+
+.reward-info-content a {
+    color: var(--primary-color, #5b3bb0);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
 .reward-card .claim-button {
-    margin-top: auto; /* Pushes button to the bottom */
+    margin-top: 20px;
     width: 100%;
     padding: 10px 15px;
     font-size: 1rem;
@@ -135,19 +180,19 @@
 }
 
 .reward-card .claim-button.manual-claim {
-     background-color: #17a2b8; /* Info color for manual claim */
+     background-color: #17a2b8;
 }
 .reward-card .claim-button.manual-claim:hover:not(:disabled) {
      background-color: #138496;
 }
 
 
+/* --- Claimed Rewards Section --- */
 .claimed-rewards-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
-
 .claimed-reward-item {
     background-color: #ffffff;
     border: 1px solid #e9ecef;
@@ -169,6 +214,16 @@
 .claimed-reward-item .details span {
     display: inline-block;
     margin-left: 15px;
+}
+
+.claimed-reward-item .reward-info-toggle {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #e0e0e0;
+}
+
+.claimed-reward-item .reward-info-content.expanded {
+    padding-bottom: 15px;
 }
 
 .claimed-reward-item .code-info {
@@ -228,4 +283,4 @@
       .rewards-section h3 {
          font-size: 1.3rem;
      }
-}
+    }
