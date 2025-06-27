@@ -9,21 +9,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </head>
-<body class="auth-page"> 
+<body class="auth-page">
 
-    <div id="notification-placeholder"></div> 
+    <div id="notification-placeholder"></div>
 
-    <div class="main-content-wrapper"> 
-        <div class="auth-page-content"> 
-            
+    <div class="main-content-wrapper">
+        <div class="auth-page-content">
+
             <div class="dashboard-header">
                 <h2><box-icon name='help-circle' type='solid'></box-icon>مركز المساعدة</h2>
             </div>
-            
+
             <p class="dashboard-intro-text">أهلاً بك في مركز مساعدة Easy Exchange! ابحث عن إجابة لاستفسارك أو تصفح الأقسام أدناه.</p>
 
             <div class="help-search-bar">
-                <input type="text" id="faqSearchInput" placeholder="اكتب كلمة مفتاحية للبحث (مثال: كلمة المرور، RedotPay)">
+                <input type="text" id="faqSearchInput" placeholder="اكتب كلمة مفتاحية للبحث (مثال: كلمة المرور, RedotPay, مكافأة)">
                 <box-icon name='search'></box-icon>
             </div>
 
@@ -31,7 +31,7 @@
                 <main class="dashboard-main-content">
                     <div id="faqContainer">
                         <p id="noResultsMessage" style="display: none; text-align: center; padding: 20px; font-weight: 500;">لا توجد نتائج تطابق بحثك.</p>
-                        
+
                         <!-- فئة: فهم Easy Exchange -->
                         <div class="faq-section">
                             <h3 class="faq-category-title">فهم Easy Exchange</h3>
@@ -95,6 +95,54 @@
                                 <div class="faq-answer"><p>لكل عملية تبادل رقم فريد (يبدأ بـ EZ-). هذا الرقم مهم جدًا لتتبع حالة عمليتك، ولتزويد فريق الدعم به عند وجود أي استفسار لتسريع عملية المساعدة.</p></div>
                             </div>
                          </div>
+
+                        <!-- فئة: أسئلة خاصة بالمكافآت (جديد) -->
+                        <div class="faq-section">
+                            <h3 class="faq-category-title">أسئلة خاصة بالمكافآت</h3>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ما هي صفحة المكافآت؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>هي صفحة جديدة تتيح للمستخدمين الحصول على مكافآت متنوعة (مثل رصيد إضافي أو أكواد خصم) مقابل إكمالهم لشروط معينة، مثل تحقيق عدد محدد من عمليات التبادل الناجحة.</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>كيف يمكنني المطالبة بمكافأة؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>عندما تحقق الشرط المطلوب لمكافأة ما (على سبيل المثال، إكمال 5 عمليات تبادل)، سيتم تفعيل زر "المطالبة بالمكافأة" في بطاقة المكافأة. كل ما عليك فعله هو الضغط على هذا الزر.</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>لماذا زر "المطالبة بالمكافأة" غير مفعل (لونه باهت)؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer">
+                                    <p>يكون الزر غير مفعل لأحد الأسباب التالية:</p>
+                                    <ul>
+                                        <li><strong>لم تحقق الشرط بعد:</strong> على سبيل المثال، إذا كانت المكافأة تتطلب 5 عمليات ولم تكمل سوى 3.</li>
+                                        <li><strong>لقد حصلت على هذه المكافأة من قبل:</strong> بعض المكافآت يمكن الحصول عليها مرة واحدة فقط.</li>
+                                        <li><strong>تم الوصول للحد الأقصى للمطالبات:</strong> بعض المكافآت لها عدد محدود من المطالبات على مستوى الموقع أو لكل مستخدم.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>ماذا يعني قسم "معلومات هامة"؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>هذا القسم يحتوي على تفاصيل أو تعليمات إضافية ضرورية للاستفادة من المكافأة. قد يحتوي على روابط خارجية، أو أكواد دعوة، أو إرشادات خاصة بالتسجيل في منصات أخرى. من المهم جدًا قراءة هذا القسم بعناية قبل المطالبة بالمكافأة.</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>حصلت على مكافأة بكود، أين أستخدمه؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>الكود الذي تحصل عليه يتم استخدامه في المنصة أو التطبيق الشريك المتعلق بالمكافأة. على سبيل المثال، إذا كانت المكافأة خاصة بمنصة YPT، فستستخدم الكود داخل تطبيق YPT. يمكنك دائمًا الرجوع إلى قسم "معلومات هامة" في بطاقة المكافأة لمعرفة التفاصيل الدقيقة لكيفية استخدام الكود.</p></div>
+                            </div>
+                             <div class="faq-item">
+                                <div class="faq-question"><span>أين أجد سجل المكافآت التي حصلت عليها؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer"><p>في <a href="./rewards.html">صفحة المكافآت</a>، يوجد قسم بعنوان "مكافآت حصلت عليها". يعرض هذا القسم جميع المكافآت التي طالبت بها، مع تفاصيلها والأكواد التي حصلت عليها (إن وجدت).</p></div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><span>اختفت مكافأة من قائمة "المكافآت المتاحة"، لماذا؟</span><box-icon name='chevron-down' class="icon-toggle"></box-icon></div>
+                                <div class="faq-answer">
+                                    <p>قد تختفي المكافأة لأسباب مختلفة، منها:</p>
+                                    <ul>
+                                        <li>لقد قمت للتو بالمطالبة بها، فانتقلت إلى سجل المكافآت التي حصلت عليها.</li>
+                                        <li>قام المسؤول بإلغاء تفعيل المكافأة بشكل مؤقت أو دائم.</li>
+                                        <li>وصلت المكافأة إلى الحد الأقصى من المطالبات على مستوى جميع المستخدمين.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </main>
 
@@ -116,7 +164,7 @@
     </div>
 
     <script src="../config.js"></script>
-    <script type="module" src="../script.js"></script> 
+    <script type="module" src="../script.js"></script>
     <script type="module">
         import { getGlobalSettings } from './auth.js';
 
