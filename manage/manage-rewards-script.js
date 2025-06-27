@@ -1,4 +1,4 @@
-// admin/manage-rewards-script.js
+// manage/manage-rewards-script.js
 import { db } from '../auth/firebase-config.js';
 import {
     collection,
@@ -13,18 +13,13 @@ import {
     getDoc,
     setDoc,
     serverTimestamp,
-    runTransaction, // For unique code claims (handled on user side)
-    writeBatch, // For batch adding/deleting codes
-    increment // For claimedCountGlobal
+    runTransaction, 
+    writeBatch, 
+    increment 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Ensure this script only runs if on the admin panel AND authenticated (via admin-script.js)
-    // admin-script.js handles the main auth check and view switching.
-    // We'll put the initialization logic inside a function that admin-script.js can call
-    // when this view becomes active.
 
     const rewardsTableBody = document.getElementById('rewards-table-body');
     const rewardsTable = document.getElementById('rewards-table');
@@ -53,6 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const rewardIsActiveCheckbox = document.getElementById('reward-is-active');
     const rewardSortOrderInput = document.getElementById('reward-sort-order');
     const rewardModalMessage = document.getElementById('reward-modal-message');
+    
+    // === MODIFIED: Added new element selectors for the important info fields ===
+    const rewardHasInfoCheckbox = document.getElementById('reward-has-info');
+    const importantInfoGroup = document.getElementById('important-info-group');
+    const rewardImportantInfoTextarea = document.getElementById('reward-important-info');
 
 
     const manageCodesModal = document.getElementById('manage-codes-modal');
@@ -72,10 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const userClaimsLoadingMsg = document.getElementById('user-claims-loading');
     const noUserClaimsMessage = document.getElementById('no-user-claims-message');
 
-    // Cache for all rewards and user claims to facilitate rendering
     let allRewardsData = [];
-    let allUserClaimsData = []; // All claims by all users
-    let currentCodesForManage = []; // Codes for the specific reward being managed
+    let allUserClaimsData = [];
+    let currentCodesForManage = []; 
 
 
     // --- Helper Functions ---
@@ -103,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Fetching Data ---
-
     const fetchAllRewards = async () => {
         rewardsLoadingMsg.style.display = 'block';
         rewardsTable.style.display = 'none';
@@ -117,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: doc.id,
                 ...doc.data()
             }));
-            renderRewardsTable(); // Called after fetching rewards
+            renderRewardsTable();
         } catch (error) {
             console.error("Error fetching rewards:", error);
             rewardsLoadingMsg.textContent = `فشل تحميل المكافآت: ${error.message}`;
@@ -133,12 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
         userClaimsTableBody.innerHTML = '';
 
         try {
-            // Fetch all claims
             const claimsQ = query(collection(db, "userRewards"), orderBy("claimedAt", "desc"));
             const claimsSnapshot = await getDocs(claimsQ);
             allUserClaimsData = claimsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-             // Fetch all users to map user IDs to names/emails for display
             const usersQ = query(collection(db, "users"));
             const usersSnapshot = await getDocs(usersQ);
             const usersMap = new Map();
@@ -147,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
                  usersMap.set(userData.uid, userData);
             });
 
-            // Add user info to claims data
             allUserClaimsData = allUserClaimsData.map(claim => {
                  const user = usersMap.get(claim.userId);
                  return {
@@ -192,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Rendering Tables ---
-
     const renderRewardsTable = () => {
         rewardsTableBody.innerHTML = '';
         if (allRewardsData.length === 0) {
@@ -207,10 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         allRewardsData.forEach(reward => {
             const row = rewardsTableBody.insertRow();
             
-            // ================== Bug Fix Start ==================
-            // Dynamically calculate total claims from the cached `allUserClaimsData` array
             const totalClaimsForThisReward = allUserClaimsData.filter(claim => claim.rewardId === reward.id).length;
-            // ================== Bug Fix End ====================
             
             const statusClass = reward.isActive ? 'active' : 'inactive';
             const conditionDisplay = reward.conditionType === 'transactions_count' ? `${reward.conditionValue} ${reward.conditionUnit || 'عملية'}` : 'يدوي';
@@ -223,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td data-label="القيمة">${reward.value}</td>
                 <td data-label="الشرط">${conditionDisplay}</td>
                 <td data-label="الحد الأقصى">${limitDisplay}</td>
-                <td data-label="تم المطالبة (إجمالي)">${totalClaimsForThisReward}</td> <!-- Used the calculated value here -->
+                <td data-label="تم المطالبة (إجمالي)">${totalClaimsForThisReward}</td>
                 <td data-label="الحالة"><span class="status-tag ${statusClass}">${reward.isActive ? 'مفعلة' : 'غير مفعلة'}</span></td>
                 <td data-label="إجراءات" class="actions-cell">
                     <div class="table-actions-buttons">
@@ -285,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const claimedByDisplay = code.claimedByUserId || 'N/A';
             const claimedAtDisplay = formatDate(code.claimedAt);
 
-
             row.innerHTML = `
                 <td data-label="الكود">${code.code}</td>
                 <td data-label="الحالة"><span class="status-tag ${statusClass}">${statusText}</span></td>
@@ -300,16 +290,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Reward Management ---
-
     const openRewardModal = (reward = null) => {
         rewardForm.reset();
         rewardModalMessage.style.display = 'none';
         rewardDocumentIdInput.value = '';
-        rewardIsActiveCheckbox.checked = true; // Default new reward to active
-        rewardSortOrderInput.value = 100; // Default sort order
-        fixedCodeInput.required = false; // Reset required state
+        rewardIsActiveCheckbox.checked = true;
+        rewardSortOrderInput.value = 100;
+        fixedCodeInput.required = false;
         conditionValueInput.required = false;
         claimLimitValueInput.required = false;
+
+        // --- [NEW] START: Reset and handle important info fields ---
+        rewardHasInfoCheckbox.checked = false;
+        importantInfoGroup.style.display = 'none';
+        rewardImportantInfoTextarea.value = '';
+        // --- [NEW] END ---
 
         if (reward) {
             rewardModalTitle.textContent = "تعديل مكافأة";
@@ -327,6 +322,14 @@ document.addEventListener('DOMContentLoaded', () => {
             rewardIsActiveCheckbox.checked = reward.isActive !== false;
             rewardSortOrderInput.value = reward.sortOrder ?? 100;
 
+            // --- [NEW] START: Populate important info fields on edit ---
+            if (reward.importantInfoHtml && reward.importantInfoHtml.trim() !== '') {
+                rewardHasInfoCheckbox.checked = true;
+                importantInfoGroup.style.display = 'block';
+                rewardImportantInfoTextarea.value = reward.importantInfoHtml;
+            }
+            // --- [NEW] END ---
+
         } else {
             rewardModalTitle.textContent = "إضافة مكافأة جديدة";
              rewardTypeSelect.value = 'no_code';
@@ -334,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
              claimLimitTypeSelect.value = 'none';
         }
 
-        toggleRewardFields(); // Set visibility and required based on initial/loaded values
+        toggleRewardFields();
         showModal(rewardModal);
     };
 
@@ -361,7 +364,10 @@ document.addEventListener('DOMContentLoaded', () => {
             fixedCode: rewardType === 'fixed_code' ? fixedCodeInput.value.trim() : null,
             isActive: rewardIsActiveCheckbox.checked,
             sortOrder: parseInt(rewardSortOrderInput.value) || 100,
-            updatedAt: serverTimestamp()
+            updatedAt: serverTimestamp(),
+            // --- [NEW] START: Conditionally add the importantInfoHtml field ---
+            importantInfoHtml: rewardHasInfoCheckbox.checked ? rewardImportantInfoTextarea.value.trim() : null
+            // --- [NEW] END ---
         };
 
         if (!documentId) {
@@ -377,7 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             alert("تم حفظ المكافأة بنجاح!");
             hideModal(rewardModal);
-            // Refresh data to show changes
             window.initializeManageRewardsView();
         } catch (error) {
             console.error("Error saving reward:", error);
@@ -413,14 +418,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Code Management (for unique_code rewards) ---
-
      const openManageCodesModal = (rewardId, rewardName) => {
         addCodesMessage.style.display = 'none';
         newCodesTextarea.value = '';
         rewardIdForCodesInput.value = rewardId;
         rewardNameForCodesSpan.textContent = rewardName;
-        codeStatusFilterSelect.value = 'all'; // Reset filter
-        fetchCodesForReward(rewardId); // Load codes for this reward
+        codeStatusFilterSelect.value = 'all';
+        fetchCodesForReward(rewardId);
         showModal(manageCodesModal);
      };
 
@@ -451,7 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
              }
              const batch = writeBatch(db);
              uniqueCodesToAdd.forEach(code => {
-                 const newCodeRef = doc(collection(db, 'rewardCodes')); // Auto ID
+                 const newCodeRef = doc(collection(db, 'rewardCodes'));
                  batch.set(newCodeRef, {
                      code: code,
                      rewardId: rewardId,
@@ -463,8 +467,8 @@ document.addEventListener('DOMContentLoaded', () => {
              addCodesMessage.textContent = `تم إضافة ${uniqueCodesToAdd.length} كود بنجاح. ${duplicateCount > 0 ? `(${duplicateCount} كود مكرر تم تجاهله).` : ''}`;
              addCodesMessage.className = 'form-message success';
              addCodesMessage.style.display = 'block';
-             newCodesTextarea.value = ''; // Clear textarea
-             fetchCodesForReward(rewardId); // Refresh codes table
+             newCodesTextarea.value = '';
+             fetchCodesForReward(rewardId);
          } catch (error) {
              console.error("Error adding codes:", error);
              addCodesMessage.textContent = `فشل إضافة الأكواد: ${error.message}`;
@@ -486,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 await deleteDoc(codeRef);
                 alert("تم حذف الكود بنجاح.");
-                fetchCodesForReward(rewardIdForCodesInput.value); // Refresh codes table
+                fetchCodesForReward(rewardIdForCodesInput.value);
             } catch (error) {
                 console.error("Error deleting code:", error);
                 alert(`فشل حذف الكود: ${error.message}`);
@@ -496,12 +500,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Initialization ---
-    // Make this function global so it can be called from admin-script.js or the inline script
     window.initializeManageRewardsView = async () => {
         console.log("Initializing Manage Rewards View...");
-        // ** Important: Fetch claims first so the data is available for reward table rendering **
         await fetchAllUserClaims();
-        // Now fetch rewards, which will call renderRewardsTable, which can now use the claims data
         await fetchAllRewards(); 
     };
 
@@ -542,5 +543,9 @@ document.addEventListener('DOMContentLoaded', () => {
          if(deleteBtn) deleteCode(deleteBtn.dataset.id, deleteBtn.dataset.codeStr);
     });
 
-    // Initial setup is handled by admin-script.js calling the global `window.initializeManageRewardsView` function
+    // --- [NEW] START: Add event listener for the new checkbox ---
+    rewardHasInfoCheckbox.addEventListener('change', () => {
+        importantInfoGroup.style.display = rewardHasInfoCheckbox.checked ? 'block' : 'none';
+    });
+    // --- [NEW] END ---
 });
