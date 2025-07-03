@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تتبع المستخدمين - Easy Exchange</title>
+    <link rel="stylesheet" href="user-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body>
+    <!-- شاشة تسجيل الدخول (لا تغيير) -->
+    <div id="login-prompt" class="login-container">
+        <div class="login-box">
+            <box-icon name='user-shield' type='solid' color='#5b3bb0' size='lg'></box-icon>
+            <h2>لوحة تتبع المستخدمين</h2>
+            <p>الرجاء إدخال بيانات الاعتماد للوصول.</p>
+            <button id="login-button" class="button primary">تسجيل الدخول</button>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي بعد تسجيل الدخول -->
+    <main id="main-content" style="display: none;">
+        <header class="main-header">
+            <div class="header-title">
+                <box-icon name='bar-chart-alt-2' type='solid'></box-icon>
+                <h1>لوحة تتبع المستخدمين والعمليات</h1>
+            </div>
+            <button id="logout-button" class="button secondary">تسجيل الخروج</button>
+        </header>
+        
+        <div class="content-area">
+            <!-- القسم الأول: إحصائيات عامة -->
+            <section id="dashboard-stats" class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon users">
+                        <box-icon name='group' type='solid' color='#fff'></box-icon>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-title">إجمالي المستخدمين</span>
+                        <span class="stat-value" id="total-users-stat">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon transactions">
+                        <box-icon name='transfer' type='solid' color='#fff'></box-icon>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-title">إجمالي العمليات</span>
+                        <span class="stat-value" id="total-transactions-stat">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <box-icon name='time-five' type='solid' color='#fff'></box-icon>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-title">عمليات قيد الانتظار</span>
+                        <span class="stat-value" id="pending-transactions-stat">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- القسم الثاني: البحث الشامل بالتاريخ -->
+            <section class="global-transactions-panel">
+                <div class="panel-header">
+                    <h2><box-icon name='calendar-event' type='solid'></box-icon>سجل العمليات الشامل (حسب التاريخ)</h2>
+                </div>
+                <div class="date-range-controls">
+                    <div class="date-input-group">
+                        <label for="start-date">من تاريخ</label>
+                        <input type="date" id="start-date">
+                    </div>
+                    <div class="date-input-group">
+                        <label for="end-date">إلى تاريخ</label>
+                        <input type="date" id="end-date">
+                    </div>
+                    <div class="date-buttons-group">
+                        <button id="filter-by-date-btn" class="button primary">
+                            <box-icon name='filter-alt' color='#ffffff'></box-icon>
+                            <span>تطبيق الفلتر</span>
+                        </button>
+                        <button id="reset-date-filter-btn" class="button secondary">
+                            <box-icon name='reset' color='var(--text-primary)'></box-icon>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="global-transactions-results" style="display: none; margin-top: 20px;">
+                    <div class="table-responsive-wrapper">
+                        <table id="global-transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم العملية</th>
+                                    <th>العميل</th>
+                                    <th>تاريخ الإنشاء</th>
+                                    <th>التفاصيل</th>
+                                    <th>سجل الحالات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="global-transactions-body"></tbody>
+                        </table>
+                    </div>
+                    <p id="global-log-message" class="no-results" style="display: none;"></p>
+                </div>
+            </section>
+
+            <!-- القسم الثالث: لوحة التحكم التفاعلية (Master-Detail) -->
+            <div class="users-dashboard-layout">
+                <!-- العمود الجانبي: قائمة المستخدمين -->
+                <aside class="users-list-panel">
+                    <div class="panel-header">
+                        <h2><box-icon name='list-ul'></box-icon>قائمة المستخدمين</h2>
+                    </div>
+                    <div class="panel-controls">
+                        <input type="text" id="search-input" placeholder="ابحث بالاسم، البريد، الهاتف...">
+                        <select id="sort-select">
+                            <option value="name_asc">الاسم (أ-ي)</option>
+                            <option value="name_desc">الاسم (ي-أ)</option>
+                            <option value="total_desc">إجمالي العمليات (الأعلى)</option>
+                            <option value="completed_desc">الناجحة (الأعلى)</option>
+                        </select>
+                    </div>
+                    <div id="users-list-container">
+                        <!-- هياكل التحميل ستظهر هنا أولاً -->
+                        <div id="loading-skeleton-container"></div>
+                    </div>
+                </aside>
+
+                <!-- اللوحة الرئيسية: تفاصيل المستخدم -->
+                <main class="user-details-panel">
+                    <div id="details-prompt" class="details-prompt">
+                        <box-icon name='user-check' size='lg' color='var(--text-secondary)'></box-icon>
+                        <h3>اختر مستخدمًا من القائمة</h3>
+                        <p>لعرض تفاصيله الكاملة وسجل عملياته هنا.</p>
+                    </div>
+
+                    <div id="details-view" class="details-view" style="display: none;">
+                        <div id="details-loading-spinner" class="spinner-container" style="display: none;">
+                            <div class="spinner"></div>
+                        </div>
+
+                        <section id="user-info-section" class="user-info-section"></section>
+
+                        <section class="user-transactions-section">
+                            <div class="panel-header">
+                                <h3><box-icon name='history'></box-icon>سجل عمليات المستخدم</h3>
+                            </div>
+                            <div class="table-responsive-wrapper">
+                                <table id="user-transactions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>رقم العملية</th>
+                                            <th>تاريخ الإنشاء</th>
+                                            <th>التفاصيل</th>
+                                            <th>سجل الحالات</th>
+                                            <th>إجراء</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="user-transactions-body"></tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </main>
+    <script src="user-script.js" type="module"></script>
+</body>
+</html>
