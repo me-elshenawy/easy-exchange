@@ -1,3 +1,11 @@
+/* =================================================================== */
+/* --- 11. GLOBAL OVERFLOW PREVENTION (DEFINITIVE FIX - PART 2) --- */
+/* =================================================================== */
+html, body {
+    overflow-x: hidden !important;
+    position: relative;
+}
+
 /* General Body Styles */
 body {
     font-family: 'Cairo', 'Arial', sans-serif; 
@@ -36,12 +44,12 @@ body {
 
 #site-top-header .header-content.container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     height: 70px;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 /* Brand Logo */
@@ -60,6 +68,12 @@ body {
 #site-brand-title box-icon {
     flex-shrink: 0;
 }
+
+/* START: Robust Header Layout Fix */
+#site-brand-title {
+    margin-right: auto;
+}
+/* END: Robust Header Layout Fix */
 
 /* Navigation & Actions */
 .navigation-container {
@@ -197,7 +211,16 @@ body {
 .pro-notification-content { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; min-height: 28px; font-size: 0.88rem; font-weight: 500; box-sizing: border-box; }
 .pro-notification-icon-span { margin-left: 12px; display: inline-flex; align-items: center; flex-shrink: 0; }
 .pro-notification-icon-span box-icon { fill: #ffffff; width: 20px; height: 20px; }
-.pro-notification-text-span { flex-grow: 1; text-align: right; margin: 0 8px; opacity: 1; transition: opacity 0.3s ease-in-out; }
+.pro-notification-text-span {
+    white-space: normal; /* Allow text to wrap correctly */
+    overflow-wrap: break-word; /* Break long words or URLs */
+    min-width: 0; /* CRITICAL FIX: Allows this flex item to shrink smaller than its content's natural width */
+    flex-grow: 1;
+    text-align: right;
+    margin: 0 8px;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
 .pro-notification-text-span.fade-out { opacity: 0; }
 .pro-notification-close-btn { background: none; border: none; color: #ffffff; cursor: pointer; padding: 5px; margin-right: 10px; opacity: 0.8; transition: opacity 0.2s ease; line-height: 0; flex-shrink: 0; }
 .pro-notification-close-btn:hover { opacity: 1; }
