@@ -1,0 +1,541 @@
+/* auth/blog-style.css */
+
+/* =================================================================== */
+/* --- 1. General Blog Layout & Messages --- */
+/* =================================================================== */
+.blog-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.1rem;
+    color: var(--text-secondary, #6c757d);
+    font-weight: 500;
+}
+
+.article-page-layout {
+    display: grid;
+    /* In the future, a sidebar can be enabled with 'grid-template-columns: 1fr 300px;' */
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+#article-sidebar {
+    display: none; /* Hidden for now, can be enabled later */
+}
+
+/* =================================================================== */
+/* --- 2. Blog Listing Page (blog.html) --- */
+/* =================================================================== */
+.blog-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.category-btn {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid var(--border-color, #e2e8f0);
+    background-color: transparent;
+    color: var(--text-secondary, #6c757d);
+    transition: all 0.2s ease;
+    font-family: 'Cairo', sans-serif;
+}
+.category-btn:hover {
+    background-color: #f0ecfb;
+    color: var(--primary-color, #5b3bb0);
+    border-color: #d1c4e9;
+}
+.category-btn.active {
+    background-color: var(--primary-color, #5b3bb0);
+    color: #ffffff;
+    border-color: var(--primary-color, #5b3bb0);
+}
+
+.articles-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.article-card {
+    background-color: var(--panel-bg, #ffffff);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.09);
+}
+
+.article-card .card-category {
+    display: inline-block;
+    background-color: #f0ecfb;
+    color: var(--primary-color, #5b3bb0);
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 20px;
+    margin: 20px 20px 0 20px;
+    align-self: flex-start;
+}
+
+.article-card .card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+    margin: 15px 20px;
+}
+
+.article-card .card-excerpt {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #6c757d);
+    line-height: 1.7;
+    margin: 0 20px 20px 20px;
+    flex-grow: 1;
+}
+
+.article-card .card-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    font-size: 0.85rem;
+    color: var(--text-secondary, #6c757d);
+    border-top: 1px solid var(--border-color, #e2e8f0);
+}
+.card-author { font-weight: 600; }
+
+/* =================================================================== */
+/* --- 3. Single Article Page (article.html) --- */
+/* =================================================================== */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+.breadcrumb a {
+    color: var(--primary-color, #5b3bb0);
+    text-decoration: none;
+    font-weight: 600;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb span { color: var(--text-secondary, #6c757d); }
+
+.article-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
+.article-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary, #6c757d);
+    margin-bottom: 25px;
+}
+
+.author-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary-color, #5b3bb0);
+    color: #fff;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.author-name {
+    display: block;
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+}
+.article-date {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary, #6c757d);
+}
+
+.article-body-content {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: #34495e;
+}
+.article-body-content h1, .article-body-content h2, .article-body-content h3 {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+}
+.article-body-content p { margin-bottom: 1.5em; }
+.article-body-content a { color: var(--primary-color, #5b3bb0); font-weight: 600; text-decoration: underline; }
+.article-body-content ul, .article-body-content ol { padding-right: 20px; margin-bottom: 1.5em; }
+
+.share-buttons {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color, #e2e8f0);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.share-buttons span { font-weight: 600; margin-left: 10px; }
+.share-btn {
+    padding: 8px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+.share-btn.whatsapp { background-color: #25D366; color: white; }
+.share-btn.facebook { background-color: #1877F2; color: white; }
+.share-btn.copy-link { background-color: #f0f2f5; color: #333; }
+.share-btn:hover { opacity: 0.85; }
+
+/* =================================================================== */
+/* --- 4. Comments System Styles (Re-architected for new Blueprint) --- */
+/* =================================================================== */
+.comments-section-container {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid var(--border-color, #e2e8f0);
+}
+.comments-section-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+}
+#comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.comment-thread {
+    width: 100%;
+}
+
+/* --- Anatomy of a Single Comment --- */
+.comment {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+.comment-avatar {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.comment-content {
+    flex-grow: 1;
+    min-width: 0; /* Important for flex-grow to work correctly */
+}
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.comment-author {
+    font-weight: 700;
+    color: var(--text-primary, #1e293b);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.verification-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background-color: #1DA1F2;
+    border-radius: 50%;
+}
+.verification-badge box-icon {
+    width: 14px;
+    height: 14px;
+    display: block;
+}
+.comment-timestamp {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #6c757d);
+    flex-shrink: 0;
+}
+.comment-text {
+    margin: 0 0 12px 0;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.reply-mention {
+    color: var(--primary-color, #5b3bb0);
+    font-weight: 700;
+    margin-left: 5px;
+    cursor: pointer;
+}
+.reply-mention:hover {
+    text-decoration: underline;
+}
+
+/* --- Comment Actions & Toggles --- */
+.comment-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.comment-action, .toggle-replies-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary, #6c757d);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0;
+    transition: color 0.2s ease;
+    font-family: 'Cairo', sans-serif;
+}
+.comment-action:hover, .toggle-replies-btn:hover {
+    color: var(--primary-color, #5b3bb0);
+}
+.comment-action.like.liked {
+    color: var(--primary-color, #5b3bb0);
+}
+.comment-action.like.liked box-icon {
+    fill: var(--primary-color, #5b3bb0);
+}
+
+/* --- Admin Specific Comment Styles --- */
+.comment.admin-comment .comment-avatar {
+    background-color: var(--primary-color, #5b3bb0);
+    color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--primary-color, #5b3bb0);
+}
+
+/* --- Nested Replies & Hierarchy --- */
+.replies-container {
+    padding-top: 15px;
+    margin-top: 10px;
+    padding-right: 25px; /* Indentation for replies */
+    margin-right: calc(48px + 15px); /* Avatar width + gap to align with parent content */
+    border-right: 2px solid var(--border-color, #e2e8f0);
+    display: block; /* block is better than flex here */
+}
+.replies-container .comment-thread {
+    margin-bottom: 15px;
+}
+.replies-container .comment-thread:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Comment Form & Login Prompt --- */
+.reply-form-container, #comment-form-container { margin-top: 20px; }
+
+.login-prompt-comment {
+    background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 8px; border: 1px solid var(--border-color, #e2e8f0);
+}
+.login-prompt-comment a { color: var(--primary-color, #5b3bb0); font-weight: 700; text-decoration: none; }
+.login-prompt-comment a:hover { text-decoration: underline; }
+
+.comment-form textarea {
+    width: 100%; min-height: 100px; padding: 12px 15px; border: 1px solid var(--border-color, #e2e8f0); border-radius: 8px; font-size: 1rem; font-family: 'Cairo', sans-serif; resize: vertical; box-sizing: border-box; transition: all 0.2s ease;
+}
+.comment-form textarea:focus { border-color: var(--primary-color, #5b3bb0); box-shadow: 0 0 0 3px rgba(91, 59, 176, 0.15); outline: none; }
+.comment-form .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+.comment-form .form-actions .button.secondary { background-color: transparent; border: none; color: var(--text-secondary, #6c757d); }
+.comment-form .form-actions .button.secondary:hover { background-color: #f1f5f9; }
+
+
+/* --- NEW: Comment Options (Edit/Delete Menu) Styles --- */
+.comment-options-wrapper {
+    position: relative;
+    margin-right: auto; /* Push to the left in RTL */
+    flex-shrink: 0;
+    margin-bottom: -5px; /* Adjust spacing with elements above/below */
+}
+
+.comment-options-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    width: 30px; /* Make clickable area consistent */
+    height: 30px;
+}
+
+.comment-options-toggle:hover {
+    background-color: #f0f0f0; /* Light hover background */
+}
+
+.comment-options-toggle box-icon {
+    fill: var(--text-secondary, #6c757d);
+    width: 20px;
+    height: 20px;
+}
+
+.comment-options-menu {
+    position: absolute;
+    top: 100%; /* Position below the toggle button */
+    left: 0; /* Align to the left (start) of the toggle button */
+    background-color: #ffffff;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 140px;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    padding: 5px 0; /* Padding inside the menu */
+}
+
+.comment-options-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.comment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 15px; /* Padding for each option */
+    width: 100%;
+    text-align: right;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary, #1e293b);
+    transition: background-color 0.2s ease;
+    font-family: 'Cairo', sans-serif;
+}
+
+.comment-option:hover {
+    background-color: #f8f9fa; /* Hover for options */
+}
+
+.comment-option box-icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor; /* Inherit color from parent */
+}
+
+/* Specific colors for delete option */
+.comment-option.delete {
+    color: var(--danger-color, #dc3545);
+}
+.comment-option.delete:hover {
+    background-color: #ffe0e0; /* Light red hover for delete */
+}
+
+/* Comment Edit Area styles */
+.comment-edit-area {
+    margin-top: 10px;
+    margin-bottom: 10px; /* Space above and below form */
+}
+
+.edit-comment-textarea {
+    width: 100%;
+    min-height: 80px; /* Make sure it's tall enough */
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Cairo', sans-serif;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.edit-comment-textarea:focus {
+    border-color: var(--primary-color, #5b3bb0);
+    box-shadow: 0 0 0 3px rgba(91, 59, 176, 0.15);
+    outline: none;
+}
+
+
+/* =================================================================== */
+/* --- 5. Responsive Styles --- */
+/* =================================================================== */
+@media (max-width: 768px) {
+    .article-header h1 {
+        font-size: 1.8rem;
+    }
+    .replies-container {
+        padding-right: 15px;
+        margin-right: 0;
+    }
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    /* Adjust options menu on small screens */
+    .comment-options-menu {
+        left: unset; /* Reset left positioning */
+        right: 0; /* Align to the right (end) of the toggle button */
+    }
+}
+
+
+/* =================================================================== */
+/* --- 6. Definitive & Professional Content Overflow Fix --- */
+/* =================================================================== */
+.article-page-layout > main { min-width: 0; }
+.article-body-content { overflow-wrap: break-word; word-wrap: break-word; max-width: 100%; overflow-x: hidden; }
+.article-body-content img, .article-body-content video, .article-body-content iframe { max-width: 100%; height: auto; display: block; border-radius: 8px; }
+.article-body-content table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-collapse: collapse; }
+.article-body-content th, .article-body-content td { padding: 10px; border: 1px solid var(--border-color, #e2e8f0); overflow-wrap: break-word; }
+.article-body-content pre { white-space: pre-wrap; overflow-wrap: break-word; background-color: #f8f9fa; padding: 15px; border-radius: 8px; overflow-x: auto; }

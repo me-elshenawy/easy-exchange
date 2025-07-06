@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المدونة - Easy Exchange</title>
+    <!-- Main and Auth Styles -->
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <!-- New Blog-Specific Styles -->
+    <link rel="stylesheet" href="blog-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+
+    <!-- Dynamic Header Placeholder -->
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content">
+            
+            <div class="dashboard-header">
+                <h2><box-icon name='news' style='margin-left: 10px;'></box-icon>مدونة Easy Exchange</h2>
+            </div>
+            
+            <p class="dashboard-intro-text">
+                اكتشف آخر الأخبار والشروحات والنصائح في عالم التحويلات المالية والعملات الرقمية.
+            </p>
+
+            <!-- Category Filter Bar -->
+            <div class="blog-filter-bar" id="category-filter-container">
+                <!-- Category buttons will be injected by JavaScript -->
+            </div>
+
+            <!-- Articles Grid -->
+            <div id="articles-container">
+                <p id="articles-loading" class="blog-message">جارٍ تحميل المقالات...</p>
+                <div id="articles-grid" class="articles-grid-container">
+                    <!-- Article cards will be injected by JavaScript -->
+                </div>
+                <p id="no-articles-message" class="blog-message" style="display: none;">لا توجد مقالات لعرضها في هذا التصنيف.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast container for notifications -->
+    <div id="toast-container"></div>
+    
+    <!-- Main Site Scripts -->
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script> 
+    <!-- New Blog-Specific Script -->
+    <script type="module" src="blog-script.js"></script> 
+</body>
+</html>

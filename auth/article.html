@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قراءة المقال - Easy Exchange</title>
+    <!-- Meta tags for social sharing -->
+    <meta property="og:title" content="Easy Exchange Blog">
+    <meta property="og:description" content="اقرأ المقال الكامل على مدونة Easy Exchange.">
+    <meta property="og:image" content="../assets/logo.png"> <!-- Note: Add a logo image to your project -->
+    <meta property="og:url" content="">
+
+    <!-- Main and Auth Styles -->
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="auth-style.css">
+    <!-- New Blog-Specific Styles -->
+    <link rel="stylesheet" href="blog-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</head>
+<body class="auth-page">
+
+    <!-- Dynamic Header Placeholder -->
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content article-page-layout">
+            
+            <!-- Main Article Content Area -->
+            <main id="article-main-content">
+                <div id="article-loading" class="blog-message">جارٍ تحميل المقال...</div>
+                <article id="article-content-container" style="display: none;">
+                    <!-- Breadcrumb Navigation -->
+                    <nav class="breadcrumb">
+                        <a href="blog.html">المدونة</a>
+                        <box-icon name='chevron-left'></box-icon>
+                        <span id="article-category-breadcrumb"></span>
+                    </nav>
+
+                    <!-- Article Header -->
+                    <header class="article-header">
+                        <h1 id="article-title"></h1>
+                        <p id="article-excerpt"></p>
+                    </header>
+
+                    <!-- Author & Date Info -->
+                    <div class="author-meta">
+                        <div class="author-avatar" id="author-avatar">EZ</div>
+                        <div class="author-info">
+                            <span id="author-name" class="author-name"></span>
+                            <span id="article-date" class="article-date"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Full Article Content -->
+                    <div id="article-body" class="article-body-content">
+                        <!-- Full HTML content will be injected here -->
+                    </div>
+
+                    <!-- Share Buttons -->
+                    <div class="share-buttons">
+                        <span>مشاركة المقال:</span>
+                        <a id="share-whatsapp" href="#" target="_blank" class="share-btn whatsapp"><box-icon type='logo' name='whatsapp'></box-icon> واتساب</a>
+                        <a id="share-facebook" href="#" target="_blank" class="share-btn facebook"><box-icon type='logo' name='facebook'></box-icon> فيسبوك</a>
+                        <button id="copy-link-btn" class="share-btn copy-link"><box-icon name='copy'></box-icon> نسخ الرابط</button>
+                    </div>
+                </article>
+
+                <!-- Comments Section -->
+                <section id="comments-section" class="comments-section-container" style="display: none;">
+                    <h3>التعليقات</h3>
+                    <div id="comments-list">
+                        <!-- Comments will be injected here -->
+                    </div>
+                    <p id="no-comments-message" class="blog-message" style="display: none;">كن أول من يكتب تعليقاً!</p>
+                    
+                    <!-- Comment Form -->
+                    <div id="comment-form-container">
+                         <!-- Form or login prompt will be injected here -->
+                    </div>
+                </section>
+            </main>
+
+            <!-- Sidebar (Optional, e.g., for recent posts) -->
+            <aside id="article-sidebar" class="article-sidebar-container">
+                 <!-- Could be used for recent posts, related articles etc. in a future update -->
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- Toast container for notifications -->
+    <div id="toast-container"></div>
+    
+    <!-- Main Site Scripts -->
+    <script src="../config.js"></script>
+    <script type="module" src="../script.js"></script> 
+    <!-- New Blog-Specific Script -->
+    <script type="module" src="blog-script.js"></script> 
+</body>
+</html>
