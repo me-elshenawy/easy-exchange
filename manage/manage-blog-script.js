@@ -25,6 +25,66 @@ document.addEventListener('DOMContentLoaded', () => {
     let quillEditor = null;
 
     // --- Helper Functions ---
+    // Helper function for rudimentary Markdown to HTML conversion
+    const convertMarkdownToHtml = (markdownText) => {
+        let html = markdownText;
+
+        // Convert headings (rudimentary) - Process longer headers first to avoid misinterpretations
+        html = html.replace(/^####\s(.+)/gm, '<h4>$1</h4>'); // H4
+        html = html.replace(/^###\s(.+)/gm, '<h3>$1</h3>'); // H3
+        html = html.replace(/^##\s(.+)/gm, '<h2>$1</h2>'); // H2
+        html = html.replace(/^#\s(.+)/gm, '<h1>$1</h1>');   // H1
+        
+        // Convert **bold** and *italic*
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        // Convert --- horizontal rule
+        html = html.replace(/^-{3,}$/gm, '<hr>');
+
+        // Convert `inline code`
+        html = html.replace(/`(.*?)`/g, '<code>$1</code>'); // Add inline code support
+
+        // Convert lists (basic, supports only single level using - or *)
+        // This regex part captures lines starting with '*' or '-' followed by a space and content
+        const listItemsRegex = /^[*-]\s(.+)/gm;
+        let processedLines = html.split('\n'); // Split the entire HTML content by newlines for line-by-line processing
+
+        let finalOutput = [];
+        let inListBlock = false;
+
+        for (let i = 0; i < processedLines.length; i++) {
+            let line = processedLines[i];
+            const listItemMatch = line.match(listItemsRegex); // Check if the line is a list item
+
+            if (listItemMatch) {
+                if (!inListBlock) {
+                    finalOutput.push('<ul>'); // Start a new unordered list if not already inside one
+                    inListBlock = true;
+                }
+                // Convert the matched list item line to an <li> tag
+                finalOutput.push(`<li>${line.substring(line.indexOf(' ') + 1).trim()}</li>`);
+            } else {
+                if (inListBlock) {
+                    finalOutput.push('</ul>'); // Close the list if ending a block of list items
+                    inListBlock = false;
+                }
+                finalOutput.push(line); // Add non-list line as is
+            }
+        }
+        if (inListBlock) { // Ensure the last list block is closed if the file ends with list items
+            finalOutput.push('</ul>');
+        }
+        
+        html = finalOutput.join('\n'); // Rejoin processed lines with list structures
+        
+        // Convert basic links (simplified) - [text](url) -> <a>
+        html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+        return html;
+    };
+
+
     const formatDate = (firebaseTimestamp) => {
         if (!firebaseTimestamp || typeof firebaseTimestamp.toDate !== 'function') return 'N/A';
         return firebaseTimestamp.toDate().toLocaleString('ar-EG-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' });
@@ -60,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             articleTitleInput.value = article.title || '';
             articleCategoryInput.value = article.category || '';
             articleExcerptInput.value = article.excerpt || '';
-            quillEditor.root.innerHTML = article.content || '';
+            quillEditor.root.innerHTML = article.content || ''; // Quill will handle display of HTML
             articleAllowCommentsCheckbox.checked = article.allowComments !== false;
             articleStatusCheckbox.checked = article.status === 'published';
         } else {
@@ -74,12 +134,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function saveArticle(event) {
         event.preventDefault();
         const docId = articleDocumentId.value;
-        const slug = articleTitleInput.value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+        const slug = articleTitleInput.value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+
+        // Convert Quill's raw HTML (which might contain basic Markdown characters user typed) to refined HTML
+        const contentHtml = convertMarkdownToHtml(quillEditor.root.innerHTML);
+
         const articleData = {
             title: articleTitleInput.value.trim(),
             category: articleCategoryInput.value.trim(),
             excerpt: articleExcerptInput.value.trim(),
-            content: quillEditor.root.innerHTML,
+            content: contentHtml, // Use the converted HTML
             slug: slug,
             allowComments: articleAllowCommentsCheckbox.checked,
             status: articleStatusCheckbox.checked ? 'published' : 'draft',
@@ -145,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- View Initializer ---
+    // Make this function available globally for admin-script.js to call
     window.initializeBlogManagementView = fetchAllArticles;
 
     // --- Event Listeners ---
