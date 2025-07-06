@@ -5,8 +5,183 @@ import { db } from './auth/firebase-config.js';
 import { collection, query, where, getDocs, orderBy, doc, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
+// EXPORTED AND ATTACHED TO WINDOW FOR GLOBAL ACCESS
+// --- START: NEW Confirmation and Info Modal Logic ---
+
+/**
+ * Shows a custom confirmation modal.
+ * @param {object} options - Configuration for the modal.
+ * @param {string} options.title - The title of the modal.
+ * @param {string} options.message - The main message content (can include HTML).
+ * @param {string} [options.confirmText='تأكيد'] - Text for the confirm button.
+ * @param {string} [options.cancelText='إلغاء'] - Text for the cancel button.
+ * @param {string} [options.iconName='error-warning'] - Boxicons icon name (e.g., 'check-circle').
+ * @param {string} [options.iconColor='var(--warning-color)'] - CSS color for the icon.
+ * @returns {Promise<boolean>} Resolves to true if confirmed, false if cancelled/closed.
+ */
+export function showConfirmationModal({
+    title = 'تأكيد الإجراء',
+    message,
+    confirmText = 'تأكيد',
+    cancelText = 'إلغاء',
+    iconName = 'error-warning',
+    iconColor = 'var(--warning-color)'
+}) {
+    return new Promise(resolve => {
+        const existingModal = document.getElementById('custom-confirmation-modal');
+        if (existingModal) existingModal.remove();
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.id = 'custom-confirmation-modal';
+        modalOverlay.className = 'custom-modal-overlay';
+        modalOverlay.innerHTML = `
+            <div class="custom-modal">
+                <div class="modal-header">
+                    <span class="modal-icon" style="color: ${iconColor};">
+                        <box-icon name='${iconName}' type='solid'></box-icon>
+                    </span>
+                    <h3>${title}</h3>
+                </div>
+                <div class="modal-body">
+                    ${message}
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-button confirm">${confirmText}</button>
+                    <button class="modal-button cancel">${cancelText}</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modalOverlay);
+        
+        const confirmBtn = modalOverlay.querySelector('.modal-button.confirm');
+        const cancelBtn = modalOverlay.querySelector('.modal-button.cancel');
+
+        const closeModal = (result) => {
+            modalOverlay.classList.remove('show');
+            setTimeout(() => {
+                modalOverlay.remove();
+                resolve(result);
+            }, 200);
+        };
+
+        confirmBtn.onclick = () => closeModal(true);
+        cancelBtn.onclick = () => closeModal(false);
+        modalOverlay.onclick = (e) => { // Click outside closes modal
+            if (e.target === modalOverlay) {
+                closeModal(false);
+            }
+        };
+
+        // Show the modal with a slight delay for CSS transition
+        setTimeout(() => modalOverlay.classList.add('show'), 10);
+    });
+}
+
+/**
+ * Shows a custom informational modal (single button).
+ * @param {object} options - Configuration for the modal.
+ * @param {string} options.title - The title of the modal.
+ * @param {string} options.message - The main message content (can include HTML).
+ * @param {string} [options.confirmText='حسناً'] - Text for the confirm button.
+ * @param {string} [options.iconName='info-circle'] - Boxicons icon name.
+ * @param {string} [options.iconColor='var(--info-color)'] - CSS color for the icon.
+ * @returns {Promise<boolean>} Resolves to true when the button is clicked.
+ */
+export function showInfoModal({
+    title = 'تنبيه',
+    message,
+    confirmText = 'حسناً',
+    iconName = 'info-circle',
+    iconColor = 'var(--info-color)'
+}) {
+     return new Promise(resolve => {
+        const existingModal = document.getElementById('custom-confirmation-modal');
+        if (existingModal) existingModal.remove();
+
+        const modalOverlay = document.createElement('div');
+        modalOverlay.id = 'custom-confirmation-modal';
+        modalOverlay.className = 'custom-modal-overlay';
+        modalOverlay.innerHTML = `
+            <div class="custom-modal">
+                <div class="modal-header">
+                    <span class="modal-icon" style="color: ${iconColor};">
+                        <box-icon name='${iconName}' type='solid'></box-icon>
+                    </span>
+                    <h3>${title}</h3>
+                </div>
+                <div class="modal-body">
+                    ${message}
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-button confirm">${confirmText}</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalOverlay);
+        const confirmBtn = modalOverlay.querySelector('.modal-button.confirm');
+
+        const closeModal = (result) => {
+            modalOverlay.classList.remove('show');
+            setTimeout(() => {
+                modalOverlay.remove();
+                resolve(result);
+            }, 200);
+        };
+
+        confirmBtn.onclick = () => closeModal(true);
+        modalOverlay.onclick = (e) => { // Click outside closes modal
+            if (e.target === modalOverlay) {
+                closeModal(false);
+            }
+        };
+
+        setTimeout(() => modalOverlay.classList.add('show'), 10);
+    });
+}
+
+/**
+ * Shows a temporary toast notification.
+ * @param {string} message - The text content of the toast.
+ * @param {'info'|'success'|'error'|'warning'} [type='info'] - The type of toast, affects styling.
+ * @param {number} [duration=3000] - Duration in milliseconds before the toast disappears.
+ */
+export function showToast(message, type = 'info', duration = 3000) { 
+    const existingToast = document.querySelector('.toast-notification'); 
+    if (existingToast && !existingToast.classList.contains('persistent')) existingToast.remove(); // Remove non-persistent toasts if new one comes
+    const toast = document.createElement('div'); 
+    toast.className = 'toast-notification'; 
+    if (type === 'success') toast.classList.add('success'); 
+    else if (type === 'error') toast.classList.add('error'); 
+    else if (type === 'info') toast.classList.add('info'); 
+    else if (type === 'warning') toast.classList.add('warning'); 
+    toast.textContent = message; 
+    document.body.appendChild(toast); 
+    // Trigger CSS transition
+    setTimeout(() => toast.classList.add('show'), 10); 
+    // Remove after duration
+    setTimeout(() => { 
+        toast.classList.remove('show'); 
+        setTimeout(() => toast.remove(), 500); // Allow fade-out animation to complete
+    }, duration); 
+}
+// --- END: NEW Confirmation and Info Modal Logic ---
+
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    // --- Attach exported functions to window object (for global access if scripts are not modules) ---
+    // This provides a robust way to ensure access in all script loading scenarios.
+    if (typeof window.showConfirmationModal === 'undefined') { // Avoid re-assignment if already attached by prior module import
+        window.showConfirmationModal = showConfirmationModal;
+    }
+    if (typeof window.showInfoModal === 'undefined') {
+        window.showInfoModal = showInfoModal;
+    }
+    if (typeof window.showToast === 'undefined') {
+        window.showToast = showToast;
+    }
+    // --- End attaching to window ---
 
     // --- START: Full Page Spinner Logic ---
 
@@ -42,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-    // Make spinner functions globally accessible
+    // Make spinner functions globally accessible (already part of window, just defined here)
 
     window.showPageSpinner = function() {
 
@@ -183,10 +358,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let navHtml = '';
 
                 const isHelpPage = window.location.pathname.includes('/help.html');
+                const isBlogPage = window.location.pathname.includes('/blog.html') || window.location.pathname.includes('/article.html');
 
-                
 
                 const helpLinkPath = window.location.pathname.startsWith('/auth/') ? 'help.html' : 'auth/help.html';
+                const blogLinkPath = window.location.pathname.startsWith('/auth/') ? 'blog.html' : 'auth/blog.html';
 
                 
 
@@ -205,61 +381,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
                     navHtml = `
-
-                        <a href="${helpLinkPath}" class="nav-link ${isHelpPage ? 'active' : ''}">
-
-                            <box-icon name='help-circle' type='solid'></box-icon>
-
-                            <span>مساعدة</span>
-
+                        <a href="${blogLinkPath}" class="nav-link ${isBlogPage ? 'active' : ''}">
+                            <box-icon name='news'></box-icon>
+                            <span>المدونة</span>
                         </a>
-
+                        <a href="${helpLinkPath}" class="nav-link ${isHelpPage ? 'active' : ''}">
+                            <box-icon name='help-circle' type='solid'></box-icon>
+                            <span>مساعدة</span>
+                        </a>
                         <div class="user-menu">
-
                             <div id="user-menu-trigger" class="user-menu-trigger">
-
                                 <span class="user-avatar-initials">${initials.toUpperCase()}</span>
-
                                 <span class="user-menu-name">${displayName}</span>
-
                                 <box-icon name='chevron-down' class="chevron-icon"></box-icon>
-
                             </div>
-
                             <div id="user-dropdown-menu" class="user-dropdown-menu">
-
                                 <div class="dropdown-user-info">
-
                                     <p class="name">${displayName}</p>
-
                                     <p class="email">${email}</p>
-
                                 </div>
-
                                 <nav class="dropdown-nav">
-
                                     <a href="${dashboardPath}">
-
                                         <box-icon name='category' type='solid'></box-icon>
-
                                         <span>لوحة التحكم</span>
-
                                     </a>
-
                                     <button id="logout-button-main" class="logout-item">
-
                                         <box-icon name='log-out-circle'></box-icon>
-
                                         <span>تسجيل الخروج</span>
-
                                     </button>
-
                                 </nav>
-
                             </div>
-
                         </div>
-
                     `;
 
                     mainNavContainer.innerHTML = navHtml;
@@ -291,13 +443,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const registerPath = window.location.pathname.startsWith('/auth/') ? 'register.html' : 'auth/register.html';
 
                     navHtml = `
-
+                        <a href="${blogLinkPath}" class="nav-link ${isBlogPage ? 'active' : ''}">المدونة</a>
                         <a href="${helpLinkPath}" class="nav-link ${isHelpPage ? 'active' : ''}">مساعدة</a>
-
                         <a href="${registerPath}" class="header-button outline">إنشاء حساب</a>
-
                         <a href="${loginPath}" class="header-button primary">تسجيل الدخول</a>
-
                     `;
 
                     mainNavContainer.innerHTML = navHtml;
@@ -352,8 +501,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     }
 
-    
-
     let proNotificationBar, proNotificationTextSpan, proNotificationIconSpan, proNotificationCloseBtn, currentMessageIndex = 0, messageInterval;
 
     const MESSAGE_FADE_DURATION = 300;
@@ -397,10 +544,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     
-
-    window.showToast = function(message, type = 'info', duration = 3000) { const existingToast = document.querySelector('.toast-notification'); if (existingToast && !existingToast.classList.contains('persistent')) existingToast.remove(); const toast = document.createElement('div'); toast.className = 'toast-notification'; if (type === 'success') toast.classList.add('success'); else if (type === 'error') toast.classList.add('error'); else if (type === 'info') toast.classList.add('info'); else if (type === 'warning') toast.classList.add('warning'); toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.classList.add('show'), 10); setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, duration); };
-
-
 
     // --- START: Exchange Form Logic (Main Page) ---
 
@@ -446,7 +589,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!allPaymentMethods || Object.keys(allPaymentMethods).length === 0 || !exchangeRatesAndFees) {
 
-                showToast("خطأ في تحميل إعدادات الموقع. يرجى تحديث الصفحة.", 'error');
+                window.showToast("خطأ في تحميل إعدادات الموقع. يرجى تحديث الصفحة.", 'error');
 
                 window.hidePageSpinner();
 
@@ -458,7 +601,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!sendMethodKey || !receiveMethodKey) {
 
-                showToast("الرجاء اختيار عملتي الإرسال والاستلام.", 'error');
+                window.showToast("الرجاء اختيار عملتي الإرسال والاستلام.", 'error');
 
                 window.hidePageSpinner();
 
@@ -470,7 +613,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (isNaN(sendAmountNum) || sendAmountNum <= 0 || isNaN(receiveAmountNum) || receiveAmountNum <= 0) {
 
-                showToast("الرجاء إدخال مبالغ صحيحة.", 'error');
+                window.showToast("الرجاء إدخال مبالغ صحيحة.", 'error');
 
                 window.hidePageSpinner();
 
@@ -488,7 +631,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!sendMethodDetails || !receiveMethodDetails) {
 
-                showToast("وسيلة الإرسال أو الاستلام المختارة غير صالحة.", "error");
+                window.showToast("وسيلة الإرسال أو الاستلام المختارة غير صالحة.", "error");
 
                 window.hidePageSpinner();
 
@@ -500,7 +643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (typeof sendMethodDetails.minAmount === 'number' && sendAmountNum < sendMethodDetails.minAmount) {
 
-                showToast(`الحد الأدنى للإرسال بعملة ${sendMethodDetails.name} هو ${sendMethodDetails.minAmount} ${sendMethodDetails.type}.`, 'warning');
+                window.showToast(`الحد الأدنى للإرسال بعملة ${sendMethodDetails.name} هو ${sendMethodDetails.minAmount} ${sendMethodDetails.type}.`, 'warning');
 
                 window.hidePageSpinner();
 
@@ -512,7 +655,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (typeof receiveMethodDetails.minAmount === 'number' && receiveAmountNum < receiveMethodDetails.minAmount) {
 
-                showToast(`الحد الأدنى للاستلام بعملة ${receiveMethodDetails.name} هو ${receiveMethodDetails.minAmount} ${receiveMethodDetails.type}.`, 'warning');
+                window.showToast(`الحد الأدنى للاستلام بعملة ${receiveMethodDetails.name} هو ${receiveMethodDetails.minAmount} ${receiveMethodDetails.type}.`, 'warning');
 
                 window.hidePageSpinner();
 
@@ -538,7 +681,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 
 
-                showToast(errorMessage, 'error', 6000); // Show for 6 seconds
+                window.showToast(errorMessage, 'error', 6000); // Show for 6 seconds
 
                 window.hidePageSpinner();
 
@@ -552,7 +695,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (sendMethodDetails.requiresWholeNumber && sendAmountNum % 1 !== 0) {
 
-                showToast(`المبلغ المرسل بعملة ${sendMethodDetails.name} يجب أن يكون رقمًا صحيحًا (بدون كسور).`, 'warning');
+                window.showToast(`المبلغ المرسل بعملة ${sendMethodDetails.name} يجب أن يكون رقمًا صحيحًا (بدون كسور).`, 'warning');
 
                 window.hidePageSpinner();
 
@@ -570,7 +713,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (!user || !user.emailVerified) {
 
-                    showToast("يجب تسجيل الدخول والتحقق من بريدك الإلكتروني للمتابعة...", 'info', 3000);
+                    window.showToast("يجب تسجيل الدخول والتحقق من بريدك الإلكتروني للمتابعة...", 'info', 3000);
 
                     localStorage.setItem('pendingExchangeData', JSON.stringify({
 
@@ -598,7 +741,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 console.error("Error checking auth status:", e);
 
-                showToast("حدث خطأ أثناء التحقق من حالة تسجيل الدخول.", 'error', 5000);
+                window.showToast("حدث خطأ أثناء التحقق من حالة تسجيل الدخول.", 'error', 5000);
 
                 window.hidePageSpinner();
 
@@ -643,236 +786,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- END: Exchange Form Logic ---
-
-
-
-    // --- START: NEW Confirmation and Info Modal Logic ---
-
-    function showConfirmationModal({
-
-        title = 'تأكيد الإجراء',
-
-        message,
-
-        confirmText = 'تأكيد',
-
-        cancelText = 'إلغاء',
-
-        iconName = 'error-warning',
-
-        iconColor = 'var(--warning-color)'
-
-    }) {
-
-        return new Promise(resolve => {
-
-            // Remove any existing modal
-
-            const existingModal = document.getElementById('custom-confirmation-modal');
-
-            if (existingModal) existingModal.remove();
-
-
-
-            const modalOverlay = document.createElement('div');
-
-            modalOverlay.id = 'custom-confirmation-modal';
-
-            modalOverlay.className = 'custom-modal-overlay';
-
-            modalOverlay.innerHTML = `
-
-                <div class="custom-modal">
-
-                    <div class="modal-header">
-
-                        <span class="modal-icon" style="color: ${iconColor};">
-
-                            <box-icon name='${iconName}' type='solid'></box-icon>
-
-                        </span>
-
-                        <h3>${title}</h3>
-
-                    </div>
-
-                    <div class="modal-body">
-
-                        ${message}
-
-                    </div>
-
-                    <div class="modal-footer">
-
-                        <button class="modal-button confirm">${confirmText}</button>
-
-                        <button class="modal-button cancel">${cancelText}</button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-
-
-            document.body.appendChild(modalOverlay);
-
-            
-
-            const confirmBtn = modalOverlay.querySelector('.modal-button.confirm');
-
-            const cancelBtn = modalOverlay.querySelector('.modal-button.cancel');
-
-
-
-            const closeModal = (result) => {
-
-                modalOverlay.classList.remove('show');
-
-                setTimeout(() => {
-
-                    modalOverlay.remove();
-
-                    resolve(result);
-
-                }, 200);
-
-            };
-
-
-
-            confirmBtn.onclick = () => closeModal(true);
-
-            cancelBtn.onclick = () => closeModal(false);
-
-            modalOverlay.onclick = (e) => {
-
-                if (e.target === modalOverlay) {
-
-                    closeModal(false);
-
-                }
-
-            };
-
-
-
-            // Show the modal
-
-            setTimeout(() => modalOverlay.classList.add('show'), 10);
-
-        });
-
-    }
-
-
-
-    function showInfoModal({
-
-        title = 'تنبيه',
-
-        message,
-
-        confirmText = 'حسناً',
-
-        iconName = 'info-circle',
-
-        iconColor = 'var(--info-color)'
-
-    }) {
-
-         return new Promise(resolve => {
-
-            const existingModal = document.getElementById('custom-confirmation-modal');
-
-            if (existingModal) existingModal.remove();
-
-
-
-            const modalOverlay = document.createElement('div');
-
-            modalOverlay.id = 'custom-confirmation-modal';
-
-            modalOverlay.className = 'custom-modal-overlay';
-
-            modalOverlay.innerHTML = `
-
-                <div class="custom-modal">
-
-                    <div class="modal-header">
-
-                        <span class="modal-icon" style="color: ${iconColor};">
-
-                            <box-icon name='${iconName}' type='solid'></box-icon>
-
-                        </span>
-
-                        <h3>${title}</h3>
-
-                    </div>
-
-                    <div class="modal-body">
-
-                        ${message}
-
-                    </div>
-
-                    <div class="modal-footer">
-
-                        <button class="modal-button confirm">${confirmText}</button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-            document.body.appendChild(modalOverlay);
-
-            const confirmBtn = modalOverlay.querySelector('.modal-button.confirm');
-
-
-
-            const closeModal = (result) => {
-
-                modalOverlay.classList.remove('show');
-
-                setTimeout(() => {
-
-                    modalOverlay.remove();
-
-                    resolve(result);
-
-                }, 200);
-
-            };
-
-
-
-            confirmBtn.onclick = () => closeModal(true);
-
-             modalOverlay.onclick = (e) => {
-
-                if (e.target === modalOverlay) {
-
-                    closeModal(false);
-
-                }
-
-            };
-
-
-
-            setTimeout(() => modalOverlay.classList.add('show'), 10);
-
-        });
-
-    }
-
-
-
-    // --- END: NEW Confirmation and Info Modal Logic ---
 
 
 
@@ -1000,7 +913,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                  const userIdentifierForChat = tx.receiveUserIdentifierType || "المعرف الخاص بي";
 
-                 const message = `مرحبًا، أرغب في إتمام عملية التبادل التالية (رقم العملية: ${tx.transactionId}):\n\nأرسل:\n- المبلغ: ${tx.sendAmount.toFixed(2)} ${tx.sendCurrencyType}\n- عبر: ${tx.sendCurrencyName}\n\nأستلم:\n- المبلغ: ${tx.receiveAmount.toFixed(2)} ${tx.receiveCurrencyType}\n- عبر: ${tx.receiveCurrencyName}\n\nسأقوم بإرسال إيصال التحويل و ${userIdentifierForChat} الآن.`;
+                 const message = `مرحبًا، أرغب في إتمام عملية التبادل التالية (رقم العملية: ${tx.transactionId}):
+
+أرسل:
+- المبلغ: ${tx.sendAmount.toFixed(2)} ${tx.sendCurrencyType}
+- عبر: ${tx.sendCurrencyName}
+
+أستلم:
+- المبلغ: ${tx.receiveAmount.toFixed(2)} ${tx.receiveCurrencyType}
+- عبر: ${tx.receiveCurrencyName}
+
+سأقوم بإرسال إيصال التحويل و ${userIdentifierForChat} الآن.`;
 
                  const whatsappUrl = `https://wa.me/${settings.whatsAppNumber}?text=${encodeURIComponent(message)}`;
 
@@ -1008,7 +931,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             } else {
 
-                await showInfoModal({
+                window.showInfoModal({
 
                     title: 'خطأ',
 
@@ -1030,7 +953,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         toast.querySelector('.toast-btn.cancel').onclick = async () => {
 
-            const confirmed = await showConfirmationModal({
+            const confirmed = await window.showConfirmationModal({
 
                 title: 'تأكيد الإلغاء',
 
@@ -1060,7 +983,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 });
 
-                await showInfoModal({
+                window.showInfoModal({
 
                     title: 'تم الإلغاء',
 
@@ -1082,7 +1005,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         toast.querySelector('.toast-btn.complete').onclick = async () => {
 
-             const confirmed = await showConfirmationModal({
+             const confirmed = await window.showConfirmationModal({
 
                 title: 'تأكيد الإتمام',
 
@@ -1112,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 });
 
-                await showInfoModal({
+                window.showInfoModal({
 
                     title: 'شكرًا لك',
 
