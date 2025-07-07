@@ -1,4 +1,4 @@
-// auth/blog-script.js
+// auth/blog-script.js full
 import { db, auth } from './firebase-config.js'; 
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
