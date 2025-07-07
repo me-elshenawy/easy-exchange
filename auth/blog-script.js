@@ -307,9 +307,13 @@ async function initializeComments(articleId) {
     noCommentsMsg = document.getElementById('no-comments-message');
     commentFormContainer = document.getElementById('comment-form-container'); 
 
-    commentFormContainer.innerHTML = `<p class="blog-message">جاري تحميل حالة التعليقات...</p>`;
+    // Initial message based on assumed state (can be overwritten)
     commentsList.innerHTML = `<p class="blog-message">جارٍ تحميل التعليقات...</p>`;
-    noCommentsMsg.style.display = 'none';
+    noCommentsMsg.style.display = 'none'; // Initially hidden
+
+    // Add this to ensure correct state after auth check
+    commentFormContainer.innerHTML = `<p class="blog-message">جاري تحميل حالة التعليقات...</p>`;
+
 
     const fetchAndCacheCommentsAndUsers = async (currentArticleId) => {
         try {
@@ -330,7 +334,10 @@ async function initializeComments(articleId) {
 
     onAuthStateChanged(auth, async user => {
         currentUser = user;
+        
+        // This is the key change: always re-render comment form container based on actual user status
         renderCommentForm(articleId); 
+
         await fetchAndCacheCommentsAndUsers(articleId);
         reRenderCommentsDisplay();
     });
@@ -607,13 +614,12 @@ function createCommentElement(comment, usersMap, repliesMap, allCommentsData) {
 // Render Comment Form
 function renderCommentForm(articleId, parentId = null) {
     const container = parentId ? document.getElementById(`reply-form-container-${parentId}`) : document.getElementById('comment-form-container');
-    if (!container) return;
-    if (currentUser === null) {
-        container.innerHTML = `<p class="blog-message">جاري تحميل حالة التعليقات...</p>`;
-        return;
-    }
+    if (!container) return; // Should not happen after DOM is ready
+
     if (currentUser && currentUser.emailVerified) {
+        // User is logged in and verified: show the comment form
         container.innerHTML = `<form class="comment-form ${parentId ? 'reply-form' : ''}"><textarea name="commentText" placeholder="${parentId ? 'اكتب ردك...' : 'اكتب تعليقك...'}" required></textarea><div class="form-actions"><button type="submit" class="button primary">نشر</button>${parentId ? '<button type="button" class="button secondary cancel-reply">إلغاء</button>' : ''}</div></form>`;
+        
         container.querySelector('form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const form = e.target;
@@ -637,7 +643,9 @@ function renderCommentForm(articleId, parentId = null) {
             }
         });
         if (parentId) container.querySelector('.cancel-reply').addEventListener('click', () => container.innerHTML = '');
+
     } else {
+        // User is not logged in or not verified: show a message asking to log in
         container.innerHTML = `<div class="login-prompt-comment"><p>الرجاء <a href="login.html?next=${encodeURIComponent(window.location.href)}">تسجيل الدخول</a> للتعليق.</p></div>`;
     }
 }
