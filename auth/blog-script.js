@@ -229,7 +229,7 @@ async function initializeArticlePage() {
         
         if (article.allowComments) {
             commentsSectionContainer.style.display = 'block';
-            initializeComments(articleId);
+            initializeComments(articleId); // This will handle form rendering
         } else {
             console.log("Comments are disabled for this article.");
             commentsSectionContainer.style.display = 'none'; // Ensure comments section is hidden
@@ -307,11 +307,10 @@ async function initializeComments(articleId) {
     noCommentsMsg = document.getElementById('no-comments-message');
     commentFormContainer = document.getElementById('comment-form-container'); 
 
-    // Initial message based on assumed state (can be overwritten)
+    // Initial message before user status is confirmed
     commentsList.innerHTML = `<p class="blog-message">جارٍ تحميل التعليقات...</p>`;
     noCommentsMsg.style.display = 'none'; // Initially hidden
-
-    // Add this to ensure correct state after auth check
+    // Also, initialize the comment form container's content based on loading status.
     commentFormContainer.innerHTML = `<p class="blog-message">جاري تحميل حالة التعليقات...</p>`;
 
 
@@ -384,9 +383,14 @@ async function initializeComments(articleId) {
         // Import global modal functions only when needed for specific actions
         const { showConfirmationModal, showToast } = await importDefaultGlobalFunctions();
 
-        if (!currentUser || !currentUser.emailVerified) { 
-            showToast('الرجاء تسجيل الدخول والتحقق من بريدك الإلكتروني للتفاعل.', 'info'); 
-            return; 
+        // This crucial block checks authentication and handles redirection
+        // Added specific checks for each interactive button and stop processing if not authenticated
+        if (!currentUser || !currentUser.emailVerified) {
+            showToast('الرجاء تسجيل الدخول والتحقق من بريدك الإلكتروني للمتابعة...', 'info', 3000);
+            setTimeout(() => {
+                window.location.href = `login.html?next=${encodeURIComponent(window.location.href)}`;
+            }, 2500); // Redirect after toast is shown
+            return; // Stop further processing if not authenticated
         }
         
         if (editOption) {
