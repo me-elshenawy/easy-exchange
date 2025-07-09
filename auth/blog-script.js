@@ -141,7 +141,7 @@ async function initializeBlogListingPage() {
             allArticles = [];
             loadingMsg.style.display = 'none'; // Hides loading message
             noArticlesMsg.style.display = 'block'; // Shows no articles message
-            noArticlesMsg.textContent = "لا توجد مقالات منشورة حاليًا.";
+            noArticlesMsg.textContent = "لم يتم العثور على مقالات للعرض حاليًا.\nيرجى التحقق من اتصالك بالإنترنت أو المحاولة لاحقًا.";
             renderCategories(); // Render categories even if no articles
             return;
         }
