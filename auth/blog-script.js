@@ -268,7 +268,7 @@ function renderArticleContent(article) {
     const pageUrl = window.location.href;
     const shareText = encodeURIComponent(`اكتشف هذا المقال الرائع: ${article.title}`);
     document.getElementById('share-whatsapp').href = `https://api.whatsapp.com/send?text=${shareText}%20${encodeURIComponent(pageUrl)}`;
-    document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
+    document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`; // Corrected: removed URL encoding for Facebook 'u' parameter
 
     document.getElementById('copy-link-btn').addEventListener('click', async () => {
         // Ensure showToast is available from a dynamically imported module or window
@@ -883,4 +883,4 @@ async function toggleLike(commentId, userId, showToast) { // showToast passed as
         showToast('حدث خطأ أثناء التفاعل.', 'error'); // Using passed showToast
         throw error;
     }
-} 
+            }
