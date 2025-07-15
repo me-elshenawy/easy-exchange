@@ -571,3 +571,175 @@ button.site-button:active, .button-like.site-button:active { transform: translat
         width: 100%;
     }
 }
+
+/* --- الأنماط الخاصة بصفحة التواصل معنا (contact.html) --- */
+
+.contact-sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.contact-section {
+    background-color: var(--card-bg, #ffffff); /* إعادة استخدام متغيرات الألوان */
+    border-radius: 12px;
+    box-shadow: var(--shadow-md); /* إعادة استخدام متغيرات الظل */
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    color: var(--text-primary, #1e293b);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.social-group-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.social-group-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: #f8f9fa; /* خلفية فاتحة للعناصر */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.social-group-item:hover {
+    background-color: #f0f2f5;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.social-button {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.social-button box-icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.social-button.facebook {
+    background-color: #1877F2;
+}
+
+.social-button.telegram {
+    background-color: #26A5E4;
+}
+
+.social-button.whatsapp {
+    background-color: #25D366;
+}
+
+.social-button:hover {
+    opacity: 0.9;
+}
+
+.promotion-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+}
+
+.promotion-section h3 {
+    justify-content: center; /* توسيط العنوان مع الأيقونة */
+    font-size: 1.3rem;
+    border-bottom: none; 
+    padding-bottom: 0;
+}
+
+.promotion-section p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+
+.email-button {
+    background-color: var(--primary-color, #5b3bb0);
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    margin-top: 10px; 
+    align-self: center; 
+}
+
+.email-button:hover {
+    background-color: var(--primary-color-dark, #4a2f91);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* التعديلات لصفحة التواصل للاستجابة على الشاشات الأصغر */
+@media (max-width: 768px) {
+    .contact-sections-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .contact-section {
+        padding: 20px;
+    }
+
+    .contact-section h3 {
+        font-size: 1.2rem;
+    }
+
+    .social-group-item {
+        flex-direction: column; /* جعل الاسم والزر يتراصان فوق بعضهما */
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .social-button {
+        width: 100%; /* جعل الزر يأخذ العرض الكامل في التنسيق المتراص */
+        justify-content: center;
+    }
+    .email-button {
+        padding: 9px 18px; /* تصغير حجم الزر قليلاً */
+        font-size: 0.95rem;
+    }
+        }
