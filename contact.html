@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تواصل معنا - Easy Exchange</title>
+
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" href="https://easy-exchanger.netlify.app/assets/Easy-Exchange.png">
+    <link rel="shortcut icon" href="https://easy-exchanger.netlify.app/assets/Easy-Exchange.png">
+    <link rel="apple-touch-icon" href="https://easy-exchanger.netlify.app/assets/Easy-Exchange.png">
+
+    <!-- SEO Meta Tags (Enhanced) -->
+    <meta name="description" content="تواصل مع فريق Easy Exchange، انضم إلى مجتمعاتنا على واتساب، فيسبوك، وتيليجرام، أو أرسل استفسارك مباشرة عبر نموذج الاتصال. نحن هنا لمساعدتك.">
+    <meta name="keywords" content="تواصل, دعم فني, Easy Exchange, واتساب, فيسبوك, تيليجرام, استفسار, إعلان, شراكة, RedotPay, BybitCard">
+    
+    <!-- Open Graph & Twitter Cards -->
+    <meta property="og:title" content="تواصل معنا - نحن هنا للمساعدة" />
+    <meta property="og:description" content="ابحث عن إجابات، انضم إلى مجتمعاتنا، أو تحدث مباشرة مع فريق الدعم لدينا. Easy Exchange معك خطوة بخطوة." />
+    <meta property="og:image" content="https://easy-exchanger.netlify.app/assets/logo.png" />
+    <meta property="og:url" content="https://easy-exchanger.netlify.app/contact.html" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Site Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth/auth-style.css">
+
+    <!-- Cairo Font and Boxicons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Internal Styles for Contact Page with Professional Fixes -->
+    <style>
+        /* General header styles for contact page */
+        .contact-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .contact-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .contact-header p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+        }
+
+        /* PROFESSIONAL FIX: Force single column grid layout for quick action cards */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Forces a single column layout on all screens */
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+        
+        .contact-card {
+            background-color: var(--panel-bg, #ffffff);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .contact-card__icon {
+            margin-bottom: 15px;
+            background-color: #f0ecfb;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .contact-card__icon box-icon {
+            width: 36px;
+            height: 36px;
+            fill: var(--primary-color);
+        }
+
+        .contact-card__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--text-primary);
+        }
+        .contact-card__description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .contact-card__cta {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .contact-card__cta:hover {
+            text-decoration: underline;
+        }
+
+        /* Community Section Styling */
+        .community-section {
+            background: #f8f9fa;
+            padding: 40px 20px;
+            border-radius: 12px;
+            margin-bottom: 50px;
+        }
+        .community-section h2 { 
+            text-align: center; 
+        }
+        .community-section .dashboard-header { /* Reusing dashboard-header but overriding some styles */
+            justify-content:center; 
+            border: none; 
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+
+        /* PROFESSIONAL FIX: Force single column grid for community groups */
+        .community-groups {
+            display: grid;
+            grid-template-columns: 1fr; /* Forces a single column layout on all screens */
+            gap: 20px;
+            margin-top:25px;
+        }
+        
+        .community-group-card {
+             background: #fff;
+             border-radius: 10px;
+             padding: 20px;
+             box-shadow: var(--shadow-sm);
+        }
+        
+        .community-group-card h3 {
+             border-bottom: 1px solid var(--border-color);
+             padding-bottom: 10px;
+        }
+
+        /* Contact Form Section Styling */
+        .contact-form-section {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* PROFESSIONAL FIXES FOR FORM & SOCIAL BUTTONS */
+        /* Universal styling for form input/textarea for consistency across contact form fields */
+        .profile-form input[type="text"],
+        .profile-form input[type="email"],
+        .profile-form select,
+        .profile-form textarea {
+            width: 100%;
+            padding: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            border: 1px solid var(--border-color, #e0e0e0);
+            border-radius: 8px;
+            box-sizing: border-box; /* Essential for padding not to exceed width */
+            transition: all 0.2s ease;
+        }
+        /* Focus state for form inputs */
+        .profile-form input:focus,
+        .profile-form select:focus,
+        .profile-form textarea:focus {
+            border-color: var(--primary-color, #5b3bb0);
+            box-shadow: 0 0 0 3px rgba(91, 59, 176, 0.15);
+            outline: none;
+        }
+
+        /* Specific fix for textarea min-height for better user experience */
+        .profile-form textarea {
+            min-height: 120px; /* Provides ample writing space on mobile */
+            resize: vertical; /* Allows user to resize if needed */
+        }
+        
+        /* PROFESSIONAL FIX: Ensure social buttons stack and don't overflow on all sizes */
+        /* Applied generally for robustness, not just in media query */
+        .social-group-list {
+            list-style: none; /* Remove default list bullets */
+            padding: 0; /* Remove default padding */
+            margin: 0; /* Remove default margin */
+            display: flex;
+            flex-direction: column; /* Forces vertical stacking of list items */
+            gap: 10px; /* Space between list items */
+        }
+
+        .social-group-item {
+            display: flex; /* Keep flex for item content layout */
+            flex-direction: column; /* Force internal content to stack vertically */
+            align-items: center; /* Center align text and button */
+            gap: 8px; /* Space between text and button */
+            padding: 15px; /* Internal padding for the list item card itself */
+            box-sizing: border-box; /* Crucial for width calculation, prevents overflow */
+            background-color: #f8f9fa; /* Light background for items */
+            border: 1px solid var(--border-color); /* Light border */
+            border-radius: 8px; /* Rounded corners for item cards */
+            word-break: break-word; /* Allow long words to break */
+            font-size: 0.95rem; /* Standard font size for readability */
+            font-weight: 600; /* Medium bold text */
+            color: var(--text-primary); /* Primary text color */
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease; /* Smooth transitions */
+        }
+        .social-group-item:hover {
+            background-color: #f0f2f5;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .social-group-item span, /* The text describing the group name */
+        .social-group-item .button.social-button /* The actual join button */
+        {
+            width: 100%; /* Make them fill the available width of their container */
+            text-align: center; /* Center the text inside them */
+            flex-shrink: 0; /* Prevent them from shrinking too much if content is long */
+            white-space: normal; /* Allow text to wrap naturally */
+            box-sizing: border-box; /* Crucial for internal elements' width */
+        }
+        
+        /* Specific margin for the span if needed when stacked */
+        .social-group-item span {
+            margin-bottom: 5px; /* Add some space below the text when it's stacked */
+        }
+
+        /* --- PROFESSIONAL FIX: Force form rows to stack on all sizes within this specific section --- */
+        .contact-form-section .form-row {
+            flex-direction: column; /* Overrides default flex-direction to stack columns vertically */
+            gap: 0; /* Remove horizontal gap, vertical spacing handled by form-group's margin-bottom */
+        }
+
+        /* Ensure form columns inside this section take full width when stacked */
+        .contact-form-section .form-group.column {
+            width: 100%; /* Makes each column full width when stacked */
+            /* margin-bottom is inherited from general form-group styling for vertical spacing */
+        }
+
+        /* Responsive adjustments for overall layout if specific breakpoints are needed for other elements */
+        @media (max-width: 768px) {
+            /* Adjustments for overall container padding on smaller screens already handled by auth-style.css */
+        }
+
+        /* Button specific colors/hover already handled by site.css and auth-style.css */
+        /*
+        .social-button.facebook { background-color: #1877F2; }
+        .social-button.telegram { background-color: #26A5E4; }
+        .social-button.whatsapp { background-color: #25D366; }
+        .social-button:hover { opacity: 0.9; }
+        */
+    </style>
+</head>
+<body class="auth-page">
+    
+    <!-- Dynamic Header Placeholder -->
+    <div id="notification-placeholder"></div>
+
+    <div class="main-content-wrapper">
+        <div class="auth-page-content"> 
+            
+            <header class="contact-header">
+                <h1>تواصل معنا</h1>
+                <p>نحن هنا لمساعدتك. اختر الطريقة الأنسب لك للتواصل مع فريقنا أو الانضمام إلى مجتمعنا النابض بالحياة.</p>
+            </header>
+
+            <!-- Quick Action Cards (now in a single column layout) -->
+            <section class="contact-grid">
+                <a href="#" id="dynamic-whatsapp-link" target="_blank" class="contact-card" style="text-decoration:none;">
+                    <div class="contact-card__icon" style="background-color: #e4f8f0;"><box-icon name='whatsapp' type='logo' size='md'></box-icon></div>
+                    <h3 class="contact-card__title">دعم فوري عبر واتساب</h3>
+                    <p class="contact-card__description">للاستفسارات العاجلة ومتابعة عمليات التحويل. فريق الدعم جاهز للرد عليك مباشرة.</p>
+                    <span class="contact-card__cta" style="color: #25d366;">
+                        ابدأ المحادثة <box-icon name='link-external' style="fill:#25d366;"></box-icon>
+                    </span>
+                </a>
+                <a href="auth/help.html" class="contact-card" style="text-decoration:none;">
+                    <div class="contact-card__icon"><box-icon name='help-circle'></box-icon></div>
+                    <h3 class="contact-card__title">مركز المساعدة</h3>
+                    <p class="contact-card__description">هل لديك سؤال؟ تصفح قسم الأسئلة الشائعة، قد تجد إجابتك هناك فورًا.</p>
+                    <span class="contact-card__cta">
+                        اذهب إلى المساعدة <box-icon name='left-arrow-alt'></box-icon>
+                    </span>
+                </a>
+                <div class="contact-card" id="business-card">
+                    <div class="contact-card__icon" style="background-color: #fff0c2;"><box-icon name='briefcase' style="fill: #ffab00;"></box-icon></div>
+                    <h3 class="contact-card__title">الشراكات والإعلانات</h3>
+                    <p class="contact-card__description">هل ترغب بالترويج لخدماتك أو بناء شراكة معنا؟ تواصل مع القسم المختص.</p>
+                     <a href="mailto:services.elshenawy@gmail.com" class="contact-card__cta" style="color:#ffab00;">
+                       أرسل بريدًا إلكترونيًا <box-icon name='envelope' style="fill:#ffab00;"></box-icon>
+                    </a>
+                </div>
+            </section>
+            
+             <!-- Community Section (now in a single column layout) -->
+            <section class="community-section">
+                <div class="dashboard-header" >
+                    <h2><box-icon name='user-voice'></box-icon> انضم إلى مجتمعاتنا </h2>
+                </div>
+                <div class="community-groups">
+                    <div class="community-group-card">
+                        <h3><box-icon type='logo' name='facebook-circle' color='#1877F2'></box-icon> مجموعات الفيسبوك</h3>
+                         <ul class="social-group-list">
+                            <li class="social-group-item"><span>RedotPay Egypt 🇪🇬</span><a href="https://www.facebook.com/groups/redotpay.elshenawy/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>مستخدمي الكروت الافتراضية</span><a href="https://www.facebook.com/groups/virtualcards/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>BybitCard Egypt 🇪🇬</span><a href="https://www.facebook.com/groups/bybitcard/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>PokePay Egypt 🇪🇬</span><a href="https://www.facebook.com/groups/pokepay/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>Tevau Community</span><a href="https://www.facebook.com/groups/tevau/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>حسابات وبنوك مصر</span><a href="https://www.facebook.com/groups/banking.elshenawy/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>ميديا بلس </span><a href="https://www.facebook.com/groups/mediaplus.elshenawy/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                            <li class="social-group-item"><span>BinPay Egypt 🇪🇬</span><a href="https://www.facebook.com/groups/binpay.elshenawy/?ref=share" target="_blank" class="button social-button facebook">انضم</a></li>
+                        </ul>
+                    </div>
+                     <div class="community-group-card">
+                         <h3><box-icon type='logo' name='telegram' color='#26A5E4'></box-icon> التيليجرام والواتساب</h3>
+                         <ul class="social-group-list">
+                            <li class="social-group-item"><span>مستخدمي الكروت الافتراضية</span><a href="https://t.me/virtualcardusers" target="_blank" class="button social-button telegram">انضم للجروب</a></li>
+                            <li class="social-group-item"><span>Easy Exchange (قناة واتساب)</span><a href="https://whatsapp.com/channel/0029VarOLaVGU3BFkRuTMY24" target="_blank" class="button social-button whatsapp">انضم للقناة</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Contact Form Section (Form fields are now stacked vertically) -->
+            <section class="contact-form-section profile-card-enhanced">
+                 <div class="profile-card-header" style="justify-content: center;">
+                    <h3><box-icon name='message-alt-dots'></box-icon> أو اترك لنا رسالة</h3>
+                </div>
+                 <div class="profile-card-body">
+                     <p style="text-align: center; color: var(--text-secondary); margin-top: -15px; margin-bottom: 25px;">سنقوم بالرد عليك عبر البريد الإلكتروني في أقرب وقت ممكن.</p>
+                     
+                    <form id="contactForm" action="https://formspree.io/f/xwpqkooj" method="POST" class="profile-form">
+                        <!-- Remember to update _next value to your live domain when deploying -->
+                        <input type="hidden" name="_next" value="https://easy-exchanger.netlify.app/thanks.html">
+                        
+                        <div class="form-row"> <!-- This will now stack inputs due to CSS override -->
+                            <div class="form-group column"><label for="contact-name">الاسم</label><input type="text" id="contact-name" name="name" required></div>
+                            <div class="form-group column"><label for="contact-email">البريد الإلكتروني</label><input type="email" id="contact-email" name="email" required></div>
+                        </div>
+                        <div class="form-group">
+                             <label for="contact-subject">الموضوع</label>
+                             <select id="contact-subject" name="subject" required>
+                                 <option value="" disabled selected>اختر موضوع الرسالة...</option>
+                                 <option value="General Inquiry">استفسار عام</option>
+                                 <option value="Technical Issue">مشكلة فنية</option>
+                                 <option value="Suggestion">اقتراح</option>
+                                 <option value="Partnership">شراكة / إعلان</option>
+                             </select>
+                         </div>
+                        <div class="form-group"><label for="contact-message">الرسالة</label><textarea id="contact-message" name="message" rows="5" required></textarea></div>
+                        <div class="form-actions"><button type="submit" class="button primary cta-button"><span class="button-text">إرسال الرسالة</span></button></div>
+                    </form>
+                 </div>
+            </section>
+
+        </div>
+    </div>
+    
+    <!-- Toast container for notifications -->
+    <div id="toast-container"></div>
+    
+    <!-- Main Site Scripts -->
+    <script src="config.js"></script>
+    <script type="module" src="script.js"></script>
+    <script type="module">
+        // This script dynamically sets the WhatsApp support link by fetching the number from Firestore settings
+        document.addEventListener('DOMContentLoaded', async () => {
+            const link = document.getElementById('dynamic-whatsapp-link');
+            if (!link) return;
+
+            try {
+                // Import getGlobalSettings from auth.js as it's the central point for Firestore interaction
+                const { getGlobalSettings } = await import('./auth/auth.js');
+                const settings = await getGlobalSettings();
+                
+                if (settings && settings.whatsAppNumber) {
+                    // Prepend country code if missing, assuming Egypt (+20) for numbers starting with 01
+                    let number = settings.whatsAppNumber.trim().replace(/\D/g, ''); // Remove non-digits
+                    if(number.startsWith('01')) {
+                        number = '2' + number; // Prepend country code for international format
+                    }
+                    link.href = `https://wa.me/${number}`; // Set the WhatsApp link
+                } else {
+                    // If no WhatsApp number is found in settings, indicate it's unavailable
+                    throw new Error("WhatsApp number not found in settings.");
+                }
+            } catch (error) {
+                console.error("Failed to set dynamic WhatsApp link:", error);
+                link.href = '#'; // Fallback link
+                link.style.opacity = '0.7'; // Visually disable it
+                link.onclick = (e) => e.preventDefault(); // Prevent default click behavior
+                const ctaSpan = link.querySelector('.contact-card__cta');
+                if(ctaSpan) ctaSpan.textContent = 'الدعم غير متاح حاليًا'; // Update CTA text
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شكراً لتواصلك - Easy Exchange</title>
+
+    <link rel="icon" type="image/png" href="assets/Easy-Exchange.png">
+    <link rel="shortcut icon" href="assets/Easy-Exchange.png">
+    
+    <!-- General SEO Meta Tags -->
+    <meta name="description" content="شكراً لك على التواصل مع Easy Exchange. تم استلام رسالتك بنجاح وسنتواصل معك قريباً.">
+    <meta name="keywords" content="شكرا, تواصل, تم الاستلام, Easy Exchange">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="شكراً لتواصلك معنا - Easy Exchange" />
+    <meta property="og:description" content="تم استلام رسالتك بنجاح، وسنتواصل معك في أقرب وقت." />
+    <meta property="og:image" content="https://easy-exchanger.netlify.app/assets/logo.png" />
+    <meta property="og:url" content="https://easy-exchanger.netlify.app/thanks.html" /> 
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Easy Exchange" />
+
+    <!-- Site Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth/auth-style.css">
+
+    <!-- Cairo Font and Boxicons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Internal Styles for Thanks Page with Professional Fixes -->
+    <style>
+        body.thanks-page {
+            font-family: 'Cairo', 'Roboto', sans-serif;
+            background-color: #f4f7fc; /* Match background with auth pages */
+            color: var(--text-primary, #333);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            box-sizing: border-box;
+            overflow-x: hidden; /* Prevent horizontal scroll for extra robustness */
+        }
+
+        .thanks-container {
+            text-align: center;
+            padding: 40px 25px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            width: 90%; /* This is responsive for the container */
+            box-sizing: border-box; /* Good, includes padding within its 90% width */
+            transform: translateY(-20px); /* Slightly move up for effect */
+            animation: fadeInScale 0.6s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: translateY(0px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(-20px) scale(1); }
+        }
+
+        .thanks-icon-wrapper {
+            margin-bottom: 25px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #d4edda; /* Light green for success */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* Simple pulse for subtle animation, inherited from error-page-styles.css concept */
+            animation: simplePulse 2s infinite ease-out; 
+        }
+
+        @keyframes simplePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .thanks-icon-wrapper box-icon {
+            width: 50px;
+            height: 50px;
+            fill: #28a745; /* Green checkmark */
+        }
+
+        .thanks-container h1 {
+            font-size: 2rem;
+            color: var(--primary-color, #5b3bb0); /* Main brand color */
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .thanks-description {
+            font-size: 1rem;
+            color: var(--text-secondary, #6c757d);
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .home-button {
+            background: linear-gradient(135deg, #5b3bb0 0%, #6a44c9 100%); /* Primary CTA button style */
+            color: #ffffff;
+            padding: 14px 25px; /* Default padding for desktop/larger screens */
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(91, 59, 176, 0.3);
+            min-width: 200px; /* Default min-width for larger screens */
+            text-align: center;
+            width: auto; /* Allow auto width by default, but override to 100% on small screens */
+            box-sizing: border-box; /* Essential: padding is included in button's width calculation */
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(91, 59, 176, 0.4);
+        }
+
+        /* Adjustments for smaller screens - PROFESSIONAL FIX */
+        @media (max-width: 480px) {
+            .thanks-container {
+                padding: 30px 20px; /* Adjust padding of the container */
+            }
+            .thanks-container h1 {
+                font-size: 1.8rem;
+            }
+            .thanks-description {
+                font-size: 0.95rem;
+            }
+            .home-button {
+                width: 100%; /* Force button to take full available width of parent */
+                min-width: unset; /* IMPORTANT: Remove the fixed min-width to allow shrinking */
+                font-size: 1rem;
+                padding: 12px; /* Reduce horizontal padding to make space for text + icon on smaller screens */
+                /* box-sizing: border-box; is already applied universally/above for robustness */
+            }
+            .thanks-icon-wrapper {
+                width: 80px;
+                height: 80px;
+            }
+            .thanks-icon-wrapper box-icon {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body class="thanks-page">
+
+    <div class="thanks-container">
+        <div class="thanks-icon-wrapper">
+            <box-icon name='check-circle' type='solid'></box-icon>
+        </div>
+        <h1>شكراً لك!</h1>
+        <p class="thanks-description">
+            تم استلام رسالتك بنجاح. سنقوم بمراجعتها والرد عليك عبر البريد الإلكتروني في أقرب وقت ممكن.
+        </p>
+        <a href="index.html" class="home-button">
+            <box-icon name='home-alt' color='#ffffff'></box-icon>
+            العودة إلى الصفحة الرئيسية
+        </a>
+    </div>
+
+    <!-- Main Site Scripts (if any global scripts are needed on this static page) -->
+    <!-- You might not need these for a purely static 'thank you' page -->
+    <!-- <script src="config.js"></script> -->
+    <!-- <script type="module" src="script.js"></script> -->
+</body>
+</html>
