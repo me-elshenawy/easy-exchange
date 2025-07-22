@@ -5,6 +5,9 @@ import {
     collection, query, where, getDocs, orderBy, doc, getDoc,
     addDoc, updateDoc, serverTimestamp, runTransaction, deleteDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// استيراد دالة getGlobalSettings من auth.js
+import { getGlobalSettings } from './auth.js';
+
 
 // Global DOM element references for comments section, initialized in initializeComments
 let commentsList, noCommentsMsg, commentFormContainer;
@@ -79,14 +82,15 @@ async function initializeBlogListingPage() {
 
     let allArticles = [];
     let allCategories = new Set();
-    let articlesFoundInDB = false; // المتغير الجديد لتتبع ما إذا تم العثور على مقالات في قاعدة البيانات
 
     const renderArticles = (articlesToRender) => {
         articlesGrid.innerHTML = '';
         if (articlesToRender.length === 0) {
             // هذه الحالة تحدث فقط إذا كانت allArticles فارغة بعد الفلترة (مثلاً بتصنيف معين)
+            // رسالة "لا توجد مقالات لعرضها في هذا التصنيف." سيتم التعامل معها هنا
             noArticlesMsg.style.display = 'block';
             noArticlesMsg.textContent = "لا توجد مقالات لعرضها في هذا التصنيف.";
+            noArticlesMsg.style.color = 'var(--text-secondary, #6c757d)'; // اللون الافتراضي للرسائل العادية
             return;
         }
         noArticlesMsg.style.display = 'none';
@@ -136,44 +140,56 @@ async function initializeBlogListingPage() {
         articlesGrid.innerHTML = '';
         console.log("Attempting to fetch articles from Firestore...");
 
+        // 1. جلب إعدادات المدونة العامة
+        const globalSettings = await getGlobalSettings();
+        // المتغير isBlogContentAvailable: إذا كانت قيمته false في Firebase، فهذا يعني أن المدونة لا تحتوي على مقالات بشكل مقصود.
+        // إذا كان true أو غير موجود، فهذا يعني أننا نتوقع وجود محتوى.
+        const isBlogContentAvailable = globalSettings?.isBlogContentAvailable !== false; // افتراضيًا تكون true إذا لم يتم تعيينها
+
+
         const articlesRef = collection(db, "articles");
         const q = query(articlesRef, where("status", "==", "published"), orderBy("publishedAt", "desc"));
         const querySnapshot = await getDocs(q);
 
-        // هنا نقوم بالتحقق من العثور على مقالات قبل معالجتها
-        if (!querySnapshot.empty) {
-            articlesFoundInDB = true; // تم العثور على مقالات في قاعدة البيانات
-            allArticles = querySnapshot.docs.map(doc => {
-                const data = doc.data();
-                if (!data.title || !data.category || !data.excerpt || !data.publishedAt) {
-                    console.warn("Skipping article due to missing critical data:", doc.id, data);
-                    return null;
-                }
-                allCategories.add(data.category);
-                return { id: doc.id, ...data };
-            }).filter(Boolean);
+        allArticles = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            // تحقق من وجود البيانات الأساسية للمقال
+            if (!data.title || !data.category || !data.excerpt || !data.publishedAt) {
+                console.warn("Skipping article due to missing critical data:", doc.id, data);
+                return null;
+            }
+            allCategories.add(data.category);
+            return { id: doc.id, ...data };
+        }).filter(Boolean); // تصفية أي مقالات بها بيانات ناقصة
 
-            console.log(`Successfully fetched ${allArticles.length} published articles.`);
-        } else {
-            console.warn("No published articles found in Firestore.");
-            // articlesFoundInDB تبقى false هنا لأنه لم يتم العثور على مقالات.
-            // ولكن طالما لم يحدث خطأ في الـ try block، فإن هذا يعتبر استجابة ناجحة.
-        }
-
-        loadingMsg.style.display = 'none'; // إخفاء رسالة التحميل
-        renderCategories(); // عرض أزرار التصنيفات
+        loadingMsg.style.display = 'none'; // إخفاء رسالة التحميل بعد محاولة الجلب
+        renderCategories(); // عرض أزرار التصنيفات بغض النظر عن وجود مقالات
 
         if (allArticles.length === 0) {
-            // إذا كان allArticles فارغًا بعد الفلترة (أو إذا كان querySnapshot.empty صحيحًا)
+            // هذه الكتلة تتعامل مع حالة عدم وجود مقالات "منشورة"
             noArticlesMsg.style.display = 'block';
-            noArticlesMsg.textContent = "لا توجد مقالات منشورة للعرض حاليًا."; // رسالة محددة لعدم وجود مقالات
+            if (isBlogContentAvailable) {
+                // الحالة 2: نتوقع وجود مقالات (isBlogContentAvailable = true) ولكن لم يتم العثور عليها.
+                // هذا يشير إلى مشكلة في الاتصال أو المزامنة مع قاعدة البيانات، أو خطأ غير معروف.
+                noArticlesMsg.textContent = "فشل تحميل المقالات. يرجى التحقق من اتصالك بالإنترنت أو المحاولة لاحقًا.";
+                noArticlesMsg.style.color = 'red'; // لون أحمر للإشارة إلى مشكلة
+            } else {
+                // الحالة 1: لا نتوقع وجود مقالات (isBlogContentAvailable = false).
+                // هذه رسالة طبيعية ولا تشير إلى مشكلة تقنية.
+                noArticlesMsg.textContent = "لا توجد مقالات منشورة للعرض حاليًا.";
+                noArticlesMsg.style.color = 'var(--text-secondary, #6c757d)'; // اللون الافتراضي للرسائل العادية
+            }
         } else {
-            renderArticles(allArticles); // عرض المقالات المفلترة
+            // مقالات تم العثور عليها وعرضها بنجاح
+            console.log(`Successfully fetched ${allArticles.length} published articles.`);
+            renderArticles(allArticles);
+            noArticlesMsg.style.display = 'none'; // التأكد من إخفائها
         }
 
     } catch (error) {
+        // الحالة 3: حدث خطأ حقيقي أثناء جلب البيانات (مثل مشكلة في الشبكة، أذونات Firebase، إلخ).
         console.error("Error fetching articles:", error);
-        loadingMsg.style.display = 'block'; // تأكد من إظهار رسالة التحميل مجددًا لوضع رسالة الخطأ بها
+        loadingMsg.style.display = 'block'; // تأكد من إظهار رسالة التحميل لوضع رسالة الخطأ بها
         loadingMsg.style.color = 'red'; // اجعل لون الخط أحمر للإشارة إلى الخطأ
         articlesGrid.innerHTML = ''; // مسح أي مقالات موجودة (في حالة ظهور جزئي)
         noArticlesMsg.style.display = 'none'; // تأكد من إخفاء رسالة "لا توجد مقالات"
@@ -187,8 +203,8 @@ async function initializeBlogListingPage() {
             errorMessageText = "مشكلة في الخادم: تعذر تحميل المقالات. يرجى المحاولة مرة أخرى لاحقًا.";
         }
         loadingMsg.textContent = errorMessageText; // عرض رسالة الخطأ
-        
-        // في حالة الخطأ، لا يوجد ما نفلتره أو نعرضه، ولكن يجب عرض التصنيفات.
+
+        // عرض التصنيفات حتى في حالة الخطأ، فهي لا تتأثر ببيانات المقالات
         renderCategories();
     }
 }
@@ -895,4 +911,4 @@ async function toggleLike(commentId, userId, showToast) { // showToast passed as
         showToast('حدث خطأ أثناء التفاعل.', 'error'); // Using passed showToast
         throw error;
     }
-        } 
+}
