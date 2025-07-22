@@ -79,11 +79,14 @@ async function initializeBlogListingPage() {
 
     let allArticles = [];
     let allCategories = new Set();
+    let articlesFoundInDB = false; // المتغير الجديد لتتبع ما إذا تم العثور على مقالات في قاعدة البيانات
 
     const renderArticles = (articlesToRender) => {
         articlesGrid.innerHTML = '';
         if (articlesToRender.length === 0) {
+            // هذه الحالة تحدث فقط إذا كانت allArticles فارغة بعد الفلترة (مثلاً بتصنيف معين)
             noArticlesMsg.style.display = 'block';
+            noArticlesMsg.textContent = "لا توجد مقالات لعرضها في هذا التصنيف.";
             return;
         }
         noArticlesMsg.style.display = 'none';
@@ -126,58 +129,67 @@ async function initializeBlogListingPage() {
     });
 
     try {
-        loadingMsg.textContent = "جارٍ تحميل المقالات..."; // Ensure loading message is set
-        loadingMsg.style.color = 'var(--text-secondary, #6c757d)'; // Reset color for loading state
-        noArticlesMsg.style.display = 'none'; // Ensure 'no articles' message is hidden
-        articlesGrid.innerHTML = ''; // Clear existing articles if any
+        loadingMsg.textContent = "جارٍ تحميل المقالات..."; // رسالة التحميل الأولية
+        loadingMsg.style.color = 'var(--text-secondary, #6c757d)';
+        loadingMsg.style.display = 'block';
+        noArticlesMsg.style.display = 'none';
+        articlesGrid.innerHTML = '';
         console.log("Attempting to fetch articles from Firestore...");
+
         const articlesRef = collection(db, "articles");
-        // Ensure status is correctly handled and document has 'publishedAt' for ordering
         const q = query(articlesRef, where("status", "==", "published"), orderBy("publishedAt", "desc"));
         const querySnapshot = await getDocs(q);
 
-        if (querySnapshot.empty) { // This block handles "no articles found"
+        // هنا نقوم بالتحقق من العثور على مقالات قبل معالجتها
+        if (!querySnapshot.empty) {
+            articlesFoundInDB = true; // تم العثور على مقالات في قاعدة البيانات
+            allArticles = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                if (!data.title || !data.category || !data.excerpt || !data.publishedAt) {
+                    console.warn("Skipping article due to missing critical data:", doc.id, data);
+                    return null;
+                }
+                allCategories.add(data.category);
+                return { id: doc.id, ...data };
+            }).filter(Boolean);
+
+            console.log(`Successfully fetched ${allArticles.length} published articles.`);
+        } else {
             console.warn("No published articles found in Firestore.");
-            allArticles = [];
-            loadingMsg.style.display = 'none'; // Hides loading message
-            noArticlesMsg.style.display = 'block'; // Shows no articles message
-            noArticlesMsg.textContent = "لم يتم العثور على مقالات للعرض حاليًا.\nيرجى التحقق من اتصالك بالإنترنت أو المحاولة لاحقًا.";
-            renderCategories(); // Render categories even if no articles
-            return;
+            // articlesFoundInDB تبقى false هنا لأنه لم يتم العثور على مقالات.
+            // ولكن طالما لم يحدث خطأ في الـ try block، فإن هذا يعتبر استجابة ناجحة.
         }
 
-        allArticles = querySnapshot.docs.map(doc => {
-            const data = doc.data();
-            // Basic validation for critical fields
-            if (!data.title || !data.category || !data.excerpt || !data.publishedAt) {
-                console.warn("Skipping article due to missing critical data:", doc.id, data);
-                return null; // Exclude incomplete articles
-            }
-            allCategories.add(data.category);
-            return { id: doc.id, ...data };
-        }).filter(Boolean); // Filter out nulls
+        loadingMsg.style.display = 'none'; // إخفاء رسالة التحميل
+        renderCategories(); // عرض أزرار التصنيفات
 
-        console.log(`Successfully fetched ${allArticles.length} published articles.`);
-        loadingMsg.style.display = 'none'; // Hide loading message on success
-        renderCategories();
-        renderArticles(allArticles);
+        if (allArticles.length === 0) {
+            // إذا كان allArticles فارغًا بعد الفلترة (أو إذا كان querySnapshot.empty صحيحًا)
+            noArticlesMsg.style.display = 'block';
+            noArticlesMsg.textContent = "لا توجد مقالات منشورة للعرض حاليًا."; // رسالة محددة لعدم وجود مقالات
+        } else {
+            renderArticles(allArticles); // عرض المقالات المفلترة
+        }
 
-    } catch (error) { // This block handles errors (e.g., network issues)
+    } catch (error) {
         console.error("Error fetching articles:", error);
-        loadingMsg.style.display = 'block'; // Ensure loading message is visible
-        loadingMsg.style.color = 'red'; // Make the error message red
-        articlesGrid.innerHTML = ''; // Clear the articles grid
-        noArticlesMsg.style.display = 'none'; // CRITICAL FIX: Hide "no articles" message on error
+        loadingMsg.style.display = 'block'; // تأكد من إظهار رسالة التحميل مجددًا لوضع رسالة الخطأ بها
+        loadingMsg.style.color = 'red'; // اجعل لون الخط أحمر للإشارة إلى الخطأ
+        articlesGrid.innerHTML = ''; // مسح أي مقالات موجودة (في حالة ظهور جزئي)
+        noArticlesMsg.style.display = 'none'; // تأكد من إخفاء رسالة "لا توجد مقالات"
 
-        let errorMessageText = "فشل تحميل المقالات. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى."; // General network error
+        let errorMessageText = "فشل تحميل المقالات. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى."; // رسالة خطأ عامة
         if (error.code === 'permission-denied') {
             errorMessageText = "خطأ في الصلاحيات: لا يمكن تحميل المقالات. قد تحتاج إلى التحقق من قواعد أمان Firebase الخاصة بك.";
-        } else if (error.message.includes("does not exist or is not a timestamp")) { // Common if orderBy field is missing
-             errorMessageText = "خطأ في بيانات المقالات: لا يوجد حقل تاريخ النشر. الرجاء التأكد من بنية بيانات المقالات.";
+        } else if (error.message.includes("does not exist or is not a timestamp")) {
+            errorMessageText = "خطأ في بيانات المقالات: لا يوجد حقل تاريخ النشر. الرجاء التأكد من بنية بيانات المقالات.";
         } else if (error.code === 'unavailable' || error.code === 'internal') {
-             errorMessageText = "مشكلة في الخادم: تعذر تحميل المقالات. يرجى المحاولة مرة أخرى لاحقًا.";
+            errorMessageText = "مشكلة في الخادم: تعذر تحميل المقالات. يرجى المحاولة مرة أخرى لاحقًا.";
         }
-        loadingMsg.textContent = errorMessageText;
+        loadingMsg.textContent = errorMessageText; // عرض رسالة الخطأ
+        
+        // في حالة الخطأ، لا يوجد ما نفلتره أو نعرضه، ولكن يجب عرض التصنيفات.
+        renderCategories();
     }
 }
 
@@ -538,7 +550,7 @@ function createCommentElement(comment, usersMap, repliesMap, allCommentsData) {
     } else if (comment.userId && typeof comment.userId === 'string' && comment.userId.length > 5) {
         // Fallback for cases where name/email couldn't be derived, but UID exists
         displayUserName = `مستخدم (ID: ${comment.userId.substring(0, 5)}...)`;
-        finalAvatarInitials = (comment.userId[0] || 'U').toUpperCase(); // Use first char of UID for initials
+        finalAvatarInitials = (comment.userId[0] || 'U').toUpperCase(); // Use first letter of UID for initials
     } else { // Truly unknown or very short/invalid userId
         displayUserName = 'مستخدم غير معروف';
         finalAvatarInitials = 'م.غ';
@@ -883,4 +895,4 @@ async function toggleLike(commentId, userId, showToast) { // showToast passed as
         showToast('حدث خطأ أثناء التفاعل.', 'error'); // Using passed showToast
         throw error;
     }
-            }
+        } 
