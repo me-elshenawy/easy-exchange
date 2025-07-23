@@ -530,6 +530,20 @@ async function getUsersData(userIds) {
                     derivedInitials = (data.email[0] || 'U').toUpperCase(); // Use first letter of email
                 }
 
+                // IMPORTANT FIX START
+                // التأكد من أن derivedName لا يكون فارغًا أبدًا لسجلات المستخدمين الموجودة.
+                if (!derivedName || derivedName === '') {
+                    derivedName = 'مستخدم Easy Exchange'; // اسم احتياطي عام
+                }
+                // التأكد من أن الأحرف الأولى ذات معنى دائمًا، حتى لو كانت مكونات الاسم الأساسية فارغة.
+                // 'US' تعني أن الأحرف الأولى لكل من الاسم الأول واسم العائلة كانت 'U' و'S' (قادمة من الاحتياطي)، أو تم اشتقاقها على هذا النحو.
+                // إذا ظلت 'U' (من القيمة الافتراضية أو البريد الإلكتروني الفارغ)، فقم باستبدالها.
+                if (!derivedInitials || derivedInitials.length === 0 || derivedInitials === 'US') {
+                    // استخدام الحرف الأول من الاسم المستخلص (والذي أصبح مضمون وجوده الآن)
+                    derivedInitials = derivedName[0] ? derivedName[0].toUpperCase() : 'EE'; // افتراضيًا 'EE' إذا لم يكن للاسم المستخلص حرف أول أيضاً.
+                }
+                // IMPORTANT FIX END
+
                 usersMap.set(data.uid, {
                     name: derivedName,
                     initials: derivedInitials,
