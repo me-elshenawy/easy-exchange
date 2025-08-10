@@ -1,0 +1,270 @@
+<!doctype html>
+
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>عرض أفكار مشاريع ذكية - FinanSage, Smart Restaurant, Smart Travel, HealthCure</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--text:#e6eef6}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0;background:linear-gradient(180deg,#071022 0%, #071730 60%);color:var(--text);direction:rtl}
+    header{padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    h1{font-size:20px;margin:0}
+    nav{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--text);cursor:pointer}
+    .container{max-width:1100px;margin:18px auto;padding:18px}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    h2{margin:0 0 8px 0}
+    .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+    ul{padding-left:18px;margin:8px 0}
+    li{margin:6px 0}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .code{background:#021226;padding:10px;border-radius:8px;color:#9ae6ff;font-family:monospace;font-size:13px}
+    footer{padding:18px;text-align:center;color:var(--muted);font-size:13px}
+    .toc{display:flex;gap:8px;flex-wrap:wrap}
+    @media(max-width:900px){.cols{grid-template-columns:1fr}}
+    .step{display:flex;gap:10px;align-items:flex-start}
+    .step .num{background:var(--accent);color:#021226;padding:6px 10px;border-radius:8px;font-weight:700}
+    .small{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>عرض أفكار مشاريع ذكية — جاهز للعرض</h1>
+      <div class="small">ملف مختصر يعرض: FinanSage، Smart Restaurant، Smart Travel، HealthCure</div>
+    </div>
+    <nav class="toc">
+      <button class="btn" onclick="scrollToId('finan')">FinanSage</button>
+      <button class="btn" onclick="scrollToId('restaurant')">Smart Restaurant</button>
+      <button class="btn" onclick="scrollToId('travel')">Smart Travel</button>
+      <button class="btn" onclick="scrollToId('health')">HealthCure</button>
+      <button class="btn" onclick="print()">طباعة / حفظ PDF</button>
+    </nav>
+  </header>  <main class="container">
+    <!-- Intro -->
+    <section class="card">
+      <h2>مقدمة سريعة</h2>
+      <p class="meta">الهدف: تحتوي هذه الصفحة على وصف لكل فكرة، مكونات المشروع، تقسيم الفرق، سيناريو استخدام مفصل، نقاط القيمة، والمقترحات التقنية التي تشرح كيفية التنفيذ عمليًا.</p>
+      <div class="cols">
+        <div>
+          <h3>نصيحة للعرض</h3>
+          <ul>
+            <li>ابدأ بمشكلة حقيقية ثم قدم الحل بوضوح.</li>
+            <li>استخدم السيناريوهات لعرض كيف سيستخدم العميل المنتج فعليًا.</li>
+            <li>اذكر بسرعة التقنيات والفِرق المطلوبة ومدة تنفيذ مبدئية.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>تفاصيل تنسيق الشرائح</h3>
+          <ul>
+            <li>شريحة لكل فكرة: عنوان، مشكلة، حل، مكونات، سيناريو، قيمة، مخاطر ومقترحات التخفيف.</li>
+            <li>استخدم رسومات بسيطة (خريطة، تدفق بيانات) لشرح العلاقة بين Front / Back / AI.</li>
+          </ul>
+        </div>
+      </div>
+    </section><!-- FinanSage -->
+<section id="finan" class="card">
+  <h2>1. FinanSage — الخبير المالي الذكي</h2>
+  <div class="meta">تطبيق لإدارة المال الشخصي: تتبع المصروفات، نصائح ادخار واستثمار، تقارير وبيانات رسومية.</div>
+
+  <div class="cols">
+    <div>
+      <h3>مكونات المشروع</h3>
+      <ul>
+        <li><strong>Front-End:</strong> واجهة مستخدم لحساب الدخل، إدخال المصروفات، لوحات رسوم بيانية، إعدادات تنبيهات.</li>
+        <li><strong>Back-End:</strong> تخزين مشفر، محرك تقارير، جداول مستخدمين وإعدادات سياسات الخصوصية.</li>
+        <li><strong>AI:</strong> نماذج لتحليل أنماط الإنفاق، توصيات ادخار، تنبؤات بالنفقات.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>تقنيات مقترحة</h3>
+      <ul>
+        <li>Front: React أو Vue + Chart.js / Recharts.</li>
+        <li>Back: Node.js/Express أو Django، Postgres + Redis.</li>
+        <li>AI: Python (scikit-learn, XGBoost)، أو خدمات ML مُدارة.</li>
+        <li>Security: تشفير AES-256، OAuth 2.0 للمصادقة.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>سيناريو الاستخدام (مفصل)</h3>
+  <ol>
+    <li class="step"><span class="num">1</span>المستخدم يسجّل حساب جديد أو يدخل عبر OAuth.</li>
+    <li class="step"><span class="num">2</span>يدخل دخلَه و المصروفات (يدويًا أو رفع CSV).</li>
+    <li class="step"><span class="num">3</span>الـ Front-End يرسل البيانات مشفّرة للـ Back-End.</li>
+    <li class="step"><span class="num">4</span>الـ Back-End يخزن البيانات ويستدعي الـ AI لتحليل النمط.</li>
+    <li class="step"><span class="num">5</span>النموذج يولّد خطة ادخار، إنذار عند إنفاق زائد، ويقترح استثمارات مناسبة.</li>
+    <li class="step"><span class="num">6</span>النتائج تعرض في داشبورد ورسوم بيانية، مع إشعارات دورية.</li>
+  </ol>
+
+  <h3>المخاطر ومقترحات التخفيف</h3>
+  <ul>
+    <li>خطأ في التوصيات المالية: عرض تحذير قانوني واضح و«توصيات عامة» مع خيار الرجوع لمستشار مالي.</li>
+    <li>سرقة بيانات: تطبيق تشفير ومراجعات أمان دورية.</li>
+  </ul>
+</section>
+
+<!-- Smart Restaurant -->
+<section id="restaurant" class="card">
+  <h2>2. Smart Restaurant Management System — إدارة المطاعم الذكية</h2>
+  <div class="meta">نظام شامل للحجوزات، الطلبات، إدارة الطاولات والموظفين مع اقتراحات ذكية وعروض مخصصة.</div>
+
+  <div class="cols">
+    <div>
+      <h3>مكونات المشروع</h3>
+      <ul>
+        <li><strong>Front-End:</strong> لوحة مدير، واجهات موظفين، تطبيق أو بوابة حجز للزبائن.</li>
+        <li><strong>Back-End:</strong> قاعدة بيانات للحجز، إدارة طاولات، تكامل مع بوابات الدفع ونظام المطبخ.</li>
+        <li><strong>AI:</strong> توقع أوقات الذروة، توزيع الموظفين، عروض مخصصة، تحليل رضا العملاء.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>تقنيات مقترحة</h3>
+      <ul>
+        <li>Front: Vue/React + PWA لتجربة جيدة على الموبايل.</li>
+        <li>Back: Node.js + PostgreSQL، Message Queue (RabbitMQ) لمعالجة الطلبات.</li>
+        <li>AI: نماذج استهلاك وتحليل نصوص لتعليقات العملاء.</li>
+        <li>Integration: POS APIs، بوابات دفع محلية.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>سيناريو الاستخدام (مفصل)</h3>
+  <ol>
+    <li class="step"><span class="num">1</span>الزبون يحجز عبر التطبيق أو الموقع.</li>
+    <li class="step"><span class="num">2</span>الـ Front-End يرسل الحجز للـ Back-End ويظهر في لوحة مدير المطعم.</li>
+    <li class="step"><span class="num">3</span>الـ AI يتنبأ بالضغط المتوقع ويقترح جدول عمل للموظفين.</li>
+    <li class="step"><span class="num">4</span>المطبخ يستلم الطلبات عبر واجهة مخصصة، ويتم تحديث الحالة في الوقت الحقيقي.</li>
+    <li class="step"><span class="num">5</span>النظام يولّد عروض مخصصة للعملاء بناءً على سجل الطلبات.</li>
+    <li class="step"><span class="num">6</span>توليد تقارير يومية لأداء الخدمة والربحية.</li>
+  </ol>
+
+  <h3>المخاطر ومقترحات التخفيف</h3>
+  <ul>
+    <li>تأخير في المزامنة: استخدام Queue ومرونة في إعادة المحاولة (retries).</li>
+    <li>تكاملات خارجية مع بوابات دفع: إعداد بيئة اختبار ومراجعة الأمان.</li>
+  </ul>
+</section>
+
+<!-- Smart Travel -->
+<section id="travel" class="card">
+  <h2>3. Smart Travel Planner — مخطط الرحلات الذكي</h2>
+  <div class="meta">تطبيق لتخطيط الرحلات بناءً على الاهتمامات والميزانية، مع خط سير متكامل وتحديثات لحظية.</div>
+
+  <div class="cols">
+    <div>
+      <h3>مكونات المشروع</h3>
+      <ul>
+        <li><strong>Front-End:</strong> واجهة إدخال التفضيلات، خريطة تفاعلية، جدول يومي قابل للتعديل.</li>
+        <li><strong>Back-End:</strong> قاعدة بيانات للواجهات، تكامل مع APIs (خرائط، طقس، حجوزات).</li>
+        <li><strong>AI:</strong> توصيات مخصصة، تحسين مسارات زمنية، اقتراح بدائل في الوقت الفعلي.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>تقنيات مقترحة</h3>
+      <ul>
+        <li>Front: React + Leaflet أو Mapbox للخرائط.</li>
+        <li>Back: Django/Flask أو Node.js + PostGIS (لجغرافيا البيانات).</li>
+        <li>APIs: Google Maps / OpenWeather / Booking APIs.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>سيناريو الاستخدام (مفصل)</h3>
+  <ol>
+    <li class="step"><span class="num">1</span>المستخدم يحدد الوجهة، المدة، الميزانية والاهتمامات.</li>
+    <li class="step"><span class="num">2</span>الـ Back-End يجيب بيانات الوجهات والفعاليات من الـ APIs.</li>
+    <li class="step"><span class="num">3</span>الـ AI ينشئ خطة يومية متكاملة تراعي المسافات والوقت.</li>
+    <li class="step"><span class="num">4</span>المستخدم يعرض الخطة على الخريطة ويعدلها إذا رغب.</li>
+    <li class="step"><span class="num">5</span>أثناء الرحلة النظام يرسل تنبيهات حسب الطقس أو فعاليات جديدة.</li>
+    <li class="step"><span class="num">6</span>بعد الرحلة يظهر تقرير مع تقييمات واقتراحات مستقبلية.</li>
+  </ol>
+
+  <h3>المخاطر ومقترحات التخفيف</h3>
+  <ul>
+    <li>اعتماد كبير على APIs خارجية: وضع طبقة Cache وبدائل للـ APIs الحرجة.</li>
+    <li>تكاليف استدعاء APIs: مراقبة استهلاك واشتراكات مناسبة.</li>
+  </ul>
+</section>
+
+<!-- HealthCure -->
+<section id="health" class="card">
+  <h2>4. HealthCure — المستشار الطبي الذكي</h2>
+  <div class="meta">موقع يستعين بالذكاء الاصطناعي لتقديم تشخيص مبدئي وتوصيات أولية بناءً على الأعراض المدخلة.</div>
+
+  <div class="cols">
+    <div>
+      <h3>مكونات المشروع</h3>
+      <ul>
+        <li><strong>Front-End:</strong> نماذج إدخال أعراض، صفحة نتائج مع توصيات واضحة، دعم لغتين.</li>
+        <li><strong>Back-End:</strong> API للتواصل مع نموذج الـ AI، تخزين آمن للسجلات، إدارة المستخدمين.</li>
+        <li><strong>AI:</strong> نموذج (Classification) لتقدير التشخيص الاحتمالي، نظام توصيات، شرح نتائج للمستخدم.</li>
+        <li><strong>SOC/Security:</strong> تشفير البيانات، سياسات خصوصية، مراقبة أمنية دورية.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>تقنيات مقترحة</h3>
+      <ul>
+        <li>Front: Next.js أو React مع تصميم متوافق (RTL).</li>
+        <li>Back: Django + Postgres، مع طبقة تشفير للحقول الحساسة.</li>
+        <li>AI: نماذج مُدربة على داتا طبية موثوقة، وثائق تدقيق طبي وقانوني.</li>
+        <li>Compliance: التزام بمعايير حماية البيانات المحلية والدولية.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>سيناريو الاستخدام (مفصل)</h3>
+  <ol>
+    <li class="step"><span class="num">1</span>المستخدم يدخل العمر، الجنس، الأعراض وتاريخ الحالة.</li>
+    <li class="step"><span class="num">2</span>الـ Front-End يرسل البيانات إلى الـ Back-End عبر اتصال مؤمن.</li>
+    <li class="step"><span class="num">3</span>الـ Back-End ينادي نموذج الـ AI لتحليل الأعراض.</li>
+    <li class="step"><span class="num">4</span>الـ AI يعطي احتمالات تشخيصية وتوصيات (مثلاً: راحة، مراجعة طوارئ).</li>
+    <li class="step"><span class="num">5</span>النتيجة تعرض مع تنبيهات ومسارات متابعة (زيارة دكتور، أدوية موصى بها بشكل عام).</li>
+    <li class="step"><span class="num">6</span>فريق الـ SOC يراقب ويحمي البيانات ويوفر سجلات تدقيق للمراجعة.</li>
+  </ol>
+
+  <h3>المخاطر ومقترحات التخفيف</h3>
+  <ul>
+    <li>مخاطر تشخيص خاطئ: وضع تحذيرات واضحة، ونصيحة بزيارة طبيب مختص، وعدم تقديم نصائح دوائية قابلة للتطبيق دون مراجعة طبية.</li>
+    <li>قضايا قانونية وتنظيمية: استشارة قانونية واعتماد من جهات طبية عند الحاجة.</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>مقارنة سريعة (مستوى الصعوبة)</h2>
+  <div class="meta">ترتيب من الأقل إلى الأكثر صعوبة (اقتراح سابق)</div>
+  <div class="cols">
+    <div>
+      <h3>الترتيب</h3>
+      <ol>
+        <li>FinanSage</li>
+        <li>Smart Travel Planner</li>
+        <li>Smart Restaurant Management</li>
+        <li>HealthCure</li>
+      </ol>
+    </div>
+    <div>
+      <h3>مقترح أولويات تنفيذ</h3>
+      <ul>
+        <li>ابدأ بفرصة سريعة (MVP) لكل فكرة لتقييم الطلب الحقيقي.</li>
+        <li>اختبار المستخدم الحقيقي يجنبك بذل مجهود كبير لفكرة غير مطلوبة.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="card">
+  <div class="small">لو عاوز أعمل لك نسخة PowerPoint من نفس المحتوى أو أعدل لهجة العرض (أكاديمي - عملي - سريع)، أعدني أتكلم.</div>
+</footer>
+
+  </main>  <script>
+    function scrollToId(id){
+      document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function print(){
+      window.print();
+    }
+  </script></body>
+</html>
